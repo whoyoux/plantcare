@@ -9,18 +9,20 @@
     "deploy:prod": "alchemy deploy --stage prod",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "build:types": "tsc -p tsconfig.types.json"
+    "build:types": "tsc -p tsconfig.types.json",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-node": "^4.0.4",
+    "@plantcare/eslint-config": "workspace:*",
     "@plantcare/tsconfig": "workspace:*",
     "alchemy": "2.0.0-beta.83",
     "effect": "^4.0.5",
+    "eslint": "catalog:",
     "pg": "^8.23.1",
     "typescript": "catalog:",
-    "eslint": "catalog:",
-    "@plantcare/eslint-config": "workspace:*"
+    "vitest": "catalog:"
   },
   "dependencies": {
     "@better-auth/expo": "^1.7.7",

@@ -4,5 +4,5 @@
     "lib": ["ES2023"],
     "types": ["@cloudflare/workers-types"]
   },
-  "include": ["src", "alchemy.run.ts"]
+  "include": ["src", "alchemy.run.ts", "vitest.config.ts"]
 }

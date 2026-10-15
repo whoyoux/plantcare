@@ -26,6 +26,7 @@ catalog:
   eslint-config-prettier: ^10.1.8
   globals: ^16.0.0
   prettier: ^3.9.0
+  vitest: ^5.0.4
 
 minimumReleaseAgeExclude:
   - '@expo/cli@57.0.30 || 57.0.31'

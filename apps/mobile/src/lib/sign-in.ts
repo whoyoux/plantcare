@@ -3,7 +3,6 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 
-import { api, ensureOk } from '@/lib/api';
 import { authClient } from '@/lib/auth-client';
 import { env } from '@/lib/env';
 
@@ -58,6 +57,16 @@ async function signInWithApple(): Promise<boolean> {
     },
   });
   if (error) throw new Error(error.message ?? 'Sign in failed');
+
+  // Lets the server keep Apple's refresh token, so deleting the account can revoke it later.
+  if (credential.authorizationCode) {
+    await authClient
+      .$fetch('/apple/authorization-code', {
+        method: 'POST',
+        body: { authorizationCode: credential.authorizationCode, bundleId: env.bundleId },
+      })
+      .catch((storeError: unknown) => console.warn('Storing the Apple authorization code failed', storeError));
+  }
   return true;
 }
 
@@ -99,28 +108,12 @@ export async function signOut() {
 }
 
 /**
- * Deletes the account. Accounts linked to Apple re-authenticate first: the server needs a fresh
- * authorization code to revoke the app's Apple token, as App Review requires.
- * Returns false when the user cancels.
+ * Deletes the account through Better Auth. The server revokes the stored Apple token and deletes
+ * photos and history before removing the user.
  */
 export async function deleteAccount(): Promise<boolean> {
-  const { data: accounts } = await authClient.listAccounts();
-  const usesApple = accounts?.some((account) => account.providerId === 'apple') ?? false;
-
-  let authorizationCode: string | undefined;
-  if (usesApple) {
-    try {
-      const credential = await AppleAuthentication.signInAsync({ requestedScopes: [] });
-      authorizationCode = credential.authorizationCode ?? undefined;
-    } catch (error) {
-      if (isAppleCancel(error)) return false;
-      throw error;
-    }
-    if (!authorizationCode) throw new Error('Apple returned no authorization code');
-  }
-
-  await ensureOk(await api.v1.account.delete.$post({ json: { authorizationCode, bundleId: env.bundleId } }));
-
-  await signOut();
+  const { error } = await authClient.deleteUser();
+  if (error) throw new Error(error.message ?? 'Account deletion failed');
+  await signOut().catch(() => undefined);
   return true;
 }
