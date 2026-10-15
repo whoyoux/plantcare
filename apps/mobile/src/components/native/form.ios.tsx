@@ -2,12 +2,14 @@ import {
   Button,
   Form as SwiftUIForm,
   Host,
+  Image,
   Label,
   LabeledContent,
   Section,
   Text,
 } from '@expo/ui/swift-ui';
 import { disabled, foregroundStyle } from '@expo/ui/swift-ui/modifiers';
+import { useCSSVariable } from 'uniwind';
 
 import type { FormProps, FormRowProps, FormSectionProps } from './form.types';
 
@@ -27,18 +29,25 @@ export function FormSection({ title, footer, children }: FormSectionProps) {
   );
 }
 
+const primary = foregroundStyle({ type: 'hierarchical', style: 'primary' });
+const secondary = foregroundStyle({ type: 'hierarchical', style: 'secondary' });
+
 export function FormRow({ label, value, systemImage, onPress, disabled: isDisabled = false }: FormRowProps) {
-  const title = <Label title={label} systemImage={systemImage} />;
+  const accent = useCSSVariable('--color-accent');
+  // Accent icon + primary title, the same whether or not the row is tappable.
+  const icon = systemImage ? (
+    <Image systemName={systemImage} modifiers={typeof accent === 'string' ? [foregroundStyle(accent)] : []} />
+  ) : undefined;
   const content = (
-    <LabeledContent label={title}>
-      <Text modifiers={[foregroundStyle({ type: 'hierarchical', style: 'secondary' })]}>{value ?? ''}</Text>
+    <LabeledContent label={<Label title={label} icon={icon} modifiers={[primary]} />}>
+      <Text modifiers={[secondary]}>{value ?? ''}</Text>
     </LabeledContent>
   );
 
   if (!onPress) return content;
 
   return (
-    <Button onPress={onPress} modifiers={[disabled(isDisabled), foregroundStyle({ type: 'hierarchical', style: 'primary' })]}>
+    <Button onPress={onPress} modifiers={[disabled(isDisabled), primary]}>
       {content}
     </Button>
   );

@@ -1,4 +1,4 @@
-import { Button as SwiftUIButton, Host } from '@expo/ui/swift-ui';
+import { Host, Label, Button as SwiftUIButton } from '@expo/ui/swift-ui';
 import { buttonStyle, controlSize, disabled, frame, tint } from '@expo/ui/swift-ui/modifiers';
 import { useCSSVariable } from 'uniwind';
 
@@ -10,17 +10,17 @@ export function Button({ label, onPress, systemImage, variant = 'prominent', dis
   return (
     <Host matchContents={{ vertical: true }}>
       <SwiftUIButton
-        label={label}
-        systemImage={systemImage}
         onPress={onPress}
         modifiers={[
           buttonStyle(variant === 'prominent' ? 'glassProminent' : 'glass'),
           controlSize('large'),
-          frame({ maxWidth: Number.POSITIVE_INFINITY }),
           ...(typeof accent === 'string' ? [tint(accent)] : []),
           disabled(isDisabled),
         ]}
-      />
+      >
+        {/* The frame goes on the label so the glass background spans the full width. */}
+        <Label title={label} systemImage={systemImage} modifiers={[frame({ maxWidth: Number.POSITIVE_INFINITY })]} />
+      </SwiftUIButton>
     </Host>
   );
 }

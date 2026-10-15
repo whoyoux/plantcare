@@ -26,7 +26,7 @@ export default function IdentifyScreen() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerClassName="flex-grow justify-center gap-8 px-6 py-10"
+      contentContainerClassName="gap-10 px-6 pb-10 pt-8"
       contentInsetAdjustmentBehavior="automatic"
     >
       <View className="items-center gap-4">

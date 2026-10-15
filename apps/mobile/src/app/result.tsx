@@ -1,4 +1,3 @@
-import { Image } from 'expo-image';
 import { useLocalSearchParams } from 'expo-router';
 import type { SFSymbol } from 'expo-symbols';
 import { SymbolView } from 'expo-symbols';
@@ -6,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
+import { Image } from '@/components/image';
 import type { Language } from '@/i18n';
 import { sampleIdentification as sample } from '@/lib/sample-identification';
 
