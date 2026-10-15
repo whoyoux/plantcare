@@ -5,13 +5,14 @@ import {
   Image,
   Label,
   LabeledContent,
+  Picker,
   Section,
   Text,
 } from '@expo/ui/swift-ui';
-import { disabled, foregroundStyle } from '@expo/ui/swift-ui/modifiers';
+import { disabled, foregroundStyle, pickerStyle, tag } from '@expo/ui/swift-ui/modifiers';
 import { useCSSVariable } from 'uniwind';
 
-import type { FormProps, FormRowProps, FormSectionProps } from './form.types';
+import type { FormPickerProps, FormProps, FormRowProps, FormSectionProps } from './form.types';
 
 export function Form({ children }: FormProps) {
   return (
@@ -32,14 +33,15 @@ export function FormSection({ title, footer, children }: FormSectionProps) {
 const primary = foregroundStyle({ type: 'hierarchical', style: 'primary' });
 const secondary = foregroundStyle({ type: 'hierarchical', style: 'secondary' });
 
-export function FormRow({ label, value, systemImage, onPress, disabled: isDisabled = false }: FormRowProps) {
+function RowIcon({ systemImage }: { systemImage: NonNullable<FormRowProps['systemImage']> }) {
   const accent = useCSSVariable('--color-accent');
+  return <Image systemName={systemImage} modifiers={typeof accent === 'string' ? [foregroundStyle(accent)] : []} />;
+}
+
+export function FormRow({ label, value, systemImage, onPress, disabled: isDisabled = false }: FormRowProps) {
   // Accent icon + primary title, the same whether or not the row is tappable.
-  const icon = systemImage ? (
-    <Image systemName={systemImage} modifiers={typeof accent === 'string' ? [foregroundStyle(accent)] : []} />
-  ) : undefined;
   const content = (
-    <LabeledContent label={<Label title={label} icon={icon} modifiers={[primary]} />}>
+    <LabeledContent label={<Label title={label} icon={systemImage ? <RowIcon systemImage={systemImage} /> : undefined} modifiers={[primary]} />}>
       <Text modifiers={[secondary]}>{value ?? ''}</Text>
     </LabeledContent>
   );
@@ -50,5 +52,22 @@ export function FormRow({ label, value, systemImage, onPress, disabled: isDisabl
     <Button onPress={onPress} modifiers={[disabled(isDisabled), primary]}>
       {content}
     </Button>
+  );
+}
+
+export function FormPicker<T extends string>({ label, systemImage, selection, options, onChange }: FormPickerProps<T>) {
+  return (
+    <Picker
+      label={<Label title={label} icon={systemImage ? <RowIcon systemImage={systemImage} /> : undefined} modifiers={[primary]} />}
+      selection={selection}
+      onSelectionChange={onChange}
+      modifiers={[pickerStyle('menu')]}
+    >
+      {options.map((option) => (
+        <Text key={option.value} modifiers={[tag(option.value)]}>
+          {option.label}
+        </Text>
+      ))}
+    </Picker>
   );
 }

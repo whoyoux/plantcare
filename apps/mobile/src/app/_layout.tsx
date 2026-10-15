@@ -6,6 +6,10 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-naviga
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
 
+import { applyStoredTheme } from '@/lib/dev-preferences';
+
+applyStoredTheme();
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { t } = useTranslation();

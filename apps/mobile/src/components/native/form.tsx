@@ -1,7 +1,7 @@
 import { Children, Fragment, isValidElement, type ReactNode } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import type { FormProps, FormRowProps, FormSectionProps } from './form.types';
+import type { FormPickerProps, FormProps, FormRowProps, FormSectionProps } from './form.types';
 
 export function Form({ children }: FormProps) {
   return (
@@ -41,5 +41,15 @@ export function FormRow({ label, value, onPress, disabled = false }: FormRowProp
       <Text className="text-[17px] text-foreground">{label}</Text>
       {value !== undefined && <Text className="text-[17px] text-muted">{value}</Text>}
     </Pressable>
+  );
+}
+
+/** Fallback: tapping cycles through the options. */
+export function FormPicker<T extends string>({ label, selection, options, onChange }: FormPickerProps<T>) {
+  const index = options.findIndex((option) => option.value === selection);
+  const next = options[(index + 1) % options.length];
+
+  return (
+    <FormRow label={label} value={options[index]?.label} onPress={next ? () => onChange(next.value) : undefined} />
   );
 }

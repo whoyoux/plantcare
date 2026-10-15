@@ -17,3 +17,13 @@ export type FormRowProps = {
   onPress?: () => void;
   disabled?: boolean;
 };
+
+export type FormPickerOption<T extends string> = { value: T; label: string };
+
+export type FormPickerProps<T extends string> = {
+  label: string;
+  systemImage?: SFSymbol;
+  selection: T;
+  options: readonly FormPickerOption<T>[];
+  onChange: (value: T) => void;
+};
