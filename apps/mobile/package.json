@@ -41,6 +41,7 @@
   "devDependencies": {
     "@plantcare/tsconfig": "workspace:*",
     "@types/react": "~19.2.2",
+    "sharp": "^0.35.5",
     "typescript": "catalog:"
   },
   "scripts": {
@@ -52,7 +53,8 @@
     "device:add": "eas device:create",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "doctor": "expo-doctor"
+    "doctor": "expo-doctor",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "private": true
 }
