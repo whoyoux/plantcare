@@ -1,5 +1,5 @@
 import { getLocales } from 'expo-localization';
-import i18n from 'i18next';
+import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { getLanguagePreference, setLanguagePreference, type LanguagePreference } from '@/lib/dev-preferences';
@@ -25,6 +25,8 @@ export function changeLanguage(preference: LanguagePreference) {
   setLanguagePreference(preference);
   void i18n.changeLanguage(resolveLanguage(preference));
 }
+
+const i18n = createInstance();
 
 void i18n.use(initReactI18next).init({
   resources,

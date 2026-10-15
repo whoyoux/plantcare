@@ -7,7 +7,7 @@ iOS app that identifies plants and trees from a photo and gives care instruction
 ## Stack
 
 - `apps/mobile` — Expo (SDK 57, Expo Router, dev client + CNG), iOS-first
-- `apps/api` — Hono on Cloudflare Workers *(planned)*
+- `apps/api` — Hono on Cloudflare Workers _(planned)_
 - `packages/*` — shared Zod schemas, Drizzle DB, tsconfig
 
 pnpm workspaces + Turborepo, Node 24.

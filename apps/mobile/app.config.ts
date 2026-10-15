@@ -113,7 +113,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     'expo-apple-authentication',
     ...(googleIosClientId
-      ? [['@react-native-google-signin/google-signin', { iosUrlScheme: reversedClientId(googleIosClientId) }] as [string, object]]
+      ? [
+          ['@react-native-google-signin/google-signin', { iosUrlScheme: reversedClientId(googleIosClientId) }] as [
+            string,
+            object,
+          ],
+        ]
       : []),
     'expo-secure-store',
     // Adds the per-app language picker in iOS Settings.

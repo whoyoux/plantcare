@@ -2,6 +2,8 @@
 
 pnpm workspaces + Turborepo. The Expo app lives in `apps/mobile` — run every `npx expo …` / `eas …` command from that directory. Shared versions go in the pnpm catalog (`pnpm-workspace.yaml`). App identity comes from `APP_VARIANT` (development | preview | production) in `apps/mobile/app.config.ts`.
 
+Before declaring work done, run from the repo root: `pnpm lint`, `pnpm typecheck`, `pnpm format:check` (`pnpm format` fixes formatting). ESLint: `eslint-config-expo` in apps/mobile, `@plantcare/eslint-config/base` (typescript-eslint, type-checked) elsewhere; Prettier owns formatting.
+
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
 ## Expo has changed — do not trust your training data

@@ -6,7 +6,10 @@ export const sampleIdentification = {
   confidence: 94,
   commonName: { en: 'Swiss cheese plant', pl: 'Monstera dziurawa' },
   care: {
-    watering: { en: 'Every 7–10 days, when the top soil is dry', pl: 'Co 7–10 dni, gdy wierzchnia warstwa ziemi przeschnie' },
+    watering: {
+      en: 'Every 7–10 days, when the top soil is dry',
+      pl: 'Co 7–10 dni, gdy wierzchnia warstwa ziemi przeschnie',
+    },
     light: { en: 'Bright, indirect light', pl: 'Jasne, rozproszone światło' },
     temperature: { en: '18–27 °C', pl: '18–27 °C' },
   },

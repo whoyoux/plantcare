@@ -1,0 +1,10 @@
+pnpm-lock.yaml
+**/migrations/**
+**/.expo/**
+**/.alchemy/**
+**/ios/**
+**/android/**
+**/*.icon/**
+.claude/skills/**
+apps/mobile/src/uniwind-types.d.ts
+**/expo-env.d.ts

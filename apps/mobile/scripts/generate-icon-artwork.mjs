@@ -28,7 +28,20 @@ if (!apiKey) throw new Error('Missing OPENROUTER_API_KEY (set it in apps/mobile/
 
 const preview = execFileSync(
   'npx',
-  ['-y', 'snapai@1', 'icon', '--prompt', values.prompt, '--style', values.style, '--model', 'gpt-1.5', '--background', 'transparent', '--prompt-only'],
+  [
+    '-y',
+    'snapai@1',
+    'icon',
+    '--prompt',
+    values.prompt,
+    '--style',
+    values.style,
+    '--model',
+    'gpt-1.5',
+    '--background',
+    'transparent',
+    '--prompt-only',
+  ],
   { encoding: 'utf8' },
 );
 const marker = 'Final prompt (sent to the model):';

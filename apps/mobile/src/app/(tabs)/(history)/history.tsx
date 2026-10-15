@@ -11,7 +11,10 @@ export default function HistoryScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <Stack.SearchBar placeholder={t('history.searchPlaceholder')} onChangeText={(event) => setQuery(event.nativeEvent.text)} />
+      <Stack.SearchBar
+        placeholder={t('history.searchPlaceholder')}
+        onChangeText={(event) => setQuery(event.nativeEvent.text)}
+      />
       {/* The list arrives with the history endpoint (step 8); until then it is always empty. */}
       {query ? (
         <EmptyState title={t('history.noResultsTitle', { query })} systemImage="magnifyingglass" />

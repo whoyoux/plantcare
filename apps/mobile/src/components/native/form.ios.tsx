@@ -38,10 +38,25 @@ function RowIcon({ systemImage }: { systemImage: NonNullable<FormRowProps['syste
   return <Image systemName={systemImage} modifiers={typeof accent === 'string' ? [foregroundStyle(accent)] : []} />;
 }
 
-export function FormRow({ label, value, systemImage, onPress, disabled: isDisabled = false, destructive = false }: FormRowProps) {
+export function FormRow({
+  label,
+  value,
+  systemImage,
+  onPress,
+  disabled: isDisabled = false,
+  destructive = false,
+}: FormRowProps) {
   // Accent icon + primary title, the same whether or not the row is tappable.
   const content = (
-    <LabeledContent label={<Label title={label} icon={systemImage ? <RowIcon systemImage={systemImage} /> : undefined} modifiers={[primary]} />}>
+    <LabeledContent
+      label={
+        <Label
+          title={label}
+          icon={systemImage ? <RowIcon systemImage={systemImage} /> : undefined}
+          modifiers={[primary]}
+        />
+      }
+    >
       <Text modifiers={[secondary]}>{value ?? ''}</Text>
     </LabeledContent>
   );
@@ -66,7 +81,13 @@ export function FormRow({ label, value, systemImage, onPress, disabled: isDisabl
 export function FormPicker<T extends string>({ label, systemImage, selection, options, onChange }: FormPickerProps<T>) {
   return (
     <Picker
-      label={<Label title={label} icon={systemImage ? <RowIcon systemImage={systemImage} /> : undefined} modifiers={[primary]} />}
+      label={
+        <Label
+          title={label}
+          icon={systemImage ? <RowIcon systemImage={systemImage} /> : undefined}
+          modifiers={[primary]}
+        />
+      }
       selection={selection}
       onSelectionChange={onChange}
       modifiers={[pickerStyle('menu')]}

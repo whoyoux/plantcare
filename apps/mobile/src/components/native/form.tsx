@@ -5,7 +5,11 @@ import type { FormPickerProps, FormProps, FormRowProps, FormSectionProps } from 
 
 export function Form({ children }: FormProps) {
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="gap-6 px-4 py-6" contentInsetAdjustmentBehavior="automatic">
+    <ScrollView
+      className="flex-1 bg-background"
+      contentContainerClassName="gap-6 px-4 py-6"
+      contentInsetAdjustmentBehavior="automatic"
+    >
       {children}
     </ScrollView>
   );

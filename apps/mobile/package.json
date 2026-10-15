@@ -46,6 +46,10 @@
   "devDependencies": {
     "@plantcare/tsconfig": "workspace:*",
     "@types/react": "~19.2.2",
+    "eslint": "catalog:",
+    "eslint-config-expo": "~57.0.2",
+    "eslint-config-prettier": "catalog:",
+    "globals": "catalog:",
     "sharp": "^0.35.5",
     "typescript": "catalog:"
   },

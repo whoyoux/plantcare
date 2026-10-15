@@ -36,7 +36,11 @@ export default function SettingsScreen() {
         </FormSection>
 
         <FormSection title={t('settings.about')}>
-          <FormRow label={t('settings.version')} value={Constants.expoConfig?.version ?? '–'} systemImage="info.circle" />
+          <FormRow
+            label={t('settings.version')}
+            value={Constants.expoConfig?.version ?? '–'}
+            systemImage="info.circle"
+          />
         </FormSection>
 
         {!isProduction && <DeveloperSection />}
@@ -84,8 +88,19 @@ function AccountSection() {
       <FormSection title={t('settings.account')}>
         <FormRow label={t('settings.name')} value={session.user.name || '–'} systemImage="person.crop.circle" />
         <FormRow label={t('settings.email')} value={session.user.email} systemImage="envelope" />
-        <FormRow label={t('settings.signOut')} systemImage="rectangle.portrait.and.arrow.right" disabled={busy} onPress={() => void run(signOut, t('settings.signOutFailed'))} />
-        <FormRow label={t('settings.deleteAccount')} systemImage="trash" destructive disabled={busy} onPress={confirmDelete} />
+        <FormRow
+          label={t('settings.signOut')}
+          systemImage="rectangle.portrait.and.arrow.right"
+          disabled={busy}
+          onPress={() => void run(signOut, t('settings.signOutFailed'))}
+        />
+        <FormRow
+          label={t('settings.deleteAccount')}
+          systemImage="trash"
+          destructive
+          disabled={busy}
+          onPress={confirmDelete}
+        />
       </FormSection>
     );
   }
@@ -140,8 +155,16 @@ function DeveloperSection() {
         }}
       />
       <FormRow label={t('settings.variant')} value={appVariant} systemImage="shippingbox" />
-      <FormRow label={t('settings.runtimeVersion')} value={Updates.runtimeVersion?.slice(0, 12) ?? '–'} systemImage="cpu" />
-      <FormRow label={t('settings.channel')} value={Updates.channel || '–'} systemImage="antenna.radiowaves.left.and.right" />
+      <FormRow
+        label={t('settings.runtimeVersion')}
+        value={Updates.runtimeVersion?.slice(0, 12) ?? '–'}
+        systemImage="cpu"
+      />
+      <FormRow
+        label={t('settings.channel')}
+        value={Updates.channel || '–'}
+        systemImage="antenna.radiowaves.left.and.right"
+      />
     </FormSection>
   );
 }

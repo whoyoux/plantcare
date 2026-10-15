@@ -7,7 +7,8 @@
     "dev": "alchemy dev --stage dev",
     "deploy:dev": "alchemy deploy --stage dev",
     "deploy:prod": "alchemy deploy --stage prod",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
@@ -16,7 +17,9 @@
     "alchemy": "2.0.0-beta.83",
     "effect": "^4.0.5",
     "pg": "^8.23.1",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "eslint": "catalog:",
+    "@plantcare/eslint-config": "workspace:*"
   },
   "dependencies": {
     "@better-auth/expo": "^1.7.7",

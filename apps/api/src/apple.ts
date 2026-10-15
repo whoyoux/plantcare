@@ -36,7 +36,7 @@ export async function revokeAppleAuthorization(key: AppleKey, clientId: string, 
     }),
   });
   if (!tokenResponse.ok) throw new Error(`Apple token exchange failed (${tokenResponse.status})`);
-  const { refresh_token: refreshToken } = (await tokenResponse.json()) as { refresh_token?: string };
+  const { refresh_token: refreshToken } = await tokenResponse.json<{ refresh_token?: string }>();
   if (!refreshToken) throw new Error('Apple returned no refresh token');
 
   const revokeResponse = await fetch(`${APPLE}/auth/revoke`, {

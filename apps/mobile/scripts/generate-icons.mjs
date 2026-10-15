@@ -33,7 +33,10 @@ const svg = (body) => Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width
  * sprout, trim to its bounds and centre it on a square canvas.
  */
 async function loadSprout() {
-  const { data, info } = await sharp(join(out, 'source/artwork.png')).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { data, info } = await sharp(join(out, 'source/artwork.png'))
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
   for (let i = 3; i < data.length; i += 4) if (data[i] < 48) data[i] = 0;
   const trimmed = await sharp(data, { raw: info }).trim().png().toBuffer();
   const { width, height } = await sharp(trimmed).metadata();
@@ -79,7 +82,9 @@ const placement = (banner) => (banner ? { scale: 0.82, dy: -72 } : { scale: 1, d
 async function glyph(sprout, banner) {
   const { scale, dy } = placement(banner);
   const viewfinder = await sharp(viewfinderSvg(VIEWFINDER_COLOR)).png().toBuffer();
-  const full = await sharp({ create: { width: 1024, height: 1024, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+  const full = await sharp({
+    create: { width: 1024, height: 1024, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+  })
     .composite([
       { input: viewfinder, left: 0, top: 0 },
       { input: await png(sprout, 560), left: 232, top: 232 },
@@ -144,12 +149,20 @@ async function iconComposerBundle(variant, sprout, banner) {
   }
   // Sprout floats above the viewfinder, so Liquid Glass separates them in depth.
   groups.push({
-    layers: [{ 'image-name': 'sprout.png', name: 'sprout', position: { scale: 0.55 * scale, 'translation-in-points': [0, dy] } }],
+    layers: [
+      {
+        'image-name': 'sprout.png',
+        name: 'sprout',
+        position: { scale: 0.55 * scale, 'translation-in-points': [0, dy] },
+      },
+    ],
     shadow: { kind: 'neutral', opacity: 0.5 },
     translucency: { enabled: false, value: 0 },
   });
   groups.push({
-    layers: [{ 'image-name': 'viewfinder.png', name: 'viewfinder', position: { scale, 'translation-in-points': [0, dy] } }],
+    layers: [
+      { 'image-name': 'viewfinder.png', name: 'viewfinder', position: { scale, 'translation-in-points': [0, dy] } },
+    ],
     shadow: { kind: 'neutral', opacity: 0.3 },
     translucency: { enabled: true, value: 0.2 },
   });

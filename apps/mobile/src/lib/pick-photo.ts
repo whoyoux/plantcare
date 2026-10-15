@@ -15,7 +15,9 @@ export async function pickPhoto(source: PhotoSource): Promise<string | null> {
   }
 
   const result =
-    source === 'camera' ? await ImagePicker.launchCameraAsync(options) : await ImagePicker.launchImageLibraryAsync(options);
+    source === 'camera'
+      ? await ImagePicker.launchCameraAsync(options)
+      : await ImagePicker.launchImageLibraryAsync(options);
 
   return result.canceled ? null : (result.assets[0]?.uri ?? null);
 }

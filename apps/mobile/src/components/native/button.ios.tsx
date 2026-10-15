@@ -4,7 +4,13 @@ import { useCSSVariable } from 'uniwind';
 
 import type { ButtonProps } from './button.types';
 
-export function Button({ label, onPress, systemImage, variant = 'prominent', disabled: isDisabled = false }: ButtonProps) {
+export function Button({
+  label,
+  onPress,
+  systemImage,
+  variant = 'prominent',
+  disabled: isDisabled = false,
+}: ButtonProps) {
   const accent = useCSSVariable('--color-accent');
 
   return (

@@ -30,7 +30,9 @@ export default function ResultSheet() {
         <Text className="text-[28px] font-bold text-foreground">{sample.commonName[language]}</Text>
         <Text className="text-[17px] italic text-muted">{sample.scientificName}</Text>
         <View className="mt-2 self-start rounded-full bg-accent-soft px-3 py-1">
-          <Text className="text-[13px] font-semibold text-accent">{t('result.match', { value: sample.confidence })}</Text>
+          <Text className="text-[13px] font-semibold text-accent">
+            {t('result.match', { value: sample.confidence })}
+          </Text>
         </View>
       </View>
 
@@ -38,7 +40,10 @@ export default function ResultSheet() {
         <Text className="text-[20px] font-semibold text-foreground">{t('result.care')}</Text>
         <View className="overflow-hidden rounded-2xl bg-card">
           {careRows.map(({ key, icon }, index) => (
-            <View key={key} className={`flex-row items-center gap-3 px-4 py-3 ${index > 0 ? 'border-t border-separator' : ''}`}>
+            <View
+              key={key}
+              className={`flex-row items-center gap-3 px-4 py-3 ${index > 0 ? 'border-t border-separator' : ''}`}
+            >
               <SymbolView name={icon} size={22} tintColor={tint} />
               <View className="flex-1">
                 <Text className="text-[13px] text-muted">{t(`result.${key}`)}</Text>
