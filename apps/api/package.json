@@ -19,9 +19,12 @@
     "typescript": "catalog:"
   },
   "dependencies": {
+    "@better-auth/expo": "^1.7.7",
+    "@hono/zod-validator": "^0.9.1",
     "@plantcare/db": "workspace:*",
-    "drizzle-orm": "catalog:",
+    "better-auth": "catalog:",
     "hono": "catalog:",
+    "jose": "^6.2.12",
     "zod": "catalog:"
   }
 }

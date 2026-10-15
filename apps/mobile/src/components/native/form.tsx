@@ -31,14 +31,14 @@ export function FormSection({ title, footer, children }: FormSectionProps) {
   );
 }
 
-export function FormRow({ label, value, onPress, disabled = false }: FormRowProps) {
+export function FormRow({ label, value, onPress, disabled = false, destructive = false }: FormRowProps) {
   return (
     <Pressable
       disabled={!onPress || disabled}
       onPress={onPress}
       className={`min-h-11 flex-row items-center justify-between px-4 py-3 active:bg-separator ${disabled ? 'opacity-40' : ''}`}
     >
-      <Text className="text-[17px] text-foreground">{label}</Text>
+      <Text className={`text-[17px] ${destructive ? 'text-red-500' : 'text-foreground'}`}>{label}</Text>
       {value !== undefined && <Text className="text-[17px] text-muted">{value}</Text>}
     </Pressable>
   );

@@ -16,6 +16,8 @@ export type FormRowProps = {
   /** Makes the row tappable (shown as a button). */
   onPress?: () => void;
   disabled?: boolean;
+  /** Red, destructive action (e.g. delete account). */
+  destructive?: boolean;
 };
 
 export type FormPickerOption<T extends string> = { value: T; label: string };

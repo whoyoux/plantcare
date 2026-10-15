@@ -38,7 +38,7 @@ function RowIcon({ systemImage }: { systemImage: NonNullable<FormRowProps['syste
   return <Image systemName={systemImage} modifiers={typeof accent === 'string' ? [foregroundStyle(accent)] : []} />;
 }
 
-export function FormRow({ label, value, systemImage, onPress, disabled: isDisabled = false }: FormRowProps) {
+export function FormRow({ label, value, systemImage, onPress, disabled: isDisabled = false, destructive = false }: FormRowProps) {
   // Accent icon + primary title, the same whether or not the row is tappable.
   const content = (
     <LabeledContent label={<Label title={label} icon={systemImage ? <RowIcon systemImage={systemImage} /> : undefined} modifiers={[primary]} />}>
@@ -47,6 +47,14 @@ export function FormRow({ label, value, systemImage, onPress, disabled: isDisabl
   );
 
   if (!onPress) return content;
+
+  if (destructive) {
+    return (
+      <Button role="destructive" onPress={onPress} modifiers={[disabled(isDisabled)]}>
+        <Label title={label} systemImage={systemImage} />
+      </Button>
+    );
+  }
 
   return (
     <Button onPress={onPress} modifiers={[disabled(isDisabled), primary]}>

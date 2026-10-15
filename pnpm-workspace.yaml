@@ -15,7 +15,7 @@ catalog:
   drizzle-orm: 1.0.0-rc.5-ab785fc
   drizzle-kit: 1.0.0-rc.5-ab785fc
   postgres: ^3.4.9
-  better-auth: ^1.7.0
+  better-auth: ^1.7.7
   hono: ^4.13.0
   '@cloudflare/workers-types': ^5.0.0
 

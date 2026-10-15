@@ -1,8 +1,10 @@
 import * as Alchemy from 'alchemy';
 import * as Cloudflare from 'alchemy/Cloudflare';
 import * as Neon from 'alchemy/Neon';
+import * as Config from 'effect/Config';
 import * as Effect from 'effect/Effect';
 import * as Layer from 'effect/Layer';
+import * as Redacted from 'effect/Redacted';
 
 // Stages: `prod` and `dev`. Deploy `prod` first: it owns the Neon project the other stages branch from.
 const MIGRATIONS = '../../packages/db/migrations';
@@ -53,8 +55,14 @@ export const Hyperdrive = Effect.gen(function* () {
 /** Uploaded plant photos; served to the app through signed URLs. */
 export const Photos = Cloudflare.R2.Bucket('Photos');
 
+/** Better Auth signing secret, minted once per stage and kept in Alchemy state. */
+export const AuthSecret = Alchemy.Random('AuthSecret');
+
+const APPLE_TEAM_ID = '73SQTP34GN';
+
 export const Api = Effect.gen(function* () {
   const { stage } = yield* Alchemy.Stack;
+  const authSecret = yield* AuthSecret;
   return yield* Cloudflare.Worker('Api', {
     main: './src/index.ts',
     compatibility: { date: '2026-10-01', flags: ['nodejs_compat'] },
@@ -63,6 +71,13 @@ export const Api = Effect.gen(function* () {
       HYPERDRIVE: Hyperdrive,
       PHOTOS: Photos,
       STAGE: stage,
+      API_URL: `https://${DOMAINS[stage]}`,
+      BETTER_AUTH_SECRET: authSecret.text,
+      // Sign in with Apple key (.p8), read from apps/api/.env at deploy time. Only needed to revoke
+      // Apple tokens when an account is deleted; sign-in works without it.
+      APPLE_TEAM_ID,
+      APPLE_KEY_ID: Config.String('APPLE_KEY_ID').pipe(Config.withDefault('')),
+      APPLE_PRIVATE_KEY: Config.Redacted('APPLE_PRIVATE_KEY').pipe(Config.withDefault(Redacted.make(''))),
     },
   });
 });

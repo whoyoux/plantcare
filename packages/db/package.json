@@ -14,13 +14,13 @@
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
-    "postgres": "catalog:"
+    "postgres": "catalog:",
+    "better-auth": "catalog:"
   },
   "devDependencies": {
     "@better-auth/expo": "^1.7.7",
     "@plantcare/tsconfig": "workspace:*",
     "auth": "^1.7.7",
-    "better-auth": "catalog:",
     "drizzle-kit": "catalog:",
     "typescript": "catalog:"
   }
