@@ -45,7 +45,8 @@
   "submit": {
     "preview": {
       "ios": {
-        "appleTeamId": "73SQTP34GN"
+        "appleTeamId": "73SQTP34GN",
+        "ascAppId": "6823247323"
       }
     },
     "production": {
