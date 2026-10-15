@@ -8,7 +8,8 @@
     "deploy:dev": "alchemy deploy --stage dev",
     "deploy:prod": "alchemy deploy --stage prod",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build:types": "tsc -p tsconfig.types.json"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
@@ -29,5 +30,10 @@
     "hono": "catalog:",
     "jose": "^6.2.12",
     "zod": "catalog:"
+  },
+  "exports": {
+    "./client": {
+      "types": "./dist/types/src/index.d.ts"
+    }
   }
 }

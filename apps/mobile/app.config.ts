@@ -124,6 +124,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // Adds the per-app language picker in iOS Settings.
     ['expo-localization', { supportedLocales: ['en', 'pl'] }],
     [
+      'expo-camera',
+      {
+        // Same wording as the image picker's camera prompt; translations come from `locales`.
+        cameraPermission: 'PlantCare uses the camera to photograph plants for identification.',
+        microphonePermission: false,
+        recordAudioAndroid: false,
+      },
+    ],
+    [
       'expo-image-picker',
       {
         // English fallback; translations come from `locales`.

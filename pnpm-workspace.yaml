@@ -17,7 +17,7 @@ catalog:
   drizzle-kit: 1.0.0-rc.5-ab785fc
   postgres: ^3.4.9
   better-auth: ^1.7.7
-  hono: ^4.13.0
+  hono: ^4.13.13
   '@cloudflare/workers-types': ^5.0.0
   # eslint-config-expo's react/import plugins support ESLint up to 9.
   eslint: ^9.39.0
@@ -40,3 +40,4 @@ minimumReleaseAgeExclude:
   - expo-router@57.0.27
   - expo@57.0.29
   - effect@4.0.5
+  - react-native-nitro-fetch@1.9.0

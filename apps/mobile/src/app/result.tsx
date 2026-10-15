@@ -27,8 +27,13 @@ export default function ResultSheet() {
       {uri && <Image source={{ uri }} contentFit="cover" className="aspect-[4/3] w-full rounded-3xl" />}
 
       <View className="gap-1">
-        <Text className="text-[28px] font-bold text-foreground">{sample.commonName[language]}</Text>
-        <Text className="text-[17px] italic text-muted">{sample.scientificName}</Text>
+        <Text className="font-rounded text-[30px] font-extrabold leading-9 text-foreground">
+          {sample.commonName[language]}
+        </Text>
+        <Text className="font-latin text-[19px] italic text-muted">
+          {sample.scientificName}
+          <Text className="font-latin text-[15px] not-italic text-muted"> · {sample.family}</Text>
+        </Text>
         <View className="mt-2 self-start rounded-full bg-accent-soft px-3 py-1">
           <Text className="text-[13px] font-semibold text-accent">
             {t('result.match', { value: sample.confidence })}
@@ -37,7 +42,7 @@ export default function ResultSheet() {
       </View>
 
       <View className="gap-2">
-        <Text className="text-[20px] font-semibold text-foreground">{t('result.care')}</Text>
+        <Text className="font-rounded text-[20px] font-bold text-foreground">{t('result.care')}</Text>
         <View className="overflow-hidden rounded-2xl bg-card">
           {careRows.map(({ key, icon }, index) => (
             <View

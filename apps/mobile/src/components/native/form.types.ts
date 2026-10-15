@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react';
 import type { SFSymbol } from 'expo-symbols';
 
-export type FormProps = { children: ReactNode };
+export type FormProps = {
+  /** Large navigation title. On iOS the form owns its SwiftUI navigation bar, so the title collapses on scroll. */
+  title?: string;
+  children: ReactNode;
+};
 
 export type FormSectionProps = {
   title?: string;

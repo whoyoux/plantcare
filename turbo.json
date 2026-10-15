@@ -12,10 +12,14 @@
     },
     "lint": {},
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^typecheck", "^build:types"]
     },
     "test": {
       "dependsOn": ["^build"]
+    },
+    "build:types": {
+      "dependsOn": ["^build:types"],
+      "outputs": ["dist/types/**"]
     }
   }
 }

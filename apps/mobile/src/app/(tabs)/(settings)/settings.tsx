@@ -16,14 +16,14 @@ import {
   type LanguagePreference,
   type ThemePreference,
 } from '@/lib/dev-preferences';
-import { availableProviders, deleteAccount, signIn, signOut, type Provider } from '@/lib/sign-in';
+import { deleteAccount, signOut } from '@/lib/sign-in';
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
 
   return (
     <View className="flex-1 bg-background">
-      <Form>
+      <Form title={t('settings.title')}>
         <AccountSection />
 
         <FormSection title={t('settings.general')} footer={t('settings.languageFooter')}>
@@ -49,14 +49,9 @@ export default function SettingsScreen() {
   );
 }
 
-const providerRows = {
-  apple: { label: 'settings.signInApple', icon: 'apple.logo' },
-  google: { label: 'settings.signInGoogle', icon: 'g.circle' },
-} as const;
-
 function AccountSection() {
   const { t } = useTranslation();
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session } = authClient.useSession();
   const [busy, setBusy] = useState(false);
 
   async function run(action: () => Promise<unknown>, failure: string) {
@@ -83,39 +78,26 @@ function AccountSection() {
     ]);
   }
 
-  if (session) {
-    return (
-      <FormSection title={t('settings.account')}>
-        <FormRow label={t('settings.name')} value={session.user.name || '–'} systemImage="person.crop.circle" />
-        <FormRow label={t('settings.email')} value={session.user.email} systemImage="envelope" />
-        <FormRow
-          label={t('settings.signOut')}
-          systemImage="rectangle.portrait.and.arrow.right"
-          disabled={busy}
-          onPress={() => void run(signOut, t('settings.signOutFailed'))}
-        />
-        <FormRow
-          label={t('settings.deleteAccount')}
-          systemImage="trash"
-          destructive
-          disabled={busy}
-          onPress={confirmDelete}
-        />
-      </FormSection>
-    );
-  }
+  // The tabs are only reachable with a session (see app/_layout.tsx).
+  if (!session) return null;
 
   return (
-    <FormSection title={t('settings.account')} footer={t('settings.accountFooter')}>
-      {availableProviders.map((provider: Provider) => (
-        <FormRow
-          key={provider}
-          label={t(providerRows[provider].label)}
-          systemImage={providerRows[provider].icon}
-          disabled={busy || isPending}
-          onPress={() => void run(() => signIn(provider), t('settings.signInFailed'))}
-        />
-      ))}
+    <FormSection title={t('settings.account')}>
+      <FormRow label={t('settings.name')} value={session.user.name || '–'} systemImage="person.crop.circle" />
+      <FormRow label={t('settings.email')} value={session.user.email} systemImage="envelope" />
+      <FormRow
+        label={t('settings.signOut')}
+        systemImage="rectangle.portrait.and.arrow.right"
+        disabled={busy}
+        onPress={() => void run(signOut, t('settings.signOutFailed'))}
+      />
+      <FormRow
+        label={t('settings.deleteAccount')}
+        systemImage="trash"
+        destructive
+        disabled={busy}
+        onPress={confirmDelete}
+      />
     </FormSection>
   );
 }

@@ -3,7 +3,8 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import { Platform } from 'react-native';
 
-import { apiFetch, authClient } from '@/lib/auth-client';
+import { api, ensureOk } from '@/lib/api';
+import { authClient } from '@/lib/auth-client';
 import { env } from '@/lib/env';
 
 export type Provider = 'apple' | 'google';
@@ -118,12 +119,7 @@ export async function deleteAccount(): Promise<boolean> {
     if (!authorizationCode) throw new Error('Apple returned no authorization code');
   }
 
-  const response = await apiFetch('/v1/account/delete', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ authorizationCode, bundleId: env.bundleId }),
-  });
-  if (!response.ok) throw new Error(`Account deletion failed (${response.status})`);
+  await ensureOk(await api.v1.account.delete.$post({ json: { authorizationCode, bundleId: env.bundleId } }));
 
   await signOut();
   return true;

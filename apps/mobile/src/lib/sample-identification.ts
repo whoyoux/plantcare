@@ -3,6 +3,7 @@ import type { Language } from '@/i18n';
 // Placeholder until POST /v1/identify exists (step 7).
 export const sampleIdentification = {
   scientificName: 'Monstera deliciosa',
+  family: 'Araceae',
   confidence: 94,
   commonName: { en: 'Swiss cheese plant', pl: 'Monstera dziurawa' },
   care: {
@@ -15,6 +16,7 @@ export const sampleIdentification = {
   },
 } satisfies {
   scientificName: string;
+  family: string;
   confidence: number;
   commonName: Record<Language, string>;
   care: Record<string, Record<Language, string>>;

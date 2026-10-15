@@ -5,19 +5,41 @@ import {
   Image,
   Label,
   LabeledContent,
+  NavigationStack,
   Picker,
   Section,
   Text,
 } from '@expo/ui/swift-ui';
-import { disabled, foregroundStyle, pickerStyle, tag } from '@expo/ui/swift-ui/modifiers';
+import {
+  disabled,
+  foregroundStyle,
+  navigationBarTitleDisplayMode,
+  navigationTitle,
+  pickerStyle,
+  tag,
+} from '@expo/ui/swift-ui/modifiers';
 import { useCSSVariable } from 'uniwind';
 
 import type { FormPickerProps, FormProps, FormRowProps, FormSectionProps } from './form.types';
 
-export function Form({ children }: FormProps) {
+export function Form({ title, children }: FormProps) {
+  if (!title) {
+    return (
+      <Host style={{ flex: 1 }}>
+        <SwiftUIForm>{children}</SwiftUIForm>
+      </Host>
+    );
+  }
+
+  // The RN stack header can't follow a SwiftUI scroll view, so the form brings its own native
+  // navigation bar: the large title collapses into the glass bar while the list scrolls.
   return (
-    <Host style={{ flex: 1 }}>
-      <SwiftUIForm>{children}</SwiftUIForm>
+    <Host style={{ flex: 1 }} ignoreSafeArea="all">
+      <NavigationStack>
+        <SwiftUIForm modifiers={[navigationTitle(title), navigationBarTitleDisplayMode('large')]}>
+          {children}
+        </SwiftUIForm>
+      </NavigationStack>
     </Host>
   );
 }

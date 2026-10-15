@@ -1,0 +1,13 @@
+{
+  // Emits declarations so the app can import `AppType` for the Hono client without
+  // type-checking Worker code against React Native's DOM-less libs.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist/types",
+    "rootDir": "."
+  },
+  "include": ["src", "alchemy.run.ts"]
+}
