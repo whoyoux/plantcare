@@ -1,7 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 // From `eas init` (EAS project whoyoux/plantcare) and the Apple Developer membership page.
-const EAS_PROJECT_ID = 'bc1f2d71-5e29-4337-8d4f-1cece9d9b962';
+const EAS_PROJECT_ID = '4cb4c923-0507-4a61-801f-85ddce4612d2';
 const EAS_OWNER = 'whoyoux';
 const APPLE_TEAM_ID = '73SQTP34GN';
 
