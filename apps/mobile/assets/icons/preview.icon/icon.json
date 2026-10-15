@@ -1,6 +1,6 @@
 {
   "fill": {
-    "automatic-gradient": "extended-srgb:0.14118,0.54118,0.23922,1.00000"
+    "automatic-gradient": "extended-srgb:0.94118,0.97647,0.94902,1.00000"
   },
   "groups": [
     {
@@ -22,24 +22,13 @@
     {
       "layers": [
         {
-          "image-name": "sprout.svg",
+          "image-name": "sprout.png",
           "name": "sprout",
           "position": {
-            "scale": 1.2,
+            "scale": 0.451,
             "translation-in-points": [
               0,
-              -50
-            ]
-          }
-        },
-        {
-          "image-name": "viewfinder.svg",
-          "name": "viewfinder",
-          "position": {
-            "scale": 1.2,
-            "translation-in-points": [
-              0,
-              -50
+              -72
             ]
           }
         }
@@ -47,6 +36,29 @@
       "shadow": {
         "kind": "neutral",
         "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      }
+    },
+    {
+      "layers": [
+        {
+          "image-name": "viewfinder.png",
+          "name": "viewfinder",
+          "position": {
+            "scale": 0.82,
+            "translation-in-points": [
+              0,
+              -72
+            ]
+          }
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.3
       },
       "translucency": {
         "enabled": true,

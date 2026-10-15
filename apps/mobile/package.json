@@ -54,7 +54,8 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "doctor": "expo-doctor",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "icons:artwork": "node --env-file-if-exists=.env.icons.local scripts/generate-icon-artwork.mjs"
   },
   "private": true
 }
