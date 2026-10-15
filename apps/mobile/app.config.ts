@@ -82,7 +82,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         imageWidth: 76,
       },
     ],
-    ['expo-build-properties', { ios: { deploymentTarget: '17.0' } }],
+    [
+      'expo-build-properties',
+      {
+        ios: {
+          deploymentTarget: '17.0',
+          // iOS 27 kills apps without the UIScene lifecycle. Remove once on SDK 58+, where it's the default.
+          enableSceneSupport: true,
+        },
+      },
+    ],
     'expo-apple-authentication',
     'expo-secure-store',
   ],
