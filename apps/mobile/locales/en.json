@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "NSCameraUsageDescription": "PlantCare uses the camera to photograph plants for identification.",
+    "NSPhotoLibraryUsageDescription": "PlantCare uses your photo library to identify plants from existing photos."
+  }
+}

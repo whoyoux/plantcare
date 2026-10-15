@@ -1,0 +1,48 @@
+export default {
+  tabs: {
+    identify: 'Identify',
+    history: 'History',
+    settings: 'Settings',
+  },
+  identify: {
+    title: 'Identify',
+    heading: 'What plant is this?',
+    description: 'Take a photo of a leaf, flower or the whole plant to get its name and care tips.',
+    takePhoto: 'Take Photo',
+    chooseFromLibrary: 'Choose from Library',
+    cameraUnavailable: 'The camera is unavailable. Check camera access in Settings.',
+  },
+  result: {
+    title: 'Result',
+    match: '{{value}}% match',
+    care: 'Care',
+    watering: 'Watering',
+    light: 'Light',
+    temperature: 'Temperature',
+    sampleNotice: 'Sample result. Real identification comes in a later step.',
+  },
+  history: {
+    title: 'History',
+    searchPlaceholder: 'Search plants',
+    emptyTitle: 'No plants yet',
+    emptyDescription: 'Plants you identify will appear here.',
+    noResultsTitle: 'No results for “{{query}}”',
+    plantCount_one: '{{count}} plant',
+    plantCount_other: '{{count}} plants',
+  },
+  settings: {
+    title: 'Settings',
+    account: 'Account',
+    signIn: 'Sign in with Apple',
+    comingSoon: 'Coming soon',
+    general: 'General',
+    language: 'Language',
+    languageFooter: 'The app follows your iPhone language. You can change it for PlantCare in iOS Settings.',
+    about: 'About',
+    version: 'Version',
+  },
+  languages: {
+    en: 'English',
+    pl: 'Polski',
+  },
+} as const;

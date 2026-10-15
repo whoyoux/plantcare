@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+/*
+ * Tokens mirror iOS system colors so RN-rendered views sit next to native ones.
+ * `bg-background`, `text-foreground`, `bg-accent`, … come from `--color-*`.
+ */
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: #f2f2f7;
+      --color-card: #ffffff;
+      --color-foreground: #000000;
+      --color-muted: #3c3c4399;
+      --color-separator: #3c3c434a;
+      --color-accent: #248a3d;
+      --color-accent-foreground: #ffffff;
+      --color-accent-soft: #248a3d1f;
+    }
+
+    @variant dark {
+      --color-background: #000000;
+      --color-card: #1c1c1e;
+      --color-foreground: #ffffff;
+      --color-muted: #ebebf599;
+      --color-separator: #54545899;
+      --color-accent: #30d158;
+      --color-accent-foreground: #000000;
+      --color-accent-soft: #30d15829;
+    }
+  }
+}

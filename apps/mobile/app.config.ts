@@ -54,6 +54,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: false,
     usesAppleSignIn: true,
     config: { usesNonExemptEncryption: false },
+    infoPlist: { CFBundleAllowMixedLocalizations: true },
     entitlements: {
       'com.apple.security.application-groups': [`group.${bundleIdentifier}`],
     },
@@ -68,9 +69,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     predictiveBackGestureEnabled: false,
   },
-  web: {
-    output: 'static',
-    favicon: './assets/images/favicon.png',
+  // Native strings (permission prompts) per language; JS strings live in src/i18n.
+  locales: {
+    en: './locales/en.json',
+    pl: './locales/pl.json',
   },
   plugins: [
     'expo-router',
@@ -94,6 +96,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     'expo-apple-authentication',
     'expo-secure-store',
+    // Adds the per-app language picker in iOS Settings.
+    ['expo-localization', { supportedLocales: ['en', 'pl'] }],
+    [
+      'expo-image-picker',
+      {
+        // English fallback; translations come from `locales`.
+        cameraPermission: 'PlantCare uses the camera to photograph plants for identification.',
+        photosPermission: 'PlantCare uses your photo library to identify plants from existing photos.',
+        microphonePermission: false,
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,

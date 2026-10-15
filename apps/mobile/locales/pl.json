@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "NSCameraUsageDescription": "PlantCare używa aparatu, aby zrobić zdjęcie rośliny do rozpoznania.",
+    "NSPhotoLibraryUsageDescription": "PlantCare korzysta z biblioteki zdjęć, aby rozpoznać roślinę na istniejącym zdjęciu."
+  }
+}
