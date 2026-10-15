@@ -1,0 +1,14 @@
+node_modules/
+.turbo/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# env / secrets
+.env
+.env*.local
+*.p8
+*.p12
+*.key
+*.pem
+*.mobileprovision
