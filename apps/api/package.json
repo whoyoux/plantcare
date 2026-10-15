@@ -15,6 +15,7 @@
     "@plantcare/tsconfig": "workspace:*",
     "alchemy": "2.0.0-beta.83",
     "effect": "^4.0.5",
+    "pg": "^8.23.1",
     "typescript": "catalog:"
   },
   "dependencies": {
