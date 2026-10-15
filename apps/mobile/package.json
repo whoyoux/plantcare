@@ -9,7 +9,6 @@
     "expo-build-properties": "~57.0.22",
     "expo-constants": "~57.0.22",
     "expo-dev-client": "~57.0.20",
-    "expo-device": "~57.0.2",
     "expo-font": "~57.0.4",
     "expo-glass-effect": "~57.0.4",
     "expo-haptics": "~57.0.3",
@@ -40,11 +39,12 @@
     "typescript": "catalog:"
   },
   "scripts": {
-    "dev": "APP_VARIANT=development expo start",
-    "start": "APP_VARIANT=development expo start",
-    "ios": "APP_VARIANT=development expo run:ios",
-    "ios:device": "APP_VARIANT=development expo run:ios --device",
-    "prebuild": "APP_VARIANT=development expo prebuild --clean",
+    "dev": "APP_VARIANT=development expo start --dev-client",
+    "dev:tunnel": "APP_VARIANT=development expo start --dev-client --tunnel",
+    "build:dev": "eas build --platform ios --profile development",
+    "build:preview": "eas build --platform ios --profile preview",
+    "build:prod": "eas build --platform ios --profile production",
+    "device:add": "eas device:create",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "doctor": "expo-doctor"

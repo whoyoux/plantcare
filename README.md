@@ -14,10 +14,15 @@ pnpm workspaces + Turborepo, Node 24.
 
 ## Development
 
+Native builds run on EAS; locally only Metro runs.
+
 ```bash
 pnpm install
-pnpm --filter @plantcare/mobile ios:device   # dev build on a connected iPhone
-pnpm --filter @plantcare/mobile dev          # Metro for the dev client
+pnpm --filter @plantcare/mobile build:dev   # dev client build on EAS (install via QR/link)
+pnpm --filter @plantcare/mobile dev         # Metro for the dev client (same Wi-Fi)
+pnpm --filter @plantcare/mobile dev:tunnel  # Metro over a tunnel (any network)
 ```
+
+Rebuild only after adding a native module or changing `app.config.ts`; JS changes reload live.
 
 App variants are selected with `APP_VARIANT` (`development` | `preview` | `production`), see `apps/mobile/app.config.ts`.
