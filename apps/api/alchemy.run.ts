@@ -27,6 +27,8 @@ export const Database = Effect.gen(function* () {
       pgVersion: 18,
       defaultBranchName: 'main',
       databaseName: 'plantcare',
+      // Neon's free plan caps point-in-time history at 6 h (Alchemy defaults to 24 h).
+      historyRetentionSeconds: 21600,
       migrations: MIGRATIONS,
     });
     return { origin: project.origin, pooledOrigin: project.pooledOrigin };
