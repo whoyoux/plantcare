@@ -9,3 +9,5 @@ pnpm-lock.yaml
 apps/mobile/src/uniwind-types.d.ts
 **/expo-env.d.ts
 **/dist/**
+**/build/**
+**/.react-router/**
