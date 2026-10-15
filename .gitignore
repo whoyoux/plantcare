@@ -12,3 +12,7 @@ dist/
 *.key
 *.pem
 *.mobileprovision
+
+# Alchemy / workerd local artifacts
+.alchemy/
+.wrangler/

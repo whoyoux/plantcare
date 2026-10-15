@@ -1,0 +1,26 @@
+{
+  "name": "@plantcare/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "alchemy dev --stage dev",
+    "deploy:dev": "alchemy deploy --stage dev",
+    "deploy:prod": "alchemy deploy --stage prod",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/platform-node": "^4.0.4",
+    "@plantcare/tsconfig": "workspace:*",
+    "alchemy": "2.0.0-beta.83",
+    "effect": "^4.0.5",
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "@plantcare/db": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  }
+}

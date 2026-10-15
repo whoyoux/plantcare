@@ -1,0 +1,27 @@
+{
+  "name": "@plantcare/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "auth:schema": "auth generate --config scripts/auth-schema.config.ts --output src/schema/auth.ts --yes",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "drizzle-orm": "catalog:",
+    "postgres": "catalog:"
+  },
+  "devDependencies": {
+    "@better-auth/expo": "^1.7.7",
+    "@plantcare/tsconfig": "workspace:*",
+    "auth": "^1.7.7",
+    "better-auth": "catalog:",
+    "drizzle-kit": "catalog:",
+    "typescript": "catalog:"
+  }
+}
