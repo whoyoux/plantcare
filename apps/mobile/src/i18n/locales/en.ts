@@ -5,7 +5,6 @@ export default {
     settings: 'Settings',
   },
   identify: {
-    title: 'Identify',
     heading: 'What plant is this?',
     description: 'Take a photo of a leaf, flower or the whole plant to get its name and care tips.',
     takePhoto: 'Take Photo',

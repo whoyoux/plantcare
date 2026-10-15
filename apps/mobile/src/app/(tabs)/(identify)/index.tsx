@@ -1,16 +1,14 @@
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
-import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, Text, View } from 'react-native';
-import { useCSSVariable } from 'uniwind';
 
+import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import { pickPhoto, type PhotoSource } from '@/lib/pick-photo';
 
 export default function IdentifyScreen() {
   const { t } = useTranslation();
-  const accent = useCSSVariable('--color-accent');
 
   async function identify(source: PhotoSource) {
     void Haptics.selectionAsync();
@@ -30,8 +28,8 @@ export default function IdentifyScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <View className="items-center gap-4">
-        <View className="size-28 items-center justify-center rounded-full bg-accent-soft">
-          <SymbolView name="leaf.fill" size={56} tintColor={typeof accent === 'string' ? accent : undefined} />
+        <View className="size-36 items-center justify-center rounded-full bg-accent-soft">
+          <Image source={require('@/assets/icons/splash.png')} className="size-24" contentFit="contain" />
         </View>
         <Text className="text-center text-[28px] font-bold text-foreground">{t('identify.heading')}</Text>
         <Text className="text-center text-[17px] leading-6 text-muted">{t('identify.description')}</Text>

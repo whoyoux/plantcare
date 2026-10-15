@@ -8,7 +8,6 @@ const pl: Translations<typeof en> = {
     settings: 'Ustawienia',
   },
   identify: {
-    title: 'Rozpoznaj',
     heading: 'Co to za roślina?',
     description: 'Zrób zdjęcie liścia, kwiatu lub całej rośliny, aby poznać jej nazwę i zasady pielęgnacji.',
     takePhoto: 'Zrób zdjęcie',
