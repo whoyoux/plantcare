@@ -1,8 +1,8 @@
 /**
  * Google web OAuth client ID: the audience of ID tokens from native Google Sign-In (iOS and Android).
- * A public identifier; empty until configured, which keeps Google sign-in disabled.
+ * A public identifier (not a secret).
  */
-export const GOOGLE_WEB_CLIENT_ID = '';
+export const GOOGLE_WEB_CLIENT_ID = '310586722263-as5g7dcle9hqtphaa3aphjng70m5qmd8.apps.googleusercontent.com';
 
 /** Per-stage identity: which app builds may sign in and which deep-link schemes Better Auth trusts. */
 const STAGES = {

@@ -7,7 +7,7 @@ const APPLE_TEAM_ID = '73SQTP34GN';
 
 // Google OAuth client IDs from Google Cloud Console. Public identifiers, not secrets.
 // The web client is the token audience the backend verifies; iOS clients are per bundle ID.
-const GOOGLE_WEB_CLIENT_ID = '';
+const GOOGLE_WEB_CLIENT_ID = '310586722263-as5g7dcle9hqtphaa3aphjng70m5qmd8.apps.googleusercontent.com';
 
 const VARIANTS = {
   production: {
@@ -15,21 +15,21 @@ const VARIANTS = {
     bundleIdentifier: 'dev.whxx.plantcare',
     scheme: 'plantcare',
     apiUrl: 'https://api.plantcare.whxx.dev',
-    googleIosClientId: '',
+    googleIosClientId: '310586722263-0sng933js9sp11cafohfgd9gvv2q24hf.apps.googleusercontent.com',
   },
   preview: {
     name: 'PlantCare Preview',
     bundleIdentifier: 'dev.whxx.plantcare.preview',
     scheme: 'plantcare-preview',
     apiUrl: 'https://api-dev.plantcare.whxx.dev',
-    googleIosClientId: '',
+    googleIosClientId: '310586722263-85du90phsvh58libdvrrorl28lfupj6v.apps.googleusercontent.com',
   },
   development: {
     name: 'PlantCare Dev',
     bundleIdentifier: 'dev.whxx.plantcare.dev',
     scheme: 'plantcare-dev',
     apiUrl: 'https://api-dev.plantcare.whxx.dev',
-    googleIosClientId: '',
+    googleIosClientId: '310586722263-8msb04d7gie51dgga949qjm0rddii8p7.apps.googleusercontent.com',
   },
 } as const;
 
