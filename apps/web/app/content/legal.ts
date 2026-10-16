@@ -31,7 +31,7 @@ const privacyPl: LegalDoc = {
       blocks: [
         {
           list: [
-            'Dane konta. Logujesz się przez Apple albo Google. Dostajemy od nich identyfikator konta, adres e-mail (przy Apple może to być ukryty adres przekierowujący) oraz imię, jeśli je udostępnisz.',
+            'Dane konta. Logujesz się przez Apple albo Google. Dostajemy od nich identyfikator konta, adres e-mail (przy Apple może to być ukryty adres przekierowujący) oraz imię, jeśli je udostępnisz. Przy logowaniu przez Apple przechowujemy też token odświeżania od Apple, który służy wyłącznie do odłączenia aplikacji od Twojego Apple ID, gdy usuniesz konto.',
             'Dane sesji. Po zalogowaniu zapisujemy token sesji, jej datę ważności oraz adres IP i nazwę urządzenia (user agent), z których się zalogowałeś.',
             'Zdjęcia roślin. Zdjęcia, które zrobisz albo wybierzesz do rozpoznania, wysyłamy na nasz serwer i przechowujemy, żeby pokazać je w Twojej historii. Przed wysłaniem aplikacja zmniejsza zdjęcie i usuwa z niego metadane, takie jak lokalizacja.',
             'Wyniki rozpoznań. Nazwa gatunku, wskazówki pielęgnacyjne, język odpowiedzi i data rozpoznania.',
@@ -113,7 +113,7 @@ const privacyEn: LegalDoc = {
       blocks: [
         {
           list: [
-            'Account data. You sign in with Apple or Google. They give us your account identifier, email address (with Apple this can be a private relay address) and your name if you choose to share it.',
+            'Account data. You sign in with Apple or Google. They give us your account identifier, email address (with Apple this can be a private relay address) and your name if you choose to share it. When you sign in with Apple we also keep a refresh token from Apple, used only to disconnect the app from your Apple ID when you delete your account.',
             'Session data. When you sign in we store a session token, its expiry, and the IP address and device name (user agent) you signed in from.',
             'Plant photos. Photos you take or choose for identification are sent to our server and stored so you can see them in your history. Before uploading, the app downsizes the photo and removes its metadata, such as location.',
             'Identification results. The species name, care tips, the language of the answer and the date.',
