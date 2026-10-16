@@ -106,8 +106,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         ios: {
           deploymentTarget: '17.0',
-          // iOS 27 kills apps without the UIScene lifecycle. Remove once on SDK 58+, where it's the default.
-          enableSceneSupport: true,
         },
       },
     ],

@@ -25,7 +25,7 @@ function load(): Preferences {
 }
 
 function save(patch: Partial<Preferences>) {
-  file.write(JSON.stringify({ ...load(), ...patch }));
+  file.writeSync(JSON.stringify({ ...load(), ...patch }));
 }
 
 export function getThemePreference(): ThemePreference {
