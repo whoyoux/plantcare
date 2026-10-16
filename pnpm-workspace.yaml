@@ -1,6 +1,7 @@
 packages:
   - apps/*
   - packages/*
+  - tools/*
 
 allowBuilds:
   esbuild: true
@@ -9,7 +10,7 @@ allowBuilds:
 
 catalog:
   turbo: ^2.11.8
-  # Expo SDK 57 pins TypeScript 6.x; keep the whole repo on the same version.
+  # Expo SDK 58 pins TypeScript 6.x; keep the whole repo on the same version.
   typescript: ~6.0.3
   zod: ^4.6.7
   # Alchemy v2 applies migrations only in drizzle-kit's v1 layout; keep both on its pinned RC.

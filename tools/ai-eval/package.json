@@ -1,0 +1,23 @@
+{
+  "name": "@plantcare/ai-eval",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dataset": "node src/dataset.ts",
+    "eval": "node src/eval.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@plantcare/shared": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@plantcare/eslint-config": "workspace:*",
+    "@plantcare/tsconfig": "workspace:*",
+    "@types/node": "^24.0.0",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

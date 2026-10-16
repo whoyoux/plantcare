@@ -1,0 +1,4 @@
+{
+  "extends": "@plantcare/tsconfig/base.json",
+  "include": ["src"]
+}

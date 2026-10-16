@@ -1,0 +1,10 @@
+{
+  "extends": "@plantcare/tsconfig/base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    // Scripts run directly with Node's type stripping, which needs explicit .ts extensions.
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true
+  },
+  "include": ["src"]
+}
