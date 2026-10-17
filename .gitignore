@@ -16,3 +16,6 @@ dist/
 # Alchemy / workerd local artifacts
 .alchemy/
 .wrangler/
+
+# /brag launch videos (render output)
+brag-output*/
