@@ -10,6 +10,7 @@ import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import { Viewfinder } from '@/components/viewfinder';
 import { CollectionStats, PhotoTips, RecentPlants } from '@/components/home';
+import { DueToday } from '@/components/plant-care';
 import { pickPhoto } from '@/lib/pick-photo';
 
 function openResult(uri: string) {
@@ -31,6 +32,7 @@ export default function IdentifyScreen() {
     >
       <CameraCard onChooseFromLibrary={() => void chooseFromLibrary()} />
 
+      <DueToday />
       <PhotoTips />
       <CollectionStats />
       <RecentPlants />

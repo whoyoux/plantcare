@@ -121,6 +121,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     // Adds the per-app language picker in iOS Settings.
     ['expo-localization', { supportedLocales: ['en', 'pl'] }],
+    // Watering reminders are local notifications scheduled on the device; no push, so no APNs entitlement.
+    ['expo-notifications', { enableRemoteNotifications: false }],
     [
       'expo-camera',
       {

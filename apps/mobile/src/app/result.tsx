@@ -12,6 +12,8 @@ import { Button } from '@/components/native/button';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
 import { identifyPhoto, type IdentifyResponse } from '@/lib/identify';
+import { useAddPlant } from '@/lib/plants';
+import { requestReminders } from '@/lib/reminders';
 import { shareIdentification } from '@/lib/share';
 import { historyKeys, useDeleteIdentification, useSavedIdentification } from '@/lib/identifications';
 
@@ -58,7 +60,7 @@ function NewResult({ uri }: { uri: string }) {
         <>
           <Details result={identification.data.result} />
           <Disclaimer />
-          <Actions id={identification.data.id} photoUri={uri} result={identification.data.result} />
+          <Actions id={identification.data.id} photoUri={uri} result={identification.data.result} plantId={null} />
         </>
       )}
     </Sheet>
@@ -76,7 +78,7 @@ function SavedResult({ id }: { id: string }) {
         <>
           <Details result={saved.data.result} />
           <Disclaimer />
-          <Actions id={id} photoUri={saved.data.imageUrl} result={saved.data.result} />
+          <Actions id={id} photoUri={saved.data.imageUrl} result={saved.data.result} plantId={saved.data.plantId} />
         </>
       )}
     </Sheet>
@@ -109,10 +111,21 @@ function Disclaimer() {
   );
 }
 
-function Actions({ id, photoUri, result }: { id: string; photoUri: string; result: Result }) {
+function Actions({
+  id,
+  photoUri,
+  result,
+  plantId,
+}: {
+  id: string;
+  photoUri: string;
+  result: Result;
+  plantId: string | null;
+}) {
   const { t } = useTranslation();
   return (
     <View className="gap-2.5">
+      <AddPlantButton identificationId={id} plantId={plantId} />
       <Button
         label={t('result.share')}
         systemImage="square.and.arrow.up"
@@ -121,6 +134,40 @@ function Actions({ id, photoUri, result }: { id: string; photoUri: string; resul
       />
       <DeleteButton id={id} />
     </View>
+  );
+}
+
+/** Adds the plant to My plants (asking for reminder permission the first time), or shows it's there. */
+function AddPlantButton({ identificationId, plantId }: { identificationId: string; plantId: string | null }) {
+  const { t } = useTranslation();
+  const add = useAddPlant();
+  const added = plantId !== null || add.isSuccess;
+
+  if (added) {
+    return (
+      <Button
+        label={t('result.inPlants')}
+        systemImage="checkmark.circle.fill"
+        variant="secondary"
+        onPress={() => {
+          router.back();
+          router.navigate('/plants');
+        }}
+      />
+    );
+  }
+  return (
+    <Button
+      label={t('result.addPlant')}
+      systemImage="drop.fill"
+      disabled={add.isPending}
+      onPress={() =>
+        add.mutate(identificationId, {
+          onSuccess: () => void requestReminders(),
+          onError: () => Alert.alert(t('result.addFailed')),
+        })
+      }
+    />
   );
 }
 

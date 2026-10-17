@@ -93,12 +93,19 @@ export const identificationRoutes = factory
       .from(table)
       .where(and(eq(table.id, c.req.valid('param').id), eq(table.userId, c.var.user.id)));
     if (!row) throw new AppError('NOT_FOUND', 404);
+    const [plant] = await c.var.db
+      .select({ id: schema.plant.id })
+      .from(schema.plant)
+      .where(and(eq(schema.plant.identificationId, row.id), eq(schema.plant.userId, c.var.user.id)))
+      .limit(1);
     return c.json({
       id: row.id,
       createdAt: row.createdAt.toISOString(),
       language: row.language,
       result: row.result as Identification,
       imageUrl: await c.var.photoUrls.sign(row.imageKey),
+      /** Set when this identification was added to My plants. */
+      plantId: plant?.id ?? null,
     });
   })
   .delete('/:id', validate('param', z.object({ id: z.uuid() })), async (c) => {
@@ -107,6 +114,7 @@ export const identificationRoutes = factory
       .where(and(eq(table.id, c.req.valid('param').id), eq(table.userId, c.var.user.id)))
       .returning({ imageKey: table.imageKey });
     if (!row) throw new AppError('NOT_FOUND', 404);
-    await c.var.photos.delete(row.imageKey);
+    // A plant created from this identification keeps using the photo.
+    await c.var.photos.deleteIfUnused(c.var.user.id, row.imageKey);
     return c.body(null, 204);
   });

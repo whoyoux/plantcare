@@ -12,6 +12,8 @@ export const CareGuide = z.object({
   watering: z.string(),
   light: z.string(),
   temperature: z.string(),
+  /** Days between waterings for a typical potted specimen; drives reminders. Older results lack it. */
+  wateringDays: z.number().int().min(1).max(60).nullable(),
 });
 
 /**
@@ -50,5 +52,6 @@ Answer with JSON that matches the schema.
 - confidence: your calibrated probability (0 to 1) that scientificName is correct.
 - alternatives: up to 3 other plausible species, most likely first, with common names in ${name}.
 - care: short, practical care guidance in ${name} for this species (watering, light, temperature).
+- care.wateringDays: how many days between waterings suit this species as a potted plant (one whole number, 1-60), or null if it is not grown in pots.
 If the photo shows no plant, set isPlant to false, the names and care to null and alternatives to [].`;
 }

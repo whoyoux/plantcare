@@ -48,7 +48,7 @@ export const monstera: Identification = {
   family: 'Araceae',
   confidence: 0.94,
   alternatives: [{ scientificName: 'Thaumatophyllum bipinnatifidum', commonName: null, confidence: 0.03 }],
-  care: { watering: 'Co 7–10 dni', light: 'Jasne, rozproszone', temperature: '18–27 °C' },
+  care: { watering: 'Co 7–10 dni', light: 'Jasne, rozproszone', temperature: '18–27 °C', wateringDays: 8 },
 };
 
 /** The URL of a fetch call, whatever form the input took. */

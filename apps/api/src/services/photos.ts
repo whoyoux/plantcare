@@ -1,4 +1,4 @@
-import { eq, schema, type Database } from '@plantcare/db';
+import { and, eq, schema, type Database } from '@plantcare/db';
 
 /** R2's delete() accepts at most 1000 keys per call. */
 const R2_DELETE_LIMIT = 1000;
@@ -31,13 +31,35 @@ export function createPhotos(deps: { db: Database; bucket: R2Bucket }) {
       await deps.bucket.delete(key);
     },
 
-    /** Deletes every photo referenced by the user's identifications. */
+    /**
+     * Deletes a photo unless an identification or a plant of this user still points at it
+     * (a plant keeps the photo of the identification it was created from).
+     */
+    async deleteIfUnused(userId: string, key: string) {
+      const [identification] = await deps.db
+        .select({ id: schema.identification.id })
+        .from(schema.identification)
+        .where(and(eq(schema.identification.userId, userId), eq(schema.identification.imageKey, key)))
+        .limit(1);
+      const [plant] = await deps.db
+        .select({ id: schema.plant.id })
+        .from(schema.plant)
+        .where(and(eq(schema.plant.userId, userId), eq(schema.plant.imageKey, key)))
+        .limit(1);
+      if (!identification && !plant) await deps.bucket.delete(key);
+    },
+
+    /** Deletes every photo referenced by the user's identifications and plants. */
     async deleteAllForUser(userId: string) {
-      const rows = await deps.db
+      const identifications = await deps.db
         .select({ key: schema.identification.imageKey })
         .from(schema.identification)
         .where(eq(schema.identification.userId, userId));
-      const keys = rows.map((row) => row.key);
+      const plants = await deps.db
+        .select({ key: schema.plant.imageKey })
+        .from(schema.plant)
+        .where(eq(schema.plant.userId, userId));
+      const keys = [...new Set([...identifications, ...plants].map((row) => row.key))];
       for (const batch of chunk(keys, R2_DELETE_LIMIT)) await deps.bucket.delete(batch);
     },
   };

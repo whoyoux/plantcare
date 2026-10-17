@@ -2,15 +2,22 @@ import { NativeTabs } from 'expo-router/native-tabs';
 import { useTranslation } from 'react-i18next';
 import { useCSSVariable } from 'uniwind';
 
+import { useReminderSync } from '@/lib/use-reminders';
+
 export default function TabsLayout() {
   const { t } = useTranslation();
   const accent = useCSSVariable('--color-accent');
+  useReminderSync();
 
   return (
     <NativeTabs tintColor={typeof accent === 'string' ? accent : undefined} minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="(identify)">
         <NativeTabs.Trigger.Icon sf={{ default: 'camera.macro', selected: 'camera.macro' }} md="photo_camera" />
         <NativeTabs.Trigger.Label>{t('tabs.identify')}</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="(plants)">
+        <NativeTabs.Trigger.Icon sf={{ default: 'drop', selected: 'drop.fill' }} md="water_drop" />
+        <NativeTabs.Trigger.Label>{t('tabs.plants')}</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="(history)">
         <NativeTabs.Trigger.Icon sf={{ default: 'leaf', selected: 'leaf.fill' }} md="history" />
