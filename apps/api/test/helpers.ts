@@ -42,6 +42,7 @@ export async function signedInUser(name = 'Test User') {
 }
 
 export const monstera: Identification = {
+  analysis: 'Large glossy heart-shaped leaves with deep splits and holes.',
   isPlant: true,
   scientificName: 'Monstera deliciosa',
   commonName: 'Monstera dziurawa',

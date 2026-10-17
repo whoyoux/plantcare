@@ -1,4 +1,4 @@
-import { Identification, identificationJsonSchema, identificationPrompt } from '@plantcare/shared';
+import { PROMPTS, type PromptVersion } from '../prompts.ts';
 
 import { plantnetCandidates } from './plantnet.ts';
 import { EUR_TO_USD, type Candidate, type Provider } from './types.ts';
@@ -11,9 +11,17 @@ type ChatResponse = {
 export type ModelOptions = {
   model: string;
   /** Reasoning effort for thinking models; omit for the model default. */ effort?: 'minimal' | 'low';
+  /** Prompt and schema version (see prompts.ts). */
+  prompt?: PromptVersion;
 };
 
-async function complete(apiKey: string, { model, effort }: ModelOptions, photo: Buffer, hint?: Candidate[]) {
+async function complete(
+  apiKey: string,
+  { model, effort, prompt = 'v2' }: ModelOptions,
+  photo: Buffer,
+  hint?: Candidate[],
+) {
+  const version = PROMPTS[prompt];
   const text = hint?.length
     ? `A specialist plant classifier suggests (score 0-1):\n${hint
         .map((c) => `- ${c.scientificName} (${c.confidence.toFixed(2)})`)
@@ -26,7 +34,7 @@ async function complete(apiKey: string, { model, effort }: ModelOptions, photo: 
     body: JSON.stringify({
       model,
       messages: [
-        { role: 'system', content: identificationPrompt('pl') },
+        { role: 'system', content: version.prompt('pl') },
         {
           role: 'user',
           content: [
@@ -37,7 +45,7 @@ async function complete(apiKey: string, { model, effort }: ModelOptions, photo: 
       ],
       response_format: {
         type: 'json_schema',
-        json_schema: { name: 'identification', strict: true, schema: identificationJsonSchema },
+        json_schema: { name: 'identification', strict: true, schema: version.schema },
       },
       // Only route to providers that honour structured output.
       provider: { require_parameters: true },
@@ -48,11 +56,17 @@ async function complete(apiKey: string, { model, effort }: ModelOptions, photo: 
   if (!response.ok) throw new Error(`OpenRouter ${model} ${response.status}: ${await response.text()}`);
   const body = (await response.json()) as ChatResponse;
   const content = body.choices[0]?.message.content ?? '';
-  const identification = Identification.parse(JSON.parse(content.replace(/^```(?:json)?\s*|\s*```$/g, '')));
+  const identification = version.parse.parse(JSON.parse(content.replace(/^```(?:json)?\s*|\s*```$/g, '')));
   return { identification, costUsd: body.usage?.cost ?? null };
 }
 
-function toCandidates(identification: Identification): Candidate[] {
+function toCandidates(identification: {
+  isPlant: boolean;
+  scientificName: string | null;
+  commonName: string | null;
+  confidence: number;
+  alternatives: Candidate[];
+}): Candidate[] {
   if (!identification.isPlant || !identification.scientificName) return [];
   return [
     {
@@ -65,7 +79,8 @@ function toCandidates(identification: Identification): Candidate[] {
 }
 
 /** A general vision model with structured output; also writes the Polish name and care guide. */
-const label = ({ model, effort }: ModelOptions) => (effort ? `${model} (${effort})` : model);
+const label = ({ model, effort, prompt = 'v2' }: ModelOptions) =>
+  `${model}${effort ? ` (${effort})` : ''} · prompt ${prompt}`;
 
 export function visionModel(apiKey: string, options: ModelOptions): Provider {
   return {

@@ -10,6 +10,7 @@ import type { Sample } from './dataset.ts';
 import { plantId } from './providers/plant-id.ts';
 import { plantnet } from './providers/plantnet.ts';
 import type { Prediction, Provider } from './providers/types.ts';
+import type { PromptVersion } from './prompts.ts';
 import { hybrid, visionModel, type ModelOptions } from './providers/vision-model.ts';
 import { matchesGenus, matchesSpecies, SPECIES } from './species.ts';
 
@@ -30,14 +31,34 @@ const envFile = join(ROOT, '.env.local');
 if (existsSync(envFile)) process.loadEnvFile(envFile);
 
 const { values: args } = parseArgs({
-  options: { only: { type: 'string' }, limit: { type: 'string' } },
+  options: {
+    only: { type: 'string' },
+    limit: { type: 'string' },
+    // `lookalike`: only the easily confused species (see species.ts).
+    group: { type: 'string' },
+    // e.g. `v1,v2`: run the primary model with each prompt version instead of the model list.
+    prompts: { type: 'string' },
+    // e.g. `google/gemini-4-argon:low,anthropic/claude-sonnet-5.5`: models to run with prompt v2.
+    models: { type: 'string' },
+  },
 });
 
 const { OPENROUTER_API_KEY, PLANTNET_API_KEY, PLANT_ID_API_KEY } = process.env;
 const providers: Provider[] = [
   ...(PLANTNET_API_KEY ? [plantnet(PLANTNET_API_KEY)] : []),
   ...(PLANT_ID_API_KEY ? [plantId(PLANT_ID_API_KEY)] : []),
-  ...(OPENROUTER_API_KEY ? MODELS.map((model) => visionModel(OPENROUTER_API_KEY, model)) : []),
+  ...(OPENROUTER_API_KEY
+    ? args.prompts
+      ? args.prompts
+          .split(',')
+          .map((prompt) => visionModel(OPENROUTER_API_KEY, { ...HYBRID_MODEL, prompt: prompt as PromptVersion }))
+      : args.models
+        ? args.models.split(',').map((entry) => {
+            const [model, effort] = entry.split(':');
+            return visionModel(OPENROUTER_API_KEY, { model: model!, effort: effort as ModelOptions['effort'] });
+          })
+        : MODELS.map((model) => visionModel(OPENROUTER_API_KEY, model))
+    : []),
   ...(OPENROUTER_API_KEY && PLANTNET_API_KEY
     ? [hybrid({ openRouter: OPENROUTER_API_KEY, plantnet: PLANTNET_API_KEY }, HYBRID_MODEL)]
     : []),
@@ -48,10 +69,10 @@ if (providers.length === 0) {
   process.exit(1);
 }
 
-const samples = (JSON.parse(await readFile(join(ROOT, 'data', 'samples.json'), 'utf8')) as Sample[]).slice(
-  0,
-  args.limit ? Number(args.limit) : undefined,
-);
+const lookalikes = new Set(SPECIES.filter((s) => s.lookalike).map((s) => s.name));
+const samples = (JSON.parse(await readFile(join(ROOT, 'data', 'samples.json'), 'utf8')) as Sample[])
+  .filter((sample) => args.group !== 'lookalike' || lookalikes.has(sample.species))
+  .slice(0, args.limit ? Number(args.limit) : undefined);
 
 type Row = {
   provider: string;

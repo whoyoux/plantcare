@@ -2,8 +2,11 @@
  * Test set: popular houseplants (the main use case), plus garden plants, herbs and common wild
  * plants in Poland. `synonyms` lists names a provider may legitimately return for the same species.
  */
-/** `indoor`: grown in pots, so test photos come from cultivated observations, like the app's users take. */
-export type Species = { name: string; synonyms?: string[]; indoor?: boolean };
+/**
+ * `indoor`: grown in pots, so test photos come from cultivated observations, like the app's users take.
+ * `lookalike`: part of a set of species that are easy to confuse with each other (harder test).
+ */
+export type Species = { name: string; synonyms?: string[]; indoor?: boolean; lookalike?: boolean };
 
 export const SPECIES: Species[] = [
   // Houseplants
@@ -43,12 +46,30 @@ export const SPECIES: Species[] = [
   { name: 'Quercus robur' },
   { name: 'Acer platanoides' },
   { name: 'Betula pendula' },
+  // Look-alikes: mints and other aromatic Lamiaceae, carrot-family herbs, nettle vs dead-nettle
+  { name: 'Mentha spicata', lookalike: true },
+  { name: 'Mentha × piperita', synonyms: ['Mentha piperita'], lookalike: true },
+  { name: 'Melissa officinalis', lookalike: true },
+  { name: 'Nepeta cataria', lookalike: true },
+  { name: 'Origanum vulgare', lookalike: true },
+  { name: 'Thymus vulgaris', lookalike: true },
+  { name: 'Salvia officinalis', lookalike: true },
+  { name: 'Petroselinum crispum', lookalike: true },
+  { name: 'Coriandrum sativum', lookalike: true },
+  { name: 'Lamium album', lookalike: true },
 ];
 
 /** First two words, lowercased: genus + species epithet. */
 export function binomial(name: string | null | undefined) {
   if (!name) return undefined;
-  return name.trim().toLowerCase().split(/\s+/).slice(0, 2).join(' ');
+  // Hybrids: "Mentha × piperita" and "Mentha x piperita" both mean genus + epithet.
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\s+[×x]\s+/, ' ')
+    .split(/\s+/)
+    .slice(0, 2)
+    .join(' ');
 }
 
 export function genusOf(name: string | null | undefined) {

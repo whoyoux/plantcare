@@ -1,11 +1,13 @@
 // Downloads a labelled test set from iNaturalist: research-grade observations with an open
 // licence, a few photos per species. Run once: `pnpm --filter @plantcare/ai-eval dataset`.
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { parseArgs } from 'node:util';
 import { join } from 'node:path';
 
 import { SPECIES, type Species } from './species.ts';
 
-const PHOTOS_PER_SPECIES = 2;
+const PHOTOS_PER_SPECIES = 3;
 const DATA_DIR = join(import.meta.dirname, '..', 'data');
 const PHOTO_DIR = join(DATA_DIR, 'photos');
 const HEADERS = { 'User-Agent': 'PlantCare-eval/0.1 (https://plantcare.whxx.dev)' };
@@ -54,18 +56,27 @@ async function observations(species: Species): Promise<Observation[]> {
   return results;
 }
 
-await rm(PHOTO_DIR, { recursive: true, force: true });
+// `--group lookalike` adds just that group to the existing set; without it the set is rebuilt.
+const { values: args } = parseArgs({ options: { group: { type: 'string' } } });
+const wanted = args.group === 'lookalike' ? SPECIES.filter((s) => s.lookalike) : SPECIES;
+const samplesFile = join(DATA_DIR, 'samples.json');
+let samples: Sample[] = [];
+if (args.group && existsSync(samplesFile)) {
+  const names = new Set(wanted.map((s) => s.name));
+  samples = (JSON.parse(await readFile(samplesFile, 'utf8')) as Sample[]).filter((s) => !names.has(s.species));
+} else {
+  await rm(PHOTO_DIR, { recursive: true, force: true });
+}
 await mkdir(PHOTO_DIR, { recursive: true });
-const samples: Sample[] = [];
 
-for (const species of SPECIES) {
+for (const species of wanted) {
   const picked = (await observations(species)).filter((o) => o.photos[0]).slice(0, PHOTOS_PER_SPECIES);
   for (const observation of picked) {
     const photo = observation.photos[0]!;
     // "large" is 1024 px on the long edge, close to what the app will upload.
     const response = await get(photo.url.replace('/square.', '/large.'));
     if (!response.ok) continue;
-    const file = `${species.name.replace(/\s+/g, '-').toLowerCase()}-${observation.id}.jpg`;
+    const file = `${species.name.replace(/[\s×]+/g, '-').toLowerCase()}-${observation.id}.jpg`;
     await writeFile(join(PHOTO_DIR, file), Buffer.from(await response.arrayBuffer()));
     samples.push({
       file,
@@ -80,5 +91,5 @@ for (const species of SPECIES) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 }
 
-await writeFile(join(DATA_DIR, 'samples.json'), JSON.stringify(samples, null, 2));
+await writeFile(samplesFile, JSON.stringify(samples, null, 2));
 console.log(`\n${samples.length} photos in ${PHOTO_DIR}`);

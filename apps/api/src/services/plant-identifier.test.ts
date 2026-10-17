@@ -5,6 +5,7 @@ import { AppError } from '../errors';
 import { createPlantIdentifier } from './plant-identifier';
 
 const monstera: Identification = {
+  analysis: 'Large glossy heart-shaped leaves with deep splits and holes.',
   isPlant: true,
   scientificName: 'Monstera deliciosa',
   commonName: 'Monstera dziurawa',
