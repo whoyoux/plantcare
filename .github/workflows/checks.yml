@@ -1,0 +1,33 @@
+name: Checks
+
+# Format, lint, typecheck and tests (API integration tests run against a Postgres service).
+# Shared by CI (every push and PR) and Release (before deploying to prod).
+on:
+  workflow_call:
+
+jobs:
+  check:
+    name: Lint, typecheck, test
+    runs-on: ubuntu-latest
+    services:
+      # Same port as `pnpm --filter @plantcare/api db:test` locally.
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: plantcare_test
+        ports: ['54329:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
