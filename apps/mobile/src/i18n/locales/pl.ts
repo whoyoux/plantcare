@@ -39,6 +39,8 @@ const pl: Translations<typeof en> = {
     light: 'Światło',
     temperature: 'Temperatura',
     alternatives: 'To może być też',
+    disclaimer:
+      'Rozpoznanie wykonała sztuczna inteligencja, która może się mylić. Traktuj wynik i wskazówki pielęgnacyjne jako podpowiedź. Nie jedz roślin i nie oceniaj na podstawie aplikacji, czy są bezpieczne dla dzieci lub zwierząt.',
     identifying: 'Rozpoznaję roślinę…',
     retry: 'Spróbuj ponownie',
     delete: 'Usuń z historii',

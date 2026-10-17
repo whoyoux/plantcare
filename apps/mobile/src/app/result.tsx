@@ -56,6 +56,7 @@ function NewResult({ uri }: { uri: string }) {
       {identification.data && (
         <>
           <Details result={identification.data.result} />
+          <Disclaimer />
           <DeleteButton id={identification.data.id} />
         </>
       )}
@@ -73,6 +74,7 @@ function SavedResult({ id }: { id: string }) {
       {saved.data && (
         <>
           <Details result={saved.data.result} />
+          <Disclaimer />
           <DeleteButton id={id} />
         </>
       )}
@@ -90,6 +92,19 @@ function Sheet({ photo, children }: { photo?: { uri: string; cacheKey?: string }
       )}
       {children}
     </ScrollView>
+  );
+}
+
+/** Every result is AI output; say so where people read it (see also the Terms of Use). */
+function Disclaimer() {
+  const { t } = useTranslation();
+  const muted = useCSSVariable('--color-muted');
+
+  return (
+    <View className="flex-row gap-3 rounded-2xl bg-card px-4 py-3">
+      <SymbolView name="sparkles" size={18} tintColor={typeof muted === 'string' ? muted : undefined} />
+      <Text className="flex-1 text-[13px] leading-[18px] text-muted">{t('result.disclaimer')}</Text>
+    </View>
   );
 }
 

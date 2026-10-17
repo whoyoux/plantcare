@@ -36,6 +36,8 @@ export default {
     light: 'Light',
     temperature: 'Temperature',
     alternatives: 'It could also be',
+    disclaimer:
+      'Identified by AI, which can make mistakes. Treat the result and care tips as guidance. Never eat a plant or judge whether it is safe for children or pets based on this app.',
     identifying: 'Identifying the plant…',
     retry: 'Try again',
     delete: 'Remove from history',

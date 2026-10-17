@@ -201,7 +201,7 @@ const termsPl: LegalDoc = {
     {
       heading: 'Wyniki rozpoznań',
       blocks: [
-        'Rozpoznania są tworzone automatycznie i mogą być błędne. Traktuj je jako wskazówkę, a nie pewną informację.',
+        'Rozpoznania i wskazówki pielęgnacyjne tworzy automatycznie model sztucznej inteligencji. Mogą być błędne lub niepełne, nawet przy wysokim procencie dopasowania, który jest tylko szacunkiem modelu. Traktuj je jako wskazówkę, a nie pewną informację, i w ważnych sprawach sprawdź je w innym źródle.',
         {
           list: [
             'Nie jedz roślin i nie używaj ich jako leków na podstawie wyniku z aplikacji.',
@@ -272,7 +272,7 @@ const termsEn: LegalDoc = {
     {
       heading: 'Identification results',
       blocks: [
-        'Identifications are generated automatically and can be wrong. Treat them as guidance, not certainty.',
+        'Identifications and care tips are generated automatically by an artificial intelligence model. They can be wrong or incomplete, even when the match percentage is high, since that number is only the model’s own estimate. Treat them as guidance, not certainty, and check another source when it matters.',
         {
           list: [
             'Do not eat plants or use them as medicine based on a result from the app.',
