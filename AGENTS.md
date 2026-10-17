@@ -47,3 +47,12 @@ Docs: https://docs.expo.dev/eas/index.md
 - If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+## Over-the-air updates (EAS Update) and App Review
+
+Apple's rules (App Review Guidelines 2.5.2 and 2.5.19, Developer Program License Agreement 3.3.1(B)/(C)) allow downloading JavaScript only if it does not introduce or change features. Since 16 Oct 2026, guideline 2.5.19 explicitly treats adding features after review (including hidden or remotely enabled ones) as grounds for removing the app and terminating the developer account.
+
+- **OK over the air:** bug and crash fixes, copy and translation fixes, small visual fixes on existing screens, performance work.
+- **Needs a new build and App Review:** any new screen, flow or capability, changes to what an existing feature does, and anything native.
+- **Never:** feature flags or remote config that switch on functionality App Review did not see.
+- Server-side changes (API, prompts, model choice, limits) are fine as long as the app's features stay the same.
