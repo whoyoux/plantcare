@@ -15,7 +15,8 @@
       "dependsOn": ["^typecheck", "^build:types"]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": false
     },
     "build:types": {
       "dependsOn": ["^build:types"],

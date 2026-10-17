@@ -6,8 +6,9 @@ import { createPhotoUrls } from '../services/photo-urls';
 import { createPhotos } from '../services/photos';
 
 /**
- * One DB client, Better Auth instance and set of services per request. Hyperdrive does the pooling; the client is
- * closed after the response is sent.
+ * One DB client, Better Auth instance and set of services per request. Hyperdrive does the pooling;
+ * the client's socket ends with the request (closing it explicitly only produces "socket closed"
+ * errors on Workers).
  */
 export const requestContext = factory.createMiddleware(async (c, next) => {
   const db = createDb(c.env.HYPERDRIVE.connectionString);
@@ -16,5 +17,4 @@ export const requestContext = factory.createMiddleware(async (c, next) => {
   c.set('photos', createPhotos({ db, bucket: c.env.PHOTOS }));
   c.set('photoUrls', createPhotoUrls({ apiUrl: c.env.API_URL, secret: c.env.PHOTO_URL_SECRET }));
   await next();
-  c.executionCtx.waitUntil(db.$client.end());
 });

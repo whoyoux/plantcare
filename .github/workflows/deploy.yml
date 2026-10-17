@@ -1,0 +1,43 @@
+name: Deploy
+
+# Deploys the API (Worker, Neon migrations, R2, AI Gateway) and the website for one stage.
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-${{ inputs.stage }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # GitHub environments `dev` and `prod` hold the secrets; `prod` can require a manual approval.
+    environment: ${{ inputs.stage }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
+      APPLE_PRIVATE_KEY: ${{ secrets.APPLE_PRIVATE_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Deploy API
+        run: pnpm exec alchemy deploy --stage ${{ inputs.stage }} --yes --no-input
+        working-directory: apps/api
+      - name: Build website
+        run: pnpm build
+        working-directory: apps/web
+      - name: Deploy website
+        run: pnpm exec alchemy deploy --stage ${{ inputs.stage }} --yes --no-input
+        working-directory: apps/web

@@ -10,9 +10,12 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "build:types": "tsc -p tsconfig.types.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "db:test": "docker run --rm -d --name plantcare-test-db -p 54329:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=plantcare_test postgres:18-alpine"
   },
   "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.4.4",
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-node": "^4.0.4",
     "@plantcare/eslint-config": "workspace:*",

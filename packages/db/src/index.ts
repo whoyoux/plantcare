@@ -11,10 +11,11 @@ export { and, count, desc, eq, gte, ilike, or, sql } from 'drizzle-orm';
 
 /**
  * Creates a Drizzle client for one request. On Workers, pass Hyperdrive's connection string;
- * Hyperdrive does the pooling, so keep the client small and skip prepared statements.
+ * Hyperdrive pools the real connections (and caches prepared statements), so the client stays small
+ * and is not closed explicitly.
  */
 export function createDb(connectionString: string) {
-  const client = postgres(connectionString, { max: 5, fetch_types: false, prepare: false });
+  const client = postgres(connectionString, { max: 5, fetch_types: false });
   return drizzle({ client, relations });
 }
 

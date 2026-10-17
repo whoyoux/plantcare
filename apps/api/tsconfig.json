@@ -2,7 +2,7 @@
   "extends": "@plantcare/tsconfig/base.json",
   "compilerOptions": {
     "lib": ["ES2023"],
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types", "@cloudflare/vitest-plugin/types"]
   },
-  "include": ["src", "alchemy.run.ts", "vitest.config.ts"]
+  "include": ["src", "test", "alchemy.run.ts", "vitest.config.ts"]
 }

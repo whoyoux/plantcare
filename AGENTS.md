@@ -2,7 +2,9 @@
 
 pnpm workspaces + Turborepo. The Expo app lives in `apps/mobile` — run every `npx expo …` / `eas …` command from that directory. Shared versions go in the pnpm catalog (`pnpm-workspace.yaml`). App identity comes from `APP_VARIANT` (development | preview | production) in `apps/mobile/app.config.ts`.
 
-Before declaring work done, run from the repo root: `pnpm lint`, `pnpm typecheck`, `pnpm format:check` (`pnpm format` fixes formatting). ESLint: `eslint-config-expo` in apps/mobile, `@plantcare/eslint-config/base` (typescript-eslint, type-checked) elsewhere; Prettier owns formatting.
+Before declaring work done, run from the repo root: `pnpm lint`, `pnpm typecheck`, `pnpm format:check` (`pnpm format` fixes formatting). API changes also need `pnpm test` (integration tests need Postgres: `pnpm --filter @plantcare/api db:test` starts it in Docker).
+
+CI (`.github/workflows`): every push and PR runs format, lint, typecheck and tests; a push to `main` deploys the API and website to dev; a `v*` tag deploys them to prod. EAS builds are never started from CI or by agents without the user asking (tiny monthly quota). ESLint: `eslint-config-expo` in apps/mobile, `@plantcare/eslint-config/base` (typescript-eslint, type-checked) elsewhere; Prettier owns formatting.
 
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
 
