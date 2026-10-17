@@ -27,6 +27,7 @@ export const ui = {
     },
     steps: {
       title: 'Jak to działa',
+      video: 'Film: jak działa PlantCare',
       items: [
         {
           title: 'Zrób zdjęcie',
@@ -80,6 +81,7 @@ export const ui = {
     },
     steps: {
       title: 'How it works',
+      video: 'Video: how PlantCare works',
       items: [
         {
           title: 'Take a photo',

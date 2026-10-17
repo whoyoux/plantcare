@@ -5,6 +5,7 @@ import type { Route } from './+types/home';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
+import { LaunchVideo } from '~/components/launch-video';
 import { Viewfinder } from '~/components/viewfinder';
 import { ui } from '~/content/ui';
 import { langFromPath, localePath, useLang } from '~/i18n';
@@ -39,6 +40,7 @@ export default function Home() {
 
       <section id="how" className="flex scroll-mt-8 flex-col gap-8">
         <h2 className="text-3xl font-bold tracking-tight">{t.steps.title}</h2>
+        <LaunchVideo lang={lang} label={t.steps.video} />
         <ol className="grid gap-4 md:grid-cols-3">
           {t.steps.items.map((step, index) => (
             <li key={step.title}>
