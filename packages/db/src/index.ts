@@ -7,7 +7,7 @@ import * as schema from './schema';
 
 export { relations, schema };
 // Re-exported so consumers share this package's single drizzle-orm instance.
-export { and, count, desc, eq, gte, ilike, or, sql } from 'drizzle-orm';
+export { and, count, countDistinct, desc, eq, gte, ilike, or, sql } from 'drizzle-orm';
 
 /**
  * Creates a Drizzle client for one request. On Workers, pass Hyperdrive's connection string;

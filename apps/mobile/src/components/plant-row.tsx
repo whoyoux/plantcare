@@ -40,20 +40,3 @@ export function PlantRow({ item }: { item: HistoryItem }) {
     </Pressable>
   );
 }
-
-/** Small card for the home screen's "Recently identified" row. */
-export function PlantCard({ item }: { item: HistoryItem }) {
-  return (
-    <Pressable accessibilityRole="button" onPress={() => openSaved(item.id)} className="w-32 gap-2 active:opacity-70">
-      <Image
-        source={{ uri: item.imageUrl, cacheKey: item.id }}
-        contentFit="cover"
-        transition={150}
-        className="aspect-square w-32 rounded-2xl bg-card"
-      />
-      <Text numberOfLines={2} className="px-0.5 text-[15px] font-semibold leading-5 text-foreground">
-        {item.commonName ?? item.scientificName}
-      </Text>
-    </Pressable>
-  );
-}

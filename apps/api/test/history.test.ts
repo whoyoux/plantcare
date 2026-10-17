@@ -140,3 +140,38 @@ describe('history', () => {
     expect(await env.PHOTOS.head(photoKey(user.id, id))).toBeNull();
   });
 });
+
+describe('GET /v1/identifications/stats', () => {
+  it('counts identifications, distinct species and the last 7 days, for this user only', async () => {
+    const user = await signedInUser();
+    const other = await signedInUser();
+    await seed(other.id, ['Foreign']);
+    const old = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
+    await db.insert(schema.identification).values({
+      userId: user.id,
+      imageKey: photoKey(user.id, 'old'),
+      language: 'pl',
+      scientificName: 'Plantus monstera',
+      commonName: 'Monstera',
+      confidence: 0.9,
+      model: 'test',
+      result: monstera,
+      createdAt: old,
+    });
+    // Two more Monsteras (same species) and one fern this week.
+    await seed(user.id, ['Monstera', 'Monstera', 'Paproć']);
+
+    const response = await user.request('/v1/identifications/stats');
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ total: 4, species: 2, thisWeek: 3 });
+  });
+
+  it('is all zeros for a new user', async () => {
+    const user = await signedInUser();
+    expect(await (await user.request('/v1/identifications/stats')).json()).toEqual({
+      total: 0,
+      species: 0,
+      thisWeek: 0,
+    });
+  });
+});

@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or, schema, sql } from '@plantcare/db';
+import { and, count, countDistinct, desc, eq, ilike, or, schema, sql } from '@plantcare/db';
 import type { Identification } from '@plantcare/shared';
 import { z } from 'zod';
 
@@ -8,6 +8,7 @@ import { requireUser } from '../../middleware/require-user';
 import { validate } from '../../validation';
 
 const PAGE_SIZE = 30;
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const table = schema.identification;
 
 /** Opaque cursor: the last row's creation time and id (rows are ordered by both). */
@@ -72,6 +73,20 @@ export const identificationRoutes = factory
       return c.json({ items, nextCursor: rows.length > PAGE_SIZE && last ? encodeCursor(last) : null });
     },
   )
+  /** Collection numbers for the home screen: identifications, distinct species, last 7 days. */
+  .get('/stats', async (c) => {
+    // Raw SQL parameters must be strings: the Workers postgres driver doesn't serialize Dates there.
+    const weekAgo = new Date(Date.now() - WEEK_MS).toISOString();
+    const [stats] = await c.var.db
+      .select({
+        total: count(),
+        species: countDistinct(table.scientificName),
+        thisWeek: sql<number>`count(*) filter (where ${table.createdAt} >= ${weekAgo}::timestamptz)`.mapWith(Number),
+      })
+      .from(table)
+      .where(eq(table.userId, c.var.user.id));
+    return c.json({ total: stats?.total ?? 0, species: stats?.species ?? 0, thisWeek: stats?.thisWeek ?? 0 });
+  })
   .get('/:id', validate('param', z.object({ id: z.uuid() })), async (c) => {
     const [row] = await c.var.db
       .select()

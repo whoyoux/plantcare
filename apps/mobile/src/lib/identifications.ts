@@ -11,7 +11,18 @@ export const historyKeys = {
   all: ['history'] as const,
   list: (query: string) => ['history', 'list', query] as const,
   detail: (id: string) => ['history', 'detail', id] as const,
+  stats: ['history', 'stats'] as const,
 };
+
+export type CollectionStats = InferResponseType<typeof api.v1.identifications.stats.$get, 200>;
+
+/** Counts for the home screen; lives under `history` so new and deleted identifications refresh it. */
+export function useCollectionStats() {
+  return useQuery({
+    queryKey: historyKeys.stats,
+    queryFn: async () => (await ensureOk(await api.v1.identifications.stats.$get())).json(),
+  });
+}
 
 /** The user's identifications, newest first, 30 per page; `query` filters by name on the server. */
 export function useHistory(query = '') {

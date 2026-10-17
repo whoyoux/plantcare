@@ -30,6 +30,10 @@ const pl: Translations<typeof en> = {
     cameraUnavailable: 'Aparat jest niedostępny. Sprawdź dostęp do aparatu w Ustawieniach.',
     recent: 'Ostatnio rozpoznane',
     recentEmpty: 'Tutaj pojawią się rozpoznane rośliny.',
+    seeAll: 'Wszystkie',
+    tipsTitle: 'Co sfotografować?',
+    tips: { leaf: 'Jeden liść z bliska', flower: 'Kwiat', light: 'Dobre światło' },
+    stats: { plants: 'Rośliny', species: 'Gatunki', thisWeek: 'Ten tydzień' },
   },
   result: {
     title: 'Wynik',

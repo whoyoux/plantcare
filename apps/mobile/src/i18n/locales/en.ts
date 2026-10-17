@@ -26,7 +26,11 @@ export default {
     openSettings: 'Open Settings',
     cameraUnavailable: 'The camera is unavailable. Check camera access in Settings.',
     recent: 'Recently identified',
-    recentEmpty: 'Plants you identify will show up here.',
+    recentEmpty: 'Plants you identify will appear here.',
+    seeAll: 'See all',
+    tipsTitle: 'What to photograph',
+    tips: { leaf: 'One leaf, up close', flower: 'A flower', light: 'Good light' },
+    stats: { plants: 'Plants', species: 'Species', thisWeek: 'This week' },
   },
   result: {
     title: 'Result',
