@@ -43,3 +43,9 @@ example
 /android
 assets/icons/source/candidates/
 .preview/
+
+# Local EAS builds (pnpm build:preview:local / build:prod:local)
+/build/
+*.ipa
+*.apk
+*.aab
