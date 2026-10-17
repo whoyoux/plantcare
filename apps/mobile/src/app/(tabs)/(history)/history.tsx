@@ -15,14 +15,24 @@ export default function HistoryScreen() {
   const search = useDebouncedValue(query.trim());
   const history = useHistory(search);
   const items = history.data?.pages.flatMap((page) => page.items) ?? [];
+  // Only a pull-to-refresh shows the spinner, not the quiet refetch when the screen opens.
+  const [pulling, setPulling] = useState(false);
 
+  async function refresh() {
+    setPulling(true);
+    await history.refetch();
+    setPulling(false);
+  }
+
+  // The list must be the screen's first view so iOS collapses the large title and search bar on scroll.
   return (
-    <View className="flex-1 bg-background">
+    <>
       <Stack.SearchBar
         placeholder={t('history.searchPlaceholder')}
         onChangeText={(event) => setQuery(event.nativeEvent.text)}
       />
       <FlatList
+        className="flex-1 bg-background"
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <PlantRow item={item} />}
@@ -32,8 +42,8 @@ export default function HistoryScreen() {
           if (history.hasNextPage && !history.isFetchingNextPage) void history.fetchNextPage();
         }}
         onEndReachedThreshold={0.5}
-        refreshing={history.isRefetching && !history.isFetchingNextPage}
-        onRefresh={() => void history.refetch()}
+        refreshing={pulling}
+        onRefresh={() => void refresh()}
         ListFooterComponent={history.isFetchingNextPage ? <ActivityIndicator className="py-4" /> : undefined}
         ListEmptyComponent={
           history.isPending ? (
@@ -54,6 +64,6 @@ export default function HistoryScreen() {
           )
         }
       />
-    </View>
+    </>
   );
 }
