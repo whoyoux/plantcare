@@ -147,6 +147,12 @@ function DeveloperSection() {
         value={Updates.channel || '–'}
         systemImage="antenna.radiowaves.left.and.right"
       />
+      {/* Which JS is running: the bundle inside the build, or an over-the-air update (and which). */}
+      <FormRow
+        label={t('settings.update')}
+        value={Updates.isEmbeddedLaunch ? t('settings.updateEmbedded') : (Updates.updateId?.slice(0, 8) ?? '–')}
+        systemImage="arrow.down.circle"
+      />
     </FormSection>
   );
 }

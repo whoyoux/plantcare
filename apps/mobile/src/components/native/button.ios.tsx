@@ -9,9 +9,14 @@ export function Button({
   onPress,
   systemImage,
   variant = 'prominent',
+  tone = 'accent',
   disabled: isDisabled = false,
 }: ButtonProps) {
+  // Filled buttons need a darker green than the accent so their white label stays readable.
+  const fill = useCSSVariable('--color-accent-fill');
   const accent = useCSSVariable('--color-accent');
+  const danger = useCSSVariable('--color-danger');
+  const color = variant === 'prominent' ? fill : tone === 'danger' ? danger : accent;
 
   return (
     <Host matchContents={{ vertical: true }}>
@@ -20,7 +25,7 @@ export function Button({
         modifiers={[
           buttonStyle(variant === 'prominent' ? 'glassProminent' : 'glass'),
           controlSize('large'),
-          ...(typeof accent === 'string' ? [tint(accent)] : []),
+          ...(typeof color === 'string' ? [tint(color)] : []),
           disabled(isDisabled),
         ]}
       >

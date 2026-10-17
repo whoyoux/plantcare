@@ -154,6 +154,8 @@ const pl: Translations<typeof en> = {
     dark: 'Ciemny',
     variant: 'Wariant',
     runtimeVersion: 'Wersja runtime',
+    update: 'Aktualizacja',
+    updateEmbedded: 'Wbudowana w build',
     channel: 'Kanał aktualizacji',
   },
   languages: {

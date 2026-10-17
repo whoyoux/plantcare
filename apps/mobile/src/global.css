@@ -19,6 +19,7 @@
       --color-muted: #5a675f;
       --color-separator: #cfd9d2;
       --color-accent: #2a7148;
+      --color-accent-fill: #2a7148;
       --color-accent-foreground: #ffffff;
       --color-accent-soft: #e3f0e7;
       --color-danger: #c4311f;
@@ -31,6 +32,8 @@
       --color-muted: #9aa7a0;
       --color-separator: #36423b;
       --color-accent: #74d19a;
+      /* Filled controls: white label at 5.1:1, 3.4:1 against the dark sheet. */
+      --color-accent-fill: #287d4d;
       --color-accent-foreground: #0b1a10;
       --color-accent-soft: #21402c;
       --color-danger: #ff7a66;

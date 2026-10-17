@@ -159,7 +159,7 @@ export function PlantCareRow({ plant, onLongPress }: { plant: Plant; onLongPress
         accessibilityLabel={t('plants.water')}
         onPress={() => actions.water(plant)}
         hitSlop={8}
-        className={`size-11 items-center justify-center rounded-full ${needsWater ? 'bg-accent' : 'bg-accent-soft'} active:opacity-70`}
+        className={`size-11 items-center justify-center rounded-full ${needsWater ? 'bg-accent-fill' : 'bg-accent-soft'} active:opacity-70`}
       >
         <SymbolView name="drop.fill" size={20} tintColor={needsWater ? 'white' : accent} />
       </Pressable>

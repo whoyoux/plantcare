@@ -4,7 +4,7 @@ import type { SFSymbol } from 'expo-symbols';
 import { SymbolView } from 'expo-symbols';
 import { useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Image } from '@/components/image';
@@ -185,14 +185,14 @@ function DeleteButton({ id }: { id: string }) {
   }
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={confirm}
+    <Button
+      label={t('result.delete')}
+      systemImage="trash"
+      variant="secondary"
+      tone="danger"
       disabled={remove.isPending}
-      className="items-center rounded-2xl bg-card py-3.5 active:opacity-70"
-    >
-      <Text className="text-[17px] text-danger">{t('result.delete')}</Text>
-    </Pressable>
+      onPress={confirm}
+    />
   );
 }
 

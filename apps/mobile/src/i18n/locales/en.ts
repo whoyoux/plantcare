@@ -143,6 +143,8 @@ export default {
     dark: 'Dark',
     variant: 'Variant',
     runtimeVersion: 'Runtime version',
+    update: 'Update',
+    updateEmbedded: 'Built in',
     channel: 'Update channel',
   },
   languages: {
