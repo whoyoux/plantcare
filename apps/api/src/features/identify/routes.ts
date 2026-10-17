@@ -6,7 +6,6 @@ import { DAILY_IDENTIFICATIONS, IDENTIFY_MODEL } from '../../config';
 import { factory } from '../../env';
 import { AppError } from '../../errors';
 import { requireUser } from '../../middleware/require-user';
-import { createPhotos } from '../../services/photos';
 import { createPlantIdentifier } from '../../services/plant-identifier';
 
 /** The app downsizes photos to ~1024 px before upload; anything bigger is not from the app. */
@@ -54,7 +53,7 @@ export const identifyRoutes = factory
     if (!result.isPlant || !result.scientificName) throw new AppError('NOT_A_PLANT', 422);
 
     const id = crypto.randomUUID();
-    const imageKey = await createPhotos({ db: c.var.db, bucket: c.env.PHOTOS }).save(user.id, id, bytes);
+    const imageKey = await c.var.photos.save(user.id, id, bytes);
     const [row] = await c.var.db
       .insert(schema.identification)
       .values({
@@ -67,8 +66,19 @@ export const identifyRoutes = factory
         confidence: result.confidence,
         model: identifier.model,
         result,
+        // Millisecond precision (like JS dates), so history cursors compare exactly.
+        createdAt: new Date(),
       })
       .returning({ id: schema.identification.id, createdAt: schema.identification.createdAt });
 
-    return c.json({ id: row!.id, createdAt: row!.createdAt.toISOString(), language, result }, 201);
+    return c.json(
+      {
+        id: row!.id,
+        createdAt: row!.createdAt.toISOString(),
+        language,
+        result,
+        imageUrl: await c.var.photoUrls.sign(imageKey),
+      },
+      201,
+    );
   });

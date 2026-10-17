@@ -23,6 +23,14 @@ export function createPhotos(deps: { db: Database; bucket: R2Bucket }) {
       return key;
     },
 
+    async get(key: string) {
+      return deps.bucket.get(key);
+    },
+
+    async delete(key: string) {
+      await deps.bucket.delete(key);
+    },
+
     /** Deletes every photo referenced by the user's identifications. */
     async deleteAllForUser(userId: string) {
       const rows = await deps.db

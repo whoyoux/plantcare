@@ -38,6 +38,12 @@ export default {
     alternatives: 'It could also be',
     identifying: 'Identifying the plant…',
     retry: 'Try again',
+    delete: 'Remove from history',
+    deleteTitle: 'Remove this plant?',
+    deleteMessage: 'The photo and the result will be removed from your history.',
+    deleteConfirm: 'Remove',
+    cancel: 'Cancel',
+    deleteFailed: 'Couldn’t remove it. Try again.',
     errors: {
       NOT_A_PLANT: 'We couldn’t find a plant in this photo. Try a closer shot of a leaf or flower.',
       DAILY_LIMIT_REACHED: 'You’ve reached today’s limit of identifications. Come back tomorrow.',
@@ -53,6 +59,8 @@ export default {
     noResultsTitle: 'No results for “{{query}}”',
     plantCount_one: '{{count}} plant',
     plantCount_other: '{{count}} plants',
+    loadFailed: 'Couldn’t load your history.',
+    retry: 'Try again',
   },
   settings: {
     title: 'Settings',

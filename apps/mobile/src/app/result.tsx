@@ -1,10 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import type { SFSymbol } from 'expo-symbols';
 import { SymbolView } from 'expo-symbols';
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Image } from '@/components/image';
@@ -12,6 +12,7 @@ import { Button } from '@/components/native/button';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
 import { identifyPhoto, type IdentifyResponse } from '@/lib/identify';
+import { historyKeys, useDeleteIdentification, useSavedIdentification } from '@/lib/identifications';
 
 type Result = IdentifyResponse['result'];
 
@@ -23,8 +24,16 @@ const careRows = [
 
 const KNOWN_ERRORS = ['NOT_A_PLANT', 'DAILY_LIMIT_REACHED', 'RATE_LIMITED'] as const;
 
+/**
+ * The result sheet. Opened with `uri` for a new photo (uploads and identifies it), or with `id` for
+ * an identification from history.
+ */
 export default function ResultSheet() {
-  const { uri } = useLocalSearchParams<{ uri: string }>();
+  const { uri, id } = useLocalSearchParams<{ uri?: string; id?: string }>();
+  return id ? <SavedResult id={id} /> : <NewResult uri={uri!} />;
+}
+
+function NewResult({ uri }: { uri: string }) {
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -37,16 +46,81 @@ export default function ResultSheet() {
   });
 
   useEffect(() => {
-    if (identification.isSuccess) void queryClient.invalidateQueries({ queryKey: ['history'] });
+    if (identification.isSuccess) void queryClient.invalidateQueries({ queryKey: historyKeys.all });
   }, [identification.isSuccess, queryClient]);
 
   return (
-    <ScrollView contentContainerClassName="gap-6 px-5 pb-10 pt-4" contentInsetAdjustmentBehavior="automatic">
-      <Image source={{ uri }} contentFit="cover" className="aspect-[4/3] w-full rounded-3xl" />
+    <Sheet photo={{ uri }}>
       {identification.isPending && <Identifying />}
       {identification.isError && <Failure error={identification.error} onRetry={() => void identification.refetch()} />}
-      {identification.data && <Details result={identification.data.result} />}
+      {identification.data && (
+        <>
+          <Details result={identification.data.result} />
+          <DeleteButton id={identification.data.id} />
+        </>
+      )}
+    </Sheet>
+  );
+}
+
+function SavedResult({ id }: { id: string }) {
+  const saved = useSavedIdentification(id);
+
+  return (
+    <Sheet photo={saved.data && { uri: saved.data.imageUrl, cacheKey: id }}>
+      {saved.isPending && <ActivityIndicator className="py-6" />}
+      {saved.isError && <Failure error={saved.error} onRetry={() => void saved.refetch()} />}
+      {saved.data && (
+        <>
+          <Details result={saved.data.result} />
+          <DeleteButton id={id} />
+        </>
+      )}
+    </Sheet>
+  );
+}
+
+function Sheet({ photo, children }: { photo?: { uri: string; cacheKey?: string }; children: ReactNode }) {
+  return (
+    <ScrollView contentContainerClassName="gap-6 px-5 pb-10 pt-4" contentInsetAdjustmentBehavior="automatic">
+      {photo ? (
+        <Image source={photo} contentFit="cover" className="aspect-[4/3] w-full rounded-3xl" />
+      ) : (
+        <View className="aspect-[4/3] w-full rounded-3xl bg-card" />
+      )}
+      {children}
     </ScrollView>
+  );
+}
+
+function DeleteButton({ id }: { id: string }) {
+  const { t } = useTranslation();
+  const remove = useDeleteIdentification();
+
+  function confirm() {
+    Alert.alert(t('result.deleteTitle'), t('result.deleteMessage'), [
+      { text: t('result.cancel'), style: 'cancel' },
+      {
+        text: t('result.deleteConfirm'),
+        style: 'destructive',
+        onPress: () =>
+          remove.mutate(id, {
+            onSuccess: () => router.back(),
+            onError: () => Alert.alert(t('result.deleteFailed')),
+          }),
+      },
+    ]);
+  }
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={confirm}
+      disabled={remove.isPending}
+      className="items-center rounded-2xl bg-card py-3.5 active:opacity-70"
+    >
+      <Text className="text-[17px] text-danger">{t('result.delete')}</Text>
+    </Pressable>
   );
 }
 

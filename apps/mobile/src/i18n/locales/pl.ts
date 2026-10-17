@@ -41,6 +41,12 @@ const pl: Translations<typeof en> = {
     alternatives: 'To może być też',
     identifying: 'Rozpoznaję roślinę…',
     retry: 'Spróbuj ponownie',
+    delete: 'Usuń z historii',
+    deleteTitle: 'Usunąć tę roślinę?',
+    deleteMessage: 'Zdjęcie i wynik znikną z Twojej historii.',
+    deleteConfirm: 'Usuń',
+    cancel: 'Anuluj',
+    deleteFailed: 'Nie udało się usunąć. Spróbuj ponownie.',
     errors: {
       NOT_A_PLANT: 'Nie widzę rośliny na tym zdjęciu. Spróbuj z bliska sfotografować liść albo kwiat.',
       DAILY_LIMIT_REACHED: 'Wykorzystano dzisiejszy limit rozpoznań. Wróć jutro.',
@@ -58,6 +64,8 @@ const pl: Translations<typeof en> = {
     plantCount_few: '{{count}} rośliny',
     plantCount_many: '{{count}} roślin',
     plantCount_other: '{{count}} rośliny',
+    loadFailed: 'Nie udało się wczytać historii.',
+    retry: 'Spróbuj ponownie',
   },
   settings: {
     title: 'Ustawienia',

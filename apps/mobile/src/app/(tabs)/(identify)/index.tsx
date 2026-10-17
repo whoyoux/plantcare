@@ -9,6 +9,8 @@ import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import { Viewfinder } from '@/components/viewfinder';
+import { PlantCard } from '@/components/plant-row';
+import { useHistory } from '@/lib/identifications';
 import { pickPhoto } from '@/lib/pick-photo';
 
 function openResult(uri: string) {
@@ -16,8 +18,6 @@ function openResult(uri: string) {
 }
 
 export default function IdentifyScreen() {
-  const { t } = useTranslation();
-
   async function chooseFromLibrary() {
     void Haptics.selectionAsync();
     const uri = await pickPhoto('library');
@@ -32,14 +32,32 @@ export default function IdentifyScreen() {
     >
       <CameraCard onChooseFromLibrary={() => void chooseFromLibrary()} />
 
-      <View className="gap-3">
-        <Text className="px-1 font-rounded text-[20px] font-bold text-foreground">{t('identify.recent')}</Text>
-        {/* Filled from the history endpoint in the next step. */}
+      <RecentPlants />
+    </ScrollView>
+  );
+}
+
+/** The latest identifications, from the first page of history. */
+function RecentPlants() {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const recent = history.data?.pages[0]?.items.slice(0, 8) ?? [];
+
+  return (
+    <View className="gap-3">
+      <Text className="px-1 font-rounded text-[20px] font-bold text-foreground">{t('identify.recent')}</Text>
+      {recent.length > 0 ? (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-3 px-1">
+          {recent.map((item) => (
+            <PlantCard key={item.id} item={item} />
+          ))}
+        </ScrollView>
+      ) : (
         <View className="rounded-2xl bg-card px-4 py-5">
           <Text className="text-[15px] text-muted">{t('identify.recentEmpty')}</Text>
         </View>
-      </View>
-    </ScrollView>
+      )}
+    </View>
   );
 }
 

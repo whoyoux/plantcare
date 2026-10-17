@@ -84,11 +84,15 @@ export const IdentifyRateLimit = Cloudflare.RateLimit('IDENTIFY_RATE_LIMIT', {
 /** Better Auth signing secret, minted once per stage and kept in Alchemy state. */
 export const AuthSecret = Alchemy.Random('AuthSecret');
 
+/** Signs the short-lived photo links handed to the app. */
+export const PhotoUrlSecret = Alchemy.Random('PhotoUrlSecret');
+
 const APPLE_TEAM_ID = '73SQTP34GN';
 
 export const Api = Effect.gen(function* () {
   const { stage } = yield* Alchemy.Stack;
   const authSecret = yield* AuthSecret;
+  const photoUrlSecret = yield* PhotoUrlSecret;
   const gateway = yield* AiGateway;
   return yield* Cloudflare.Worker('Api', {
     main: './src/index.ts',
@@ -100,6 +104,7 @@ export const Api = Effect.gen(function* () {
       STAGE: stage,
       API_URL: `https://${DOMAINS[stage]}`,
       BETTER_AUTH_SECRET: authSecret.text,
+      PHOTO_URL_SECRET: photoUrlSecret.text,
       // Sign in with Apple key (.p8), read from apps/api/.env at deploy time. Only needed to revoke
       // Apple tokens when an account is deleted; sign-in works without it.
       APPLE_TEAM_ID,
