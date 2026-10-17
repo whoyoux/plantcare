@@ -9,6 +9,10 @@ allowBuilds:
   workerd: true
 
 catalog:
+  # One React for the whole repo: React Native 0.88 (Expo SDK 58) pins 19.3.0, and a second copy
+  # (pulled in through react-dom) would end up next to it in the app's native build.
+  react: 19.3.0
+  react-dom: 19.3.0
   turbo: ^2.11.8
   # Expo SDK 58 pins TypeScript 6.x; keep the whole repo on the same version.
   typescript: ~6.0.3
@@ -30,7 +34,7 @@ catalog:
   vitest: ^5.0.4
 
 minimumReleaseAgeExclude:
-  - '@expo/cli@58.1.10'
+  - '@expo/cli@58.1.10 || 58.1.11'
   - '@expo/metro-config@58.0.14'
   - '@expo/package-manager@1.14.2'
   - '@expo/prebuild-config@58.0.14'
@@ -38,13 +42,23 @@ minimumReleaseAgeExclude:
   - '@expo/ui@58.0.19'
   - babel-preset-expo@58.0.16
   - effect@4.0.5
-  - expo@58.0.12
+  - expo@58.0.12 || 58.0.14
   - expo-asset@58.0.16
   - expo-glass-effect@58.0.4
   - expo-image@58.0.15
-  - expo-modules-core@58.0.20
-  - expo-modules-jsi@58.0.14
-  - expo-router@58.0.21
+  - expo-modules-core@58.0.20 || 58.0.22
+  - expo-modules-jsi@58.0.14 || 58.0.15
+  - expo-router@58.0.21 || 58.0.23
   - expo-system-ui@58.0.6
   - expo-updates@58.0.17
   - react-native-nitro-fetch@1.9.0
+  - '@expo/schema-utils@58.0.2'
+  - expo-build-properties@58.0.11
+  - expo-dev-client@58.0.14
+  - expo-dev-launcher@58.0.14
+
+# Expo's web packages auto-install react-dom as a peer; without this pnpm picks the newest one,
+# which drags a second React into the app's native build.
+overrides:
+  react: 'catalog:'
+  react-dom: 'catalog:'
