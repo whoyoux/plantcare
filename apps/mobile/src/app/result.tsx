@@ -12,6 +12,7 @@ import { Button } from '@/components/native/button';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
 import { identifyPhoto, type IdentifyResponse } from '@/lib/identify';
+import { shareIdentification } from '@/lib/share';
 import { historyKeys, useDeleteIdentification, useSavedIdentification } from '@/lib/identifications';
 
 type Result = IdentifyResponse['result'];
@@ -57,7 +58,7 @@ function NewResult({ uri }: { uri: string }) {
         <>
           <Details result={identification.data.result} />
           <Disclaimer />
-          <DeleteButton id={identification.data.id} />
+          <Actions id={identification.data.id} photoUri={uri} result={identification.data.result} />
         </>
       )}
     </Sheet>
@@ -75,7 +76,7 @@ function SavedResult({ id }: { id: string }) {
         <>
           <Details result={saved.data.result} />
           <Disclaimer />
-          <DeleteButton id={id} />
+          <Actions id={id} photoUri={saved.data.imageUrl} result={saved.data.result} />
         </>
       )}
     </Sheet>
@@ -104,6 +105,21 @@ function Disclaimer() {
     <View className="flex-row gap-3 rounded-2xl bg-card px-4 py-3">
       <SymbolView name="sparkles" size={18} tintColor={typeof muted === 'string' ? muted : undefined} />
       <Text className="flex-1 text-[13px] leading-[18px] text-muted">{t('result.disclaimer')}</Text>
+    </View>
+  );
+}
+
+function Actions({ id, photoUri, result }: { id: string; photoUri: string; result: Result }) {
+  const { t } = useTranslation();
+  return (
+    <View className="gap-2.5">
+      <Button
+        label={t('result.share')}
+        systemImage="square.and.arrow.up"
+        variant="secondary"
+        onPress={() => void shareIdentification({ id, photoUri, result }, t)}
+      />
+      <DeleteButton id={id} />
     </View>
   );
 }

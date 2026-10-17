@@ -1,20 +1,30 @@
 import { Stack } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, View } from 'react-native';
+import { ActivityIndicator, SectionList, Text, View } from 'react-native';
 
 import { Button } from '@/components/native/button';
 import { EmptyState } from '@/components/native/empty-state';
 import { PlantRow } from '@/components/plant-row';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 import { useHistory } from '@/lib/identifications';
+import { groupByDay } from '@/lib/sections';
 
 export default function HistoryScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [query, setQuery] = useState('');
   const search = useDebouncedValue(query.trim());
   const history = useHistory(search);
-  const items = history.data?.pages.flatMap((page) => page.items) ?? [];
+  const items = useMemo(() => history.data?.pages.flatMap((page) => page.items) ?? [], [history.data]);
+  const sections = useMemo(
+    () =>
+      groupByDay(items, i18n.language, {
+        today: t('history.sections.today'),
+        yesterday: t('history.sections.yesterday'),
+        thisWeek: t('history.sections.thisWeek'),
+      }),
+    [items, i18n.language, t],
+  );
   // Only a pull-to-refresh shows the spinner, not the quiet refetch when the screen opens.
   const [pulling, setPulling] = useState(false);
 
@@ -31,11 +41,17 @@ export default function HistoryScreen() {
         placeholder={t('history.searchPlaceholder')}
         onChangeText={(event) => setQuery(event.nativeEvent.text)}
       />
-      <FlatList
+      <SectionList
         className="flex-1 bg-background"
-        data={items}
+        sections={sections}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <PlantRow item={item} />}
+        renderSectionHeader={({ section }) => (
+          <View className="bg-background px-4 pb-1.5 pt-4">
+            <Text className="font-rounded text-[15px] font-bold text-muted">{section.title}</Text>
+          </View>
+        )}
+        stickySectionHeadersEnabled
         contentInsetAdjustmentBehavior="automatic"
         contentContainerClassName="grow pb-32"
         onEndReached={() => {

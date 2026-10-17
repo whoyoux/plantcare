@@ -33,6 +33,7 @@ export default {
     stats: { plants: 'Plants', species: 'Species', thisWeek: 'This week' },
   },
   result: {
+    share: 'Share',
     title: 'Result',
     match: '{{value}}% match',
     care: 'Care',
@@ -58,6 +59,12 @@ export default {
     },
   },
   history: {
+    sections: { today: 'Today', yesterday: 'Yesterday', thisWeek: 'This week' },
+    match: '{{value}}%',
+    open: 'Open',
+    share: 'Share',
+    delete: 'Delete',
+    deleteFailed: 'Couldn’t delete it. Try again.',
     title: 'History',
     searchPlaceholder: 'Search plants',
     emptyTitle: 'No plants yet',
@@ -67,6 +74,9 @@ export default {
     plantCount_other: '{{count}} plants',
     loadFailed: 'Couldn’t load your history.',
     retry: 'Try again',
+  },
+  share: {
+    footer: 'Identified with PlantCare:',
   },
   settings: {
     title: 'Settings',

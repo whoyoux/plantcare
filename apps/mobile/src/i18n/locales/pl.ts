@@ -36,6 +36,7 @@ const pl: Translations<typeof en> = {
     stats: { plants: 'Rośliny', species: 'Gatunki', thisWeek: 'Ten tydzień' },
   },
   result: {
+    share: 'Udostępnij',
     title: 'Wynik',
     match: 'Dopasowanie {{value}}%',
     care: 'Pielęgnacja',
@@ -61,6 +62,12 @@ const pl: Translations<typeof en> = {
     },
   },
   history: {
+    sections: { today: 'Dziś', yesterday: 'Wczoraj', thisWeek: 'Ten tydzień' },
+    match: '{{value}}%',
+    open: 'Otwórz',
+    share: 'Udostępnij',
+    delete: 'Usuń',
+    deleteFailed: 'Nie udało się usunąć. Spróbuj ponownie.',
     title: 'Historia',
     searchPlaceholder: 'Szukaj roślin',
     emptyTitle: 'Brak roślin',
@@ -72,6 +79,9 @@ const pl: Translations<typeof en> = {
     plantCount_other: '{{count}} rośliny',
     loadFailed: 'Nie udało się wczytać historii.',
     retry: 'Spróbuj ponownie',
+  },
+  share: {
+    footer: 'Rozpoznane w PlantCare:',
   },
   settings: {
     title: 'Ustawienia',
