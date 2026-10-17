@@ -51,7 +51,8 @@ export default function RootLayout() {
               }}
             />
           </Stack.Protected>
-          <Stack.Protected guard={!signedIn}>
+          {/* After signing in, land on the camera (`/`), not the first tab folder alphabetically. */}
+          <Stack.Protected guard={!signedIn} redirectTo="/">
             <Stack.Screen name="sign-in" options={{ animation: 'fade' }} />
           </Stack.Protected>
         </Stack>
