@@ -48,7 +48,8 @@ export default function PlantsScreen() {
       keyExtractor={(plant) => plant.id}
       renderItem={({ item }) => <PlantCareRow plant={item} onLongPress={() => showActions(item)} />}
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerClassName="grow gap-2.5 px-4 pb-32 pt-2"
+      // Fill the screen only for the empty state; otherwise a short list would still scroll.
+      contentContainerClassName={`gap-2.5 px-4 pb-8 pt-2 ${plants.data?.length ? '' : 'grow'}`}
       refreshing={pulling}
       onRefresh={() => void refresh()}
       ListHeaderComponent={

@@ -53,7 +53,8 @@ export default function HistoryScreen() {
         )}
         stickySectionHeadersEnabled
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerClassName="grow pb-32"
+        // Fill the screen only for the empty state; otherwise a short list would still scroll.
+        contentContainerClassName={`pb-8 ${items.length ? '' : 'grow'}`}
         onEndReached={() => {
           if (history.hasNextPage && !history.isFetchingNextPage) void history.fetchNextPage();
         }}

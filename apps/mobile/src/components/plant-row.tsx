@@ -2,6 +2,7 @@ import { Link, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Text, View } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Animated, { useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
 
 import { Image } from '@/components/image';
 import { api, ensureOk } from '@/lib/api';
@@ -43,14 +44,8 @@ export function PlantRow({ item }: { item: HistoryItem }) {
       friction={2}
       rightThreshold={40}
       overshootRight={false}
-      renderRightActions={() => (
-        <Pressable
-          accessibilityRole="button"
-          onPress={deleteItem}
-          className="w-24 items-center justify-center bg-danger active:opacity-80"
-        >
-          <Text className="text-[15px] font-semibold text-white">{t('history.delete')}</Text>
-        </Pressable>
+      renderRightActions={(progress) => (
+        <DeleteAction progress={progress} label={t('history.delete')} onPress={deleteItem} />
       )}
     >
       <Link href={{ pathname: '/result', params: { id: item.id } }} asChild>
@@ -93,5 +88,33 @@ export function PlantRow({ item }: { item: HistoryItem }) {
         </Link.Menu>
       </Link>
     </ReanimatedSwipeable>
+  );
+}
+
+/**
+ * The red Delete button revealed by swiping. Hidden while the row rests, so it can't show through
+ * the row's rounded corners when iOS lifts the row for its context menu.
+ */
+function DeleteAction({
+  progress,
+  label,
+  onPress,
+}: {
+  progress: SharedValue<number>;
+  label: string;
+  onPress: () => void;
+}) {
+  const style = useAnimatedStyle(() => ({ opacity: progress.value > 0.01 ? 1 : 0 }));
+
+  return (
+    <Animated.View style={style}>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onPress}
+        className="h-full w-24 items-center justify-center bg-danger active:opacity-80"
+      >
+        <Text className="text-[15px] font-semibold text-white">{label}</Text>
+      </Pressable>
+    </Animated.View>
   );
 }

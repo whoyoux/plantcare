@@ -27,7 +27,7 @@ export default function IdentifyScreen() {
   return (
     <ScrollView
       className="flex-1 bg-background"
-      contentContainerClassName="gap-6 px-4 pb-32 pt-2"
+      contentContainerClassName="gap-6 px-4 pb-8 pt-2"
       contentInsetAdjustmentBehavior="automatic"
     >
       <CameraCard onChooseFromLibrary={() => void chooseFromLibrary()} />
