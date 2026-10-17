@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1000" viewBox="0 0 1500 1000">
+<defs>
+<!-- shared pot with face -->
+<g id="pot">
+  <path d="M28 54 H72 L67 86 C66 88 64 89 61 89 H39 C36 89 34 88 33 86Z" fill="#C8664A"/>
+  <rect x="24" y="50" width="52" height="9" rx="4" fill="#D9805F"/>
+  <circle cx="41" cy="70" r="2.8" fill="#3A1D14"/><circle cx="59" cy="70" r="2.8" fill="#3A1D14"/>
+  <path d="M45 77 Q50 81 55 77" stroke="#3A1D14" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+</g>
+
+<!-- K: mascot pot inside the arched window -->
+<g id="K-art">
+  <path d="M22 90 V42 A28 28 0 0 1 78 42 V90Z" fill="#F4EEE2"/>
+  <g transform="translate(50 60) scale(0.74) translate(-50 -60)">
+    <path d="M50 50 V30" stroke="#1F5C3A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M50 38 C39 40 31 32 31 22 C42 20 50 28 50 38Z" fill="#3E9A64"/>
+    <path d="M50 33 C60 35 69 29 71 18 C60 16 51 23 50 33Z" fill="#2E7D4F"/>
+    <use href="#pot"/>
+  </g>
+</g>
+<g id="K-light"><rect width="100" height="100" rx="22" fill="#2E7D4F"/><use href="#K-art"/></g>
+<g id="K-dark"><rect width="100" height="100" rx="22" fill="#0B140E"/><use href="#K-art"/></g>
+
+<!-- L: mascot with one big monstera leaf -->
+<g id="L-art">
+  <path d="M50 52 V40" stroke="#1F5C3A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M50 44 C31 44 20 33 21 18 C30 10 43 12 50 18 C57 12 70 10 79 18 C80 33 69 44 50 44Z" fill="#2E7D4F"/>
+  <path d="M50 20 V42 M24 22 L36 28 M22 32 L35 33 M76 22 L64 28 M78 32 L65 33" stroke="#F4EEE2" stroke-width="2.6" stroke-linecap="round"/>
+  <use href="#pot"/>
+</g>
+<g id="L-light"><rect width="100" height="100" rx="22" fill="#F4EEE2"/><use href="#L-art"/></g>
+<g id="L-dark"><rect width="100" height="100" rx="22" fill="#14201A"/><g><path d="M50 52 V40" stroke="#1F5C3A" stroke-width="4" stroke-linecap="round"/><path d="M50 44 C31 44 20 33 21 18 C30 10 43 12 50 18 C57 12 70 10 79 18 C80 33 69 44 50 44Z" fill="#3E9A64"/><path d="M50 20 V42 M24 22 L36 28 M22 32 L35 33 M76 22 L64 28 M78 32 L65 33" stroke="#14201A" stroke-width="2.6" stroke-linecap="round"/><use href="#pot"/></g></g>
+
+<!-- M: mascot winking, framed by viewfinder corners (identify) -->
+<g id="M-art">
+  <g fill="none" stroke-width="4.5" stroke-linecap="round"><path d="M14 30V14h16M70 14h16v16M86 70v16H70M30 86H14V70"/></g>
+  <g stroke="none" transform="translate(50 54) scale(0.8) translate(-50 -54)">
+    <path d="M50 50 V32" style="stroke:#1F5C3A" stroke-width="4" stroke-linecap="round"/>
+    <path d="M50 40 C39 42 31 34 31 24 C42 22 50 30 50 40Z" fill="#3E9A64"/>
+    <path d="M50 35 C60 37 69 31 71 20 C60 18 51 25 50 35Z" fill="#2E7D4F"/>
+    <path d="M28 54 H72 L67 86 C66 88 64 89 61 89 H39 C36 89 34 88 33 86Z" fill="#C8664A"/>
+    <rect x="24" y="50" width="52" height="9" rx="4" fill="#D9805F"/>
+    <path d="M38 70 Q41 67 44 70" style="stroke:#3A1D14" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <circle cx="59" cy="70" r="2.8" fill="#3A1D14"/>
+    <path d="M44 77 Q50 82 56 77" style="stroke:#3A1D14" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+  </g>
+</g>
+<g id="M-light"><rect width="100" height="100" rx="22" fill="#F4EEE2"/><g stroke="#2E7D4F"><use href="#M-art"/></g></g>
+<g id="M-dark"><rect width="100" height="100" rx="22" fill="#14201A"/><g stroke="#74D19A"><use href="#M-art"/></g></g>
+
+<!-- N: arched window, sun and monstera, terracotta wall -->
+<g id="N-art">
+  <path d="M24 88 V44 A26 26 0 0 1 76 44 V88Z" fill="#F4EEE2"/>
+  <circle cx="62" cy="36" r="7" fill="#F2B84B"/>
+  <path d="M50 88 V62" stroke="#1F5C3A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M50 66 C35 67 28 58 30 47 C40 44 50 52 50 66Z" fill="#2E7D4F"/>
+  <path d="M50 60 C62 61 70 53 68 42 C58 40 50 47 50 60Z" fill="#3E9A64"/>
+  <path d="M33 52 L42 56 M64 47 L56 52" stroke="#F4EEE2" stroke-width="2" stroke-linecap="round"/>
+  <path d="M36 88 H64 L61 76 H39Z" fill="#9C4A34"/>
+</g>
+<g id="N-light"><rect width="100" height="100" rx="22" fill="#C8664A"/><use href="#N-art"/></g>
+<g id="N-dark"><rect width="100" height="100" rx="22" fill="#0B140E"/><use href="#N-art"/></g>
+
+<!-- O: plant growing out of the arch (breaks the frame) -->
+<g id="O-art">
+  <path d="M28 88 V50 A22 22 0 0 1 72 50 V88Z" fill="#F4EEE2"/>
+  <path d="M50 88 V34" stroke="#1F5C3A" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M50 56 C36 58 24 50 20 38 C34 34 46 42 50 56Z" fill="#3E9A64"/>
+  <path d="M50 46 C64 48 76 40 80 28 C66 24 54 32 50 46Z" fill="#2E7D4F"/>
+  <path d="M50 34 C45 27 45 18 50 11 C55 18 55 27 50 34Z" fill="#3E9A64"/>
+  <path d="M38 88 H62 L60 78 H40Z" fill="#C8664A"/>
+</g>
+<g id="O-light"><rect width="100" height="100" rx="22" fill="#1F5C3A"/><use href="#O-art"/></g>
+<g id="O-dark"><rect width="100" height="100" rx="22" fill="#0B140E"/><use href="#O-art"/></g>
+
+<!-- P: cactus mascot -->
+<g id="P-art">
+  <path d="M40 54 V30 C40 22 60 22 60 30 V54Z" fill="#3E9A64"/>
+  <path d="M40 44 H33 C29 44 28 41 28 38 V34" stroke="#3E9A64" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M60 40 H67 C71 40 72 37 72 34 V30" stroke="#3E9A64" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M50 26 V52" stroke="#2E7D4F" stroke-width="1.6"/>
+  <circle cx="50" cy="20" r="4" fill="#E86A8A"/>
+  <use href="#pot"/>
+</g>
+<g id="P-light"><rect width="100" height="100" rx="22" fill="#F4EEE2"/><use href="#P-art"/></g>
+<g id="P-dark"><rect width="100" height="100" rx="22" fill="#14201A"/><use href="#P-art"/></g>
+</defs>
+<rect width="1500" height="1000" fill="#ffffff"/>
+<g font-family="-apple-system, Helvetica, Arial, sans-serif" fill="#14201A">
+<text x="60" y="80" font-size="40" font-weight="700">PlantCare: runda 3 (w stylu H i J)</text>
+<text x="60" y="122" font-size="22" fill="#5A675F">Jasna i ciemna wersja, na dole mały rozmiar</text>
+</g>
+<g font-family="-apple-system, Helvetica, Arial, sans-serif" fill="#14201A">
+<g transform="translate(40 170)"><use href="#K-light" transform="scale(2)"/><use href="#K-dark" transform="translate(0 220) scale(2)"/><use href="#K-light" transform="translate(0 440) scale(0.6)"/><use href="#K-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="30" font-weight="700">K</text><text x="30" y="560" font-size="20">Kiełek w oknie</text></g>
+<g transform="translate(285 170)"><use href="#L-light" transform="scale(2)"/><use href="#L-dark" transform="translate(0 220) scale(2)"/><use href="#L-light" transform="translate(0 440) scale(0.6)"/><use href="#L-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="30" font-weight="700">L</text><text x="30" y="560" font-size="20">Doniczka z monsterą</text></g>
+<g transform="translate(530 170)"><use href="#M-light" transform="scale(2)"/><use href="#M-dark" transform="translate(0 220) scale(2)"/><use href="#M-light" transform="translate(0 440) scale(0.6)"/><use href="#M-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="30" font-weight="700">M</text><text x="30" y="560" font-size="20">Kiełek w kadrze</text></g>
+<g transform="translate(775 170)"><use href="#N-light" transform="scale(2)"/><use href="#N-dark" transform="translate(0 220) scale(2)"/><use href="#N-light" transform="translate(0 440) scale(0.6)"/><use href="#N-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="30" font-weight="700">N</text><text x="30" y="560" font-size="20">Okno ze słońcem</text></g>
+<g transform="translate(1020 170)"><use href="#O-light" transform="scale(2)"/><use href="#O-dark" transform="translate(0 220) scale(2)"/><use href="#O-light" transform="translate(0 440) scale(0.6)"/><use href="#O-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="30" font-weight="700">O</text><text x="30" y="560" font-size="20">Rośnie poza okno</text></g>
+<g transform="translate(1265 170)"><use href="#P-light" transform="scale(2)"/><use href="#P-dark" transform="translate(0 220) scale(2)"/><use href="#P-light" transform="translate(0 440) scale(0.6)"/><use href="#P-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="30" font-weight="700">P</text><text x="30" y="560" font-size="20">Kaktus</text></g>
+</g>
+</svg>

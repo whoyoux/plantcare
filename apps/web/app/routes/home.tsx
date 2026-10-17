@@ -80,7 +80,7 @@ function SpecimenPhone({ lang }: { lang: 'pl' | 'en' }) {
     <div className="mx-auto w-full max-w-[320px] rounded-[48px] border-[10px] border-foreground/90 bg-background p-4 shadow-2xl shadow-primary/15">
       <div className="relative mx-auto my-4 flex size-44 items-center justify-center">
         <Viewfinder />
-        <img src="/sprout.webp" alt="" width={240} height={240} className="size-32" />
+        <img src="/logo.webp" alt="" width={240} height={240} className="size-32" />
       </div>
       <Card className="gap-4 py-5">
         <CardContent className="flex flex-col gap-1 px-5">

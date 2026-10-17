@@ -6,7 +6,6 @@ import { ActivityIndicator, Alert, Pressable, Text, View, useColorScheme } from 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Image } from '@/components/image';
-import { Viewfinder } from '@/components/viewfinder';
 import { PRIVACY_URL, TERMS_URL } from '@/lib/legal';
 import { availableProviders, signIn, type Provider } from '@/lib/sign-in';
 
@@ -32,10 +31,12 @@ export default function SignInScreen() {
   return (
     <View className="flex-1 bg-background px-6" style={{ paddingTop: insets.top, paddingBottom: insets.bottom + 8 }}>
       <View className="flex-1 items-center justify-center gap-5">
-        <View className="size-40 items-center justify-center">
-          <Viewfinder size={30} />
-          <Image source={require('@/assets/icons/splash.png')} className="size-28" contentFit="contain" />
-        </View>
+        <Image
+          source={require('@/assets/icons/splash.png')}
+          className="size-40"
+          contentFit="contain"
+          accessibilityIgnoresInvertColors
+        />
         <Text className="font-rounded text-[38px] font-extrabold tracking-tight text-foreground">PlantCare</Text>
         <Text className="max-w-[280px] text-center text-[17px] leading-6 text-muted">{t('signIn.pitch')}</Text>
 

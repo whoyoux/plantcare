@@ -148,10 +148,7 @@ function PermissionCard({
 
   return (
     <View className="items-center gap-4 rounded-[32px] bg-card px-6 py-8">
-      <View className="size-32 items-center justify-center">
-        <Viewfinder size={26} />
-        <Image source={require('@/assets/icons/splash.png')} className="size-20" contentFit="contain" />
-      </View>
+      <Image source={require('@/assets/icons/splash.png')} className="size-28" contentFit="contain" />
       <Text className="text-center font-rounded text-[22px] font-bold text-foreground">
         {t('identify.cameraTitle')}
       </Text>

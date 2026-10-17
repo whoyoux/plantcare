@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1000" viewBox="0 0 1500 1000">
+<defs>
+<!-- F: Monstera leaf (bold silhouette, splits and holes) -->
+<g id="F-body">
+  <path d="M50 88 C29 82 14 66 14 46 C14 27 28 14 45 16 C48 17 50 21 50 25 C50 21 52 17 55 16 C72 14 86 27 86 46 C86 66 71 82 50 88Z"/>
+</g>
+<g id="F-cuts" stroke-linecap="round" fill="none">
+  <path d="M50 27 L50 80" stroke-width="2.4"/>
+  <path d="M15 40 L33 45 M17 58 L36 59 M25 73 L40 69 M85 40 L67 45 M83 58 L64 59 M75 73 L60 69" stroke-width="4.5"/>
+</g>
+<g id="F-holes"><ellipse cx="40" cy="36" rx="3" ry="4.5"/><ellipse cx="60" cy="36" rx="3" ry="4.5"/><ellipse cx="44" cy="52" rx="2.6" ry="3.8"/><ellipse cx="56" cy="52" rx="2.6" ry="3.8"/></g>
+<g id="F-light"><rect width="100" height="100" rx="22" fill="#F4EEE2"/><g transform="translate(50 52) scale(0.86) translate(-50 -52)"><use href="#F-body" fill="#1F5C3A"/><use href="#F-cuts" stroke="#F4EEE2"/><use href="#F-holes" fill="#F4EEE2"/></g></g>
+<g id="F-dark"><rect width="100" height="100" rx="22" fill="#0B140E"/><g transform="translate(50 52) scale(0.86) translate(-50 -52)"><use href="#F-body" fill="#74D19A"/><use href="#F-cuts" stroke="#0B140E"/><use href="#F-holes" fill="#0B140E"/></g></g>
+
+<!-- G: Magnifier whose lens is leaf venation -->
+<g id="G-art">
+  <circle cx="44" cy="43" r="25" fill="none" stroke-width="8"/>
+  <path d="M62 61 L80 79" stroke-width="10" stroke-linecap="round"/>
+</g>
+<g id="G-veins" fill="none" stroke-linecap="round" stroke-width="3"><path d="M30 57 L58 29"/><path d="M38 49 L33 37 M45 42 L41 30 M38 49 L50 53 M45 42 L56 46"/></g>
+<g id="G-light"><rect width="100" height="100" rx="22" fill="#E7F1E9"/><use href="#G-art" stroke="#1F5C3A"/><use href="#G-veins" stroke="#3E9A64"/></g>
+<g id="G-dark"><rect width="100" height="100" rx="22" fill="#0B140E"/><use href="#G-art" stroke="#74D19A"/><use href="#G-veins" stroke="#4FB27A"/></g>
+
+<!-- H: Sprout mascot in a terracotta pot -->
+<g id="H-art">
+  <path d="M50 52 C50 42 50 36 50 30" stroke="#1F5C3A" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M50 36 C38 38 30 30 30 20 C42 18 50 26 50 36Z" fill="#3E9A64"/>
+  <path d="M50 32 C60 34 70 28 72 16 C60 14 51 22 50 32Z" fill="#2E7D4F"/>
+  <path d="M26 50 H74 L69 84 C68 87 66 88 63 88 H37 C34 88 32 87 31 84Z" fill="#C8664A"/>
+  <rect x="22" y="46" width="56" height="10" rx="4" fill="#D9805F"/>
+  <circle cx="41" cy="68" r="3" fill="#3A1D14"/><circle cx="59" cy="68" r="3" fill="#3A1D14"/>
+  <path d="M45 75 Q50 79 55 75" stroke="#3A1D14" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+</g>
+<g id="H-light"><rect width="100" height="100" rx="22" fill="#F4EEE2"/><use href="#H-art"/></g>
+<g id="H-dark"><rect width="100" height="100" rx="22" fill="#14201A"/><use href="#H-art"/></g>
+
+<!-- I: Leaf half solid, half scan lines -->
+<clipPath id="I-left"><rect x="0" y="0" width="50" height="100"/></clipPath>
+<clipPath id="I-right"><rect x="50" y="0" width="50" height="100"/></clipPath>
+<path id="I-leaf" d="M50 14 C70 26 78 44 72 62 C67 76 58 84 50 88 C42 84 33 76 28 62 C22 44 30 26 50 14Z"/>
+<g id="I-lines"><rect x="50" y="20" width="40" height="4"/><rect x="50" y="29" width="40" height="4"/><rect x="50" y="38" width="40" height="4"/><rect x="50" y="47" width="40" height="4"/><rect x="50" y="56" width="40" height="4"/><rect x="50" y="65" width="40" height="4"/><rect x="50" y="74" width="40" height="4"/><rect x="50" y="83" width="40" height="4"/></g>
+<clipPath id="I-leafclip"><use href="#I-leaf"/></clipPath>
+<g id="I-light"><rect width="100" height="100" rx="22" fill="#103B26"/><use href="#I-leaf" fill="#8BE0AA" clip-path="url(#I-left)"/><g clip-path="url(#I-leafclip)" fill="#8BE0AA"><use href="#I-lines"/></g><path d="M50 18 V86" stroke="#103B26" stroke-width="2"/></g>
+<g id="I-dark"><rect width="100" height="100" rx="22" fill="#0B140E"/><use href="#I-leaf" fill="#74D19A" clip-path="url(#I-left)"/><g clip-path="url(#I-leafclip)" fill="#74D19A"><use href="#I-lines"/></g><path d="M50 18 V86" stroke="#0B140E" stroke-width="2"/></g>
+
+<!-- J: Arched window with a houseplant -->
+<g id="J-art">
+  <path d="M26 86 V44 A24 24 0 0 1 74 44 V86Z" fill="#F4EEE2"/>
+  <path d="M50 86 V58" stroke="#1F5C3A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M50 64 C40 64 33 56 34 46 C44 46 50 54 50 64Z" fill="#2E7D4F"/>
+  <path d="M50 58 C60 58 67 50 66 40 C56 40 50 48 50 58Z" fill="#3E9A64"/>
+  <path d="M50 50 C46 44 46 36 50 30 C54 36 54 44 50 50Z" fill="#1F5C3A"/>
+  <path d="M38 86 H62 L60 76 H40Z" fill="#C8664A"/>
+</g>
+<g id="J-light"><rect width="100" height="100" rx="22" fill="#2E7D4F"/><use href="#J-art"/></g>
+<g id="J-dark"><rect width="100" height="100" rx="22" fill="#0B140E"/><use href="#J-art"/></g>
+</defs>
+<rect width="1500" height="1000" fill="#ffffff"/>
+<g font-family="-apple-system, Helvetica, Arial, sans-serif" fill="#14201A">
+<text x="60" y="80" font-size="40" font-weight="700">PlantCare: propozycje ikony, runda 2</text>
+<text x="60" y="122" font-size="22" fill="#5A675F">Jasna i ciemna wersja, na dole mały rozmiar (jak na ekranie głównym iPhone'a)</text>
+</g>
+<g font-family="-apple-system, Helvetica, Arial, sans-serif" fill="#14201A">
+<g transform="translate(60 170)"><use href="#F-light" transform="scale(2)"/><use href="#F-dark" transform="translate(0 220) scale(2)"/><use href="#F-light" transform="translate(0 440) scale(0.6)"/><use href="#F-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="34" font-weight="700">F</text><text x="34" y="560" font-size="22">Liść monstery</text></g>
+<g transform="translate(345 170)"><use href="#G-light" transform="scale(2)"/><use href="#G-dark" transform="translate(0 220) scale(2)"/><use href="#G-light" transform="translate(0 440) scale(0.6)"/><use href="#G-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="34" font-weight="700">G</text><text x="34" y="560" font-size="22">Lupa z żyłkami</text></g>
+<g transform="translate(630 170)"><use href="#H-light" transform="scale(2)"/><use href="#H-dark" transform="translate(0 220) scale(2)"/><use href="#H-light" transform="translate(0 440) scale(0.6)"/><use href="#H-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="34" font-weight="700">H</text><text x="34" y="560" font-size="22">Kiełek w doniczce</text></g>
+<g transform="translate(915 170)"><use href="#I-light" transform="scale(2)"/><use href="#I-dark" transform="translate(0 220) scale(2)"/><use href="#I-light" transform="translate(0 440) scale(0.6)"/><use href="#I-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="34" font-weight="700">I</text><text x="34" y="560" font-size="22">Skanowany liść</text></g>
+<g transform="translate(1200 170)"><use href="#J-light" transform="scale(2)"/><use href="#J-dark" transform="translate(0 220) scale(2)"/><use href="#J-light" transform="translate(0 440) scale(0.6)"/><use href="#J-dark" transform="translate(80 440) scale(0.6)"/><text y="560" font-size="34" font-weight="700">J</text><text x="34" y="560" font-size="22">Roślina w oknie</text></g>
+</g>
+</svg>
