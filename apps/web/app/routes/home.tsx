@@ -64,7 +64,7 @@ export default function Home() {
             <p className="max-w-xl leading-relaxed text-muted-foreground">{t.privacy.body}</p>
           </div>
         </div>
-        <Button asChild variant="outline" className="bg-card">
+        <Button asChild className="shrink-0">
           <Link to={localePath(lang, '/privacy')}>{t.privacy.link}</Link>
         </Button>
       </section>
