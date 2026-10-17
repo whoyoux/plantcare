@@ -1,3 +1,8 @@
+// Hermes (React Native's JS engine) has no Intl.PluralRules, which i18next needs for "1 dzień /
+// 2 dni / 5 dni". The polyfill only installs itself when the engine lacks it.
+import '@formatjs/intl-pluralrules/polyfill.js';
+import '@formatjs/intl-pluralrules/locale-data/en.js';
+import '@formatjs/intl-pluralrules/locale-data/pl.js';
 import { getLocales } from 'expo-localization';
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
