@@ -10,18 +10,19 @@ import type { Sample } from './dataset.ts';
 import { plantId } from './providers/plant-id.ts';
 import { plantnet } from './providers/plantnet.ts';
 import type { Prediction, Provider } from './providers/types.ts';
-import { hybrid, visionModel } from './providers/vision-model.ts';
+import { hybrid, visionModel, type ModelOptions } from './providers/vision-model.ts';
 import { matchesGenus, matchesSpecies, SPECIES } from './species.ts';
 
 /** Vision models to try: fast/cheap tiers from each lab, plus one larger model as a quality ceiling. */
-const MODELS = [
-  'google/gemini-3.8-flash',
-  'google/gemini-3.5-flash-lite',
-  'openai/gpt-5.6-luna',
-  'anthropic/claude-haiku-5.5',
-  'anthropic/claude-sonnet-5.5',
+const MODELS: ModelOptions[] = [
+  { model: 'google/gemini-3.8-flash' },
+  { model: 'google/gemini-3.8-flash', effort: 'low' },
+  { model: 'google/gemini-3.5-flash-lite' },
+  { model: 'openai/gpt-5.6-luna', effort: 'low' },
+  { model: 'anthropic/claude-haiku-5.5' },
+  { model: 'anthropic/claude-sonnet-5.5' },
 ];
-const HYBRID_MODEL = 'google/gemini-3.8-flash';
+const HYBRID_MODEL: ModelOptions = { model: 'google/gemini-3.8-flash', effort: 'low' };
 const CONCURRENCY = 4;
 
 const ROOT = join(import.meta.dirname, '..');

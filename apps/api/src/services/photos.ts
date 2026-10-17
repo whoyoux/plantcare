@@ -17,6 +17,12 @@ export function chunk<T>(items: readonly T[], size: number): T[][] {
 /** Photo storage. The database is the source of truth for which objects exist. */
 export function createPhotos(deps: { db: Database; bucket: R2Bucket }) {
   return {
+    async save(userId: string, photoId: string, photo: Uint8Array) {
+      const key = photoKey(userId, photoId);
+      await deps.bucket.put(key, photo, { httpMetadata: { contentType: 'image/jpeg' } });
+      return key;
+    },
+
     /** Deletes every photo referenced by the user's identifications. */
     async deleteAllForUser(userId: string) {
       const rows = await deps.db

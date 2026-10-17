@@ -1,9 +1,9 @@
 // Downloads a labelled test set from iNaturalist: research-grade observations with an open
 // licence, a few photos per species. Run once: `pnpm --filter @plantcare/ai-eval dataset`.
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { SPECIES } from './species.ts';
+import { SPECIES, type Species } from './species.ts';
 
 const PHOTOS_PER_SPECIES = 2;
 const DATA_DIR = join(import.meta.dirname, '..', 'data');
@@ -16,6 +16,18 @@ type Observation = {
   photos: { id: number; url: string; license_code: string | null; attribution: string }[];
 };
 
+/** iNaturalist sometimes drops connections; retry with a pause. */
+async function get(url: string, attempts = 4): Promise<Response> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fetch(url, { headers: HEADERS });
+    } catch (error) {
+      if (attempt >= attempts) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+    }
+  }
+}
+
 export type Sample = {
   file: string;
   species: string;
@@ -24,32 +36,34 @@ export type Sample = {
   attribution: string;
 };
 
-async function observations(name: string): Promise<Observation[]> {
+async function observations(species: Species): Promise<Observation[]> {
   const params = new URLSearchParams({
-    taxon_name: name,
-    quality_grade: 'research',
+    taxon_name: species.name,
     photos: 'true',
     photo_license: 'cc0,cc-by,cc-by-nc,cc-by-sa',
-    order_by: 'votes',
+    // Recent everyday photos, not the most-voted ones (those skew towards flowers and rarities).
+    order_by: 'created_at',
     per_page: String(PHOTOS_PER_SPECIES * 3),
+    // Potted plants are "captive" on iNaturalist and can't be research grade; require the
+    // community to agree with the ID instead.
+    ...(species.indoor ? { captive: 'true', identifications: 'most_agree' } : { quality_grade: 'research' }),
   });
-  const response = await fetch(`https://api.inaturalist.org/v1/observations?${params.toString()}`, {
-    headers: HEADERS,
-  });
-  if (!response.ok) throw new Error(`iNaturalist ${response.status} for ${name}`);
+  const response = await get(`https://api.inaturalist.org/v1/observations?${params.toString()}`);
+  if (!response.ok) throw new Error(`iNaturalist ${response.status} for ${species.name}`);
   const { results } = (await response.json()) as { results: Observation[] };
   return results;
 }
 
+await rm(PHOTO_DIR, { recursive: true, force: true });
 await mkdir(PHOTO_DIR, { recursive: true });
 const samples: Sample[] = [];
 
 for (const species of SPECIES) {
-  const picked = (await observations(species.name)).filter((o) => o.photos[0]).slice(0, PHOTOS_PER_SPECIES);
+  const picked = (await observations(species)).filter((o) => o.photos[0]).slice(0, PHOTOS_PER_SPECIES);
   for (const observation of picked) {
     const photo = observation.photos[0]!;
     // "large" is 1024 px on the long edge, close to what the app will upload.
-    const response = await fetch(photo.url.replace('/square.', '/large.'), { headers: HEADERS });
+    const response = await get(photo.url.replace('/square.', '/large.'));
     if (!response.ok) continue;
     const file = `${species.name.replace(/\s+/g, '-').toLowerCase()}-${observation.id}.jpg`;
     await writeFile(join(PHOTO_DIR, file), Buffer.from(await response.arrayBuffer()));

@@ -15,7 +15,8 @@ export const identification = pgTable(
     /** Language the model answered in (en | pl); old entries keep their original language. */
     language: text('language').notNull(),
     scientificName: text('scientific_name').notNull(),
-    commonName: text('common_name').notNull(),
+    // Null when the species has no common name in that language.
+    commonName: text('common_name'),
     confidence: real('confidence').notNull(),
     model: text('model').notNull(),
     result: jsonb('result').notNull(),

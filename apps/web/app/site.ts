@@ -6,6 +6,6 @@ export const SITE = {
   controller: '[DO UZUPEŁNIENIA: imię i nazwisko lub nazwa firmy, adres]',
   contactEmail: '[DO UZUPEŁNIENIA: adres e-mail kontaktowy]',
   /** AI model provider that receives photos for identification (decided with POST /v1/identify). */
-  aiProvider: '[DO UZUPEŁNIENIA po wyborze modelu AI]',
-  legalUpdated: '2026-10-16',
+  aiProvider: 'Google Gemini, via OpenRouter, Inc.',
+  legalUpdated: '2026-10-17',
 } as const;

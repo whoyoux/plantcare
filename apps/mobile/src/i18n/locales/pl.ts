@@ -38,7 +38,15 @@ const pl: Translations<typeof en> = {
     watering: 'Podlewanie',
     light: 'Światło',
     temperature: 'Temperatura',
-    sampleNotice: 'Przykładowy wynik. Prawdziwe rozpoznawanie pojawi się w kolejnym kroku.',
+    alternatives: 'To może być też',
+    identifying: 'Rozpoznaję roślinę…',
+    retry: 'Spróbuj ponownie',
+    errors: {
+      NOT_A_PLANT: 'Nie widzę rośliny na tym zdjęciu. Spróbuj z bliska sfotografować liść albo kwiat.',
+      DAILY_LIMIT_REACHED: 'Wykorzystano dzisiejszy limit rozpoznań. Wróć jutro.',
+      RATE_LIMITED: 'Za dużo zdjęć naraz. Poczekaj chwilę i spróbuj ponownie.',
+      generic: 'Coś poszło nie tak. Sprawdź połączenie i spróbuj ponownie.',
+    },
   },
   history: {
     title: 'Historia',

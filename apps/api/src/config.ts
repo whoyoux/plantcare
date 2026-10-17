@@ -22,3 +22,12 @@ export type StageConfig = (typeof STAGES)[keyof typeof STAGES];
 export function stageConfig(stage: string): StageConfig {
   return stage === 'prod' ? STAGES.prod : STAGES.dev;
 }
+
+/**
+ * Vision model for /v1/identify, chosen with tools/ai-eval (accuracy, latency, cost).
+ * Requests go to OpenRouter through Cloudflare AI Gateway.
+ */
+export const IDENTIFY_MODEL = { model: 'google/gemini-3.8-flash', effort: 'low' } as const;
+
+/** Identifications per user in a rolling 24 hours. */
+export const DAILY_IDENTIFICATIONS = 30;

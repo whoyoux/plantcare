@@ -1,0 +1,1 @@
+ALTER TABLE "identification" ALTER COLUMN "common_name" DROP NOT NULL;

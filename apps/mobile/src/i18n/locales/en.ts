@@ -35,7 +35,15 @@ export default {
     watering: 'Watering',
     light: 'Light',
     temperature: 'Temperature',
-    sampleNotice: 'Sample result. Real identification comes in a later step.',
+    alternatives: 'It could also be',
+    identifying: 'Identifying the plant…',
+    retry: 'Try again',
+    errors: {
+      NOT_A_PLANT: 'We couldn’t find a plant in this photo. Try a closer shot of a leaf or flower.',
+      DAILY_LIMIT_REACHED: 'You’ve reached today’s limit of identifications. Come back tomorrow.',
+      RATE_LIMITED: 'Too many photos at once. Wait a minute and try again.',
+      generic: 'Something went wrong. Check your connection and try again.',
+    },
   },
   history: {
     title: 'History',

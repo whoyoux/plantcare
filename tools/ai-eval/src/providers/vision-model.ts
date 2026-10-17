@@ -1,23 +1,19 @@
-import { Identification, identificationJsonSchema } from '@plantcare/shared';
+import { Identification, identificationJsonSchema, identificationPrompt } from '@plantcare/shared';
 
 import { plantnetCandidates } from './plantnet.ts';
 import { EUR_TO_USD, type Candidate, type Provider } from './types.ts';
-
-const SYSTEM_PROMPT = `You identify plants from photos for a plant care app.
-Answer with JSON that matches the schema.
-- scientificName: the accepted binomial without author (genus and species). If only the genus is certain, give the genus alone.
-- commonName: the common name in Polish, or null if there is none.
-- confidence: your calibrated probability (0 to 1) that scientificName is correct.
-- alternatives: up to 3 other plausible species, most likely first.
-- care: short, practical care guidance in Polish for this species (watering, light, temperature).
-If the photo shows no plant, set isPlant to false, the names and care to null and alternatives to [].`;
 
 type ChatResponse = {
   choices: { message: { content: string | null } }[];
   usage?: { cost?: number };
 };
 
-async function complete(apiKey: string, model: string, photo: Buffer, hint?: Candidate[]) {
+export type ModelOptions = {
+  model: string;
+  /** Reasoning effort for thinking models; omit for the model default. */ effort?: 'minimal' | 'low';
+};
+
+async function complete(apiKey: string, { model, effort }: ModelOptions, photo: Buffer, hint?: Candidate[]) {
   const text = hint?.length
     ? `A specialist plant classifier suggests (score 0-1):\n${hint
         .map((c) => `- ${c.scientificName} (${c.confidence.toFixed(2)})`)
@@ -30,7 +26,7 @@ async function complete(apiKey: string, model: string, photo: Buffer, hint?: Can
     body: JSON.stringify({
       model,
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: identificationPrompt('pl') },
         {
           role: 'user',
           content: [
@@ -45,6 +41,7 @@ async function complete(apiKey: string, model: string, photo: Buffer, hint?: Can
       },
       // Only route to providers that honour structured output.
       provider: { require_parameters: true },
+      ...(effort ? { reasoning: { effort } } : {}),
       usage: { include: true },
     }),
   });
@@ -68,23 +65,25 @@ function toCandidates(identification: Identification): Candidate[] {
 }
 
 /** A general vision model with structured output; also writes the Polish name and care guide. */
-export function visionModel(apiKey: string, model: string): Provider {
+const label = ({ model, effort }: ModelOptions) => (effort ? `${model} (${effort})` : model);
+
+export function visionModel(apiKey: string, options: ModelOptions): Provider {
   return {
-    id: model,
+    id: label(options),
     async identify(photo) {
-      const { identification, costUsd } = await complete(apiKey, model, photo);
+      const { identification, costUsd } = await complete(apiKey, options, photo);
       return { candidates: toCandidates(identification), costUsd };
     },
   };
 }
 
 /** Hybrid: Pl@ntNet's top candidates go to the vision model as a hint. */
-export function hybrid(keys: { openRouter: string; plantnet: string }, model: string): Provider {
+export function hybrid(keys: { openRouter: string; plantnet: string }, options: ModelOptions): Provider {
   return {
-    id: `plantnet+${model}`,
+    id: `plantnet + ${label(options)}`,
     async identify(photo) {
       const hint = await plantnetCandidates(keys.plantnet, photo);
-      const { identification, costUsd } = await complete(keys.openRouter, model, photo, hint);
+      const { identification, costUsd } = await complete(keys.openRouter, options, photo, hint);
       return { candidates: toCandidates(identification), costUsd: (costUsd ?? 0) + 0.005 * EUR_TO_USD };
     },
   };

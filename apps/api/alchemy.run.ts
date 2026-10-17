@@ -55,6 +55,32 @@ export const Hyperdrive = Effect.gen(function* () {
 /** Uploaded plant photos; served to the app through signed URLs. */
 export const Photos = Cloudflare.R2.Bucket('Photos');
 
+/**
+ * AI Gateway in front of OpenRouter: request logs, a gateway-wide request cap and a daily spend cap
+ * as a backstop behind the per-user limits in the API.
+ */
+export const AiGateway = Effect.gen(function* () {
+  const { stage } = yield* Alchemy.Stack;
+  return yield* Cloudflare.AI.Gateway('AiGateway', {
+    id: `plantcare-${stage}`,
+    // The OpenRouter key travels with each request (Authorization header) and is never stored in the
+    // gateway, so the gateway itself needs no token.
+    authentication: false,
+    collectLogs: true,
+    logManagement: 10_000,
+    logManagementStrategy: 'DELETE_OLDEST',
+    rateLimitingInterval: 60,
+    rateLimitingLimit: 120,
+    rateLimitingTechnique: 'sliding',
+  });
+});
+
+/** Burst limit for /v1/identify, keyed by user. */
+export const IdentifyRateLimit = Cloudflare.RateLimit('IDENTIFY_RATE_LIMIT', {
+  namespaceId: 1001,
+  simple: { limit: 6, period: 60 },
+});
+
 /** Better Auth signing secret, minted once per stage and kept in Alchemy state. */
 export const AuthSecret = Alchemy.Random('AuthSecret');
 
@@ -63,6 +89,7 @@ const APPLE_TEAM_ID = '73SQTP34GN';
 export const Api = Effect.gen(function* () {
   const { stage } = yield* Alchemy.Stack;
   const authSecret = yield* AuthSecret;
+  const gateway = yield* AiGateway;
   return yield* Cloudflare.Worker('Api', {
     main: './src/index.ts',
     compatibility: { date: '2026-10-01', flags: ['nodejs_compat'] },
@@ -78,6 +105,11 @@ export const Api = Effect.gen(function* () {
       APPLE_TEAM_ID,
       APPLE_KEY_ID: Config.String('APPLE_KEY_ID').pipe(Config.withDefault('')),
       APPLE_PRIVATE_KEY: Config.Redacted('APPLE_PRIVATE_KEY').pipe(Config.withDefault(Redacted.make(''))),
+      // Plant identification: OpenRouter through AI Gateway. The key comes from apps/api/.env.
+      IDENTIFY_RATE_LIMIT: IdentifyRateLimit,
+      AI_GATEWAY_ID: gateway.gatewayId,
+      CLOUDFLARE_ACCOUNT_ID: gateway.accountId,
+      OPENROUTER_API_KEY: Config.Redacted('OPENROUTER_API_KEY'),
     },
   });
 });
