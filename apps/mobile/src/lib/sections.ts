@@ -33,7 +33,7 @@ export function groupByDay<T extends { createdAt: string }>(
       title = name.charAt(0).toUpperCase() + name.slice(1);
     }
 
-    const last = sections.at(-1);
+    const last = sections[sections.length - 1];
     if (last?.key === key) last.data.push(item);
     else sections.push({ key, title, data: [item] });
   }

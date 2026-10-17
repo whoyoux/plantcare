@@ -97,7 +97,7 @@ export function RecentPlants() {
 }
 
 function PlantTile({ item }: { item: HistoryItem }) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   return (
     <Pressable
@@ -116,7 +116,10 @@ function PlantTile({ item }: { item: HistoryItem }) {
           {item.commonName ?? item.scientificName}
         </Text>
         <Text numberOfLines={1} className="text-[13px] text-muted">
-          {relativeDay(item.createdAt, i18n.language)}
+          {relativeDay(item.createdAt, i18n.language, {
+            today: t('history.sections.today'),
+            yesterday: t('history.sections.yesterday'),
+          })}
         </Text>
       </View>
     </Pressable>
