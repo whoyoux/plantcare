@@ -6,7 +6,7 @@
     "dev": "react-router dev",
     "build": "react-router build && cp build/client/404/index.html build/client/404.html",
     "typecheck": "react-router typegen && tsc",
-    "lint": "eslint .",
+    "lint": "react-router typegen && eslint .",
     "deploy:dev": "alchemy deploy --stage dev",
     "deploy:prod": "alchemy deploy --stage prod"
   },
