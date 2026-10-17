@@ -12,48 +12,48 @@
  * shadcn/ui's variables so every component picks it up.
  */
 :root {
-  --background: #f3f6f2;
+  --background: #f2f5f1;
   --foreground: #14201a;
   --card: #ffffff;
   --card-foreground: #14201a;
   --popover: #ffffff;
   --popover-foreground: #14201a;
-  --primary: #2e7a4e;
+  --primary: #2a7148;
   --primary-foreground: #ffffff;
-  --secondary: #e0eee5;
+  --secondary: #e3f0e7;
   --secondary-foreground: #14201a;
   --muted: #e8eee9;
-  --muted-foreground: #5e6b63;
-  --accent: #e0eee5;
+  --muted-foreground: #5a675f;
+  --accent: #e3f0e7;
   --accent-foreground: #14201a;
   --destructive: #c4311f;
-  --border: #dde5df;
-  --input: #dde5df;
-  --ring: #2e7a4e;
+  --border: #cfd9d2;
+  --input: #cfd9d2;
+  --ring: #2a7148;
   --radius: 1rem;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0c110e;
+    --background: #050806;
     --foreground: #eef3ef;
-    --card: #18201b;
+    --card: #1a221d;
     --card-foreground: #eef3ef;
-    --popover: #18201b;
+    --popover: #1a221d;
     --popover-foreground: #eef3ef;
-    --primary: #6fcb93;
-    --primary-foreground: #0d1a12;
-    --secondary: #1b3124;
+    --primary: #74d19a;
+    --primary-foreground: #0b1a10;
+    --secondary: #21402c;
     --secondary-foreground: #eef3ef;
-    --muted: #18201b;
-    --muted-foreground: #93a099;
-    --accent: #1b3124;
+    --muted: #1a221d;
+    --muted-foreground: #9aa7a0;
+    --accent: #21402c;
     --accent-foreground: #eef3ef;
-    --destructive: #ff6b57;
-    --border: #27302a;
-    --input: #27302a;
-    --ring: #6fcb93;
+    --destructive: #ff7a66;
+    --border: #36423b;
+    --input: #36423b;
+    --ring: #74d19a;
     color-scheme: dark;
   }
 }

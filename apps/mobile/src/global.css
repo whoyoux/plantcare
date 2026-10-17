@@ -4,31 +4,36 @@
 /*
  * "Fern" palette: a deep leaf green accent on lightly green-tinted neutrals.
  * `bg-background`, `text-foreground`, `bg-accent`, … come from `--color-*`.
+ *
+ * Contrast (WCAG): text pairs are all ≥ 5:1 in both themes. Surfaces follow iOS's grouped
+ * backgrounds: dark mode is near-black with cards at ~1.24:1 and separators at ~1.55:1, which is
+ * at least as distinct as the system's own (#000 / #1C1C1E / #38383A). Re-check these numbers
+ * when changing a color.
  */
 @layer theme {
   :root {
     @variant light {
-      --color-background: #f3f6f2;
+      --color-background: #f2f5f1;
       --color-card: #ffffff;
       --color-foreground: #14201a;
-      --color-muted: #5e6b63;
-      --color-separator: #dde5df;
-      --color-accent: #2e7a4e;
+      --color-muted: #5a675f;
+      --color-separator: #cfd9d2;
+      --color-accent: #2a7148;
       --color-accent-foreground: #ffffff;
-      --color-accent-soft: #e0eee5;
+      --color-accent-soft: #e3f0e7;
       --color-danger: #c4311f;
     }
 
     @variant dark {
-      --color-background: #0c110e;
-      --color-card: #18201b;
+      --color-background: #050806;
+      --color-card: #1a221d;
       --color-foreground: #eef3ef;
-      --color-muted: #93a099;
-      --color-separator: #27302a;
-      --color-accent: #6fcb93;
-      --color-accent-foreground: #0d1a12;
-      --color-accent-soft: #1b3124;
-      --color-danger: #ff6b57;
+      --color-muted: #9aa7a0;
+      --color-separator: #36423b;
+      --color-accent: #74d19a;
+      --color-accent-foreground: #0b1a10;
+      --color-accent-soft: #21402c;
+      --color-danger: #ff7a66;
     }
   }
 }
