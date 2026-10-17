@@ -83,6 +83,11 @@ export default {
     retry: 'Try again',
   },
   plants: {
+    reminders: 'Watering reminders',
+    remindersTitle: 'Notifications are off',
+    remindersEnable: 'Remind me to water',
+    remindersDisable: 'Stop reminders',
+    openSettings: 'Open Settings',
     title: 'My plants',
     emptyTitle: 'No plants yet',
     emptyDescription: 'Identify a plant and add it here to get watering reminders.',

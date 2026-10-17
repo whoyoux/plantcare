@@ -56,7 +56,15 @@ export function useWaterPlant() {
 export function useUpdatePlant() {
   const invalidate = useInvalidatePlants();
   return useMutation({
-    mutationFn: async ({ id, ...json }: { id: string; name?: string; wateringIntervalDays?: number }) => {
+    mutationFn: async ({
+      id,
+      ...json
+    }: {
+      id: string;
+      name?: string;
+      wateringIntervalDays?: number;
+      remindersEnabled?: boolean;
+    }) => {
       await ensureOk(await api.v1.plants[':id'].$patch({ param: { id }, json }));
     },
     onSuccess: invalidate,

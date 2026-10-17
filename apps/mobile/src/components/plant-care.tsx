@@ -2,11 +2,12 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Linking, Pressable, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Image } from '@/components/image';
 import { daysUntilWatering, useDeletePlant, usePlants, useUpdatePlant, useWaterPlant, type Plant } from '@/lib/plants';
+import { requestReminders } from '@/lib/reminders';
 
 function useAccent() {
   const accent = useCSSVariable('--color-accent');
@@ -34,6 +35,22 @@ export function usePlantActions() {
   const failed = () => Alert.alert(t('plants.failed'));
 
   return {
+    /** Turning reminders on asks for notification permission the first time; off never asks. */
+    async toggleReminders(plant: Plant) {
+      if (plant.remindersEnabled) {
+        update.mutate({ id: plant.id, remindersEnabled: false }, { onError: failed });
+        return;
+      }
+      if (!(await requestReminders())) {
+        Alert.alert(t('plants.remindersTitle'), t('plants.remindersOff'), [
+          { text: t('plants.cancel'), style: 'cancel' },
+          { text: t('plants.openSettings'), onPress: () => void Linking.openSettings() },
+        ]);
+        return;
+      }
+      void Haptics.selectionAsync();
+      update.mutate({ id: plant.id, remindersEnabled: true }, { onError: failed });
+    },
     water(plant: Plant) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       water.mutate(plant.id, { onError: failed });
@@ -100,6 +117,7 @@ export function PlantCareRow({ plant, onLongPress }: { plant: Plant; onLongPress
   const due = useDueLabel()(plant);
   const actions = usePlantActions();
   const needsWater = daysUntilWatering(plant) <= 0;
+  const muted = useCSSVariable('--color-muted');
 
   return (
     <Pressable
@@ -122,6 +140,20 @@ export function PlantCareRow({ plant, onLongPress }: { plant: Plant; onLongPress
           {due.text} · {t('plants.every', { count: plant.wateringIntervalDays })}
         </Text>
       </View>
+      <Pressable
+        accessibilityRole="switch"
+        accessibilityState={{ checked: plant.remindersEnabled }}
+        accessibilityLabel={t('plants.reminders')}
+        onPress={() => void actions.toggleReminders(plant)}
+        hitSlop={8}
+        className="size-11 items-center justify-center rounded-full active:opacity-70"
+      >
+        <SymbolView
+          name={plant.remindersEnabled ? 'bell.fill' : 'bell.slash'}
+          size={19}
+          tintColor={plant.remindersEnabled ? accent : typeof muted === 'string' ? muted : undefined}
+        />
+      </Pressable>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('plants.water')}

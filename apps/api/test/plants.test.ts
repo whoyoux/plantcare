@@ -45,7 +45,8 @@ describe('plants', () => {
 
     const { items } = await (await user.request('/v1/plants')).json<Plants>();
     expect(items).toHaveLength(1);
-    expect(items[0]).toMatchObject({ name: 'Monstera dziurawa', wateringIntervalDays: 8 });
+    // Reminders stay off until the user turns them on.
+    expect(items[0]).toMatchObject({ name: 'Monstera dziurawa', wateringIntervalDays: 8, remindersEnabled: false });
     const next = new Date(items[0]!.nextWateringAt).getTime() - new Date(items[0]!.lastWateredAt).getTime();
     expect(next).toBe(8 * 24 * 60 * 60 * 1000);
 
@@ -85,14 +86,16 @@ describe('plants', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-    expect((await patch(user, { name: 'Moja monstera', wateringIntervalDays: 10 })).status).toBe(204);
+    expect(
+      (await patch(user, { name: 'Moja monstera', wateringIntervalDays: 10, remindersEnabled: true })).status,
+    ).toBe(204);
     expect((await patch(user, { wateringIntervalDays: 0 })).status).toBe(400);
     expect((await patch(user, {})).status).toBe(400);
     expect((await patch(other, { name: 'Hacked' })).status).toBe(404);
     expect((await other.request(`/v1/plants/${id}/water`, { method: 'POST' })).status).toBe(404);
 
     const { items } = await (await user.request('/v1/plants')).json<Plants>();
-    expect(items[0]).toMatchObject({ name: 'Moja monstera', wateringIntervalDays: 10 });
+    expect(items[0]).toMatchObject({ name: 'Moja monstera', wateringIntervalDays: 10, remindersEnabled: true });
     expect(Date.now() - new Date(items[0]!.lastWateredAt).getTime()).toBeLessThan(60_000);
     expect(await (await other.request('/v1/plants')).json()).toEqual({ items: [] });
   });

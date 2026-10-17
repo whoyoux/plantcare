@@ -31,11 +31,13 @@ export async function requestReminders() {
 }
 
 /**
- * Replaces all scheduled reminders with one per day for the next two weeks. A plant is listed on
- * every day from its due date until it is marked as watered, so an overdue plant keeps reminding.
+ * Replaces all scheduled reminders with one per day for the next two weeks, for the plants whose
+ * reminders the user turned on. A plant is listed on every day from its due date until it is
+ * marked as watered, so an overdue plant keeps reminding.
  */
-export async function syncReminders(plants: Plant[], t: TFunction, now = new Date()) {
+export async function syncReminders(allPlants: Plant[], t: TFunction, now = new Date()) {
   await Notifications.cancelAllScheduledNotificationsAsync();
+  const plants = allPlants.filter((plant) => plant.remindersEnabled);
   if (plants.length === 0 || !(await remindersAllowed())) return;
 
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

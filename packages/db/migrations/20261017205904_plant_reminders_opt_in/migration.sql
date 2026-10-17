@@ -1,0 +1,1 @@
+ALTER TABLE "plant" ADD COLUMN "reminders_enabled" boolean DEFAULT false NOT NULL;

@@ -13,7 +13,6 @@ import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
 import { identifyPhoto, type IdentifyResponse } from '@/lib/identify';
 import { useAddPlant } from '@/lib/plants';
-import { requestReminders } from '@/lib/reminders';
 import { shareIdentification } from '@/lib/share';
 import { historyKeys, useDeleteIdentification, useSavedIdentification } from '@/lib/identifications';
 
@@ -137,7 +136,7 @@ function Actions({
   );
 }
 
-/** Adds the plant to My plants (asking for reminder permission the first time), or shows it's there. */
+/** Adds the plant to My plants, or shows it's there. Reminders are turned on separately, per plant. */
 function AddPlantButton({ identificationId, plantId }: { identificationId: string; plantId: string | null }) {
   const { t } = useTranslation();
   const add = useAddPlant();
@@ -161,12 +160,7 @@ function AddPlantButton({ identificationId, plantId }: { identificationId: strin
       label={t('result.addPlant')}
       systemImage="drop.fill"
       disabled={add.isPending}
-      onPress={() =>
-        add.mutate(identificationId, {
-          onSuccess: () => void requestReminders(),
-          onError: () => Alert.alert(t('result.addFailed')),
-        })
-      }
+      onPress={() => add.mutate(identificationId, { onError: () => Alert.alert(t('result.addFailed')) })}
     />
   );
 }

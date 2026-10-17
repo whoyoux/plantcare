@@ -37,6 +37,7 @@ export const plantRoutes = factory
         wateringIntervalDays: row.wateringIntervalDays,
         lastWateredAt: row.lastWateredAt.toISOString(),
         nextWateringAt: new Date(row.lastWateredAt.getTime() + row.wateringIntervalDays * DAY_MS).toISOString(),
+        remindersEnabled: row.remindersEnabled,
         imageUrl: await sign(row),
       })),
     );
@@ -85,7 +86,11 @@ export const plantRoutes = factory
     validate(
       'json',
       z
-        .object({ name: z.string().trim().min(1).max(80).optional(), wateringIntervalDays: Interval.optional() })
+        .object({
+          name: z.string().trim().min(1).max(80).optional(),
+          wateringIntervalDays: Interval.optional(),
+          remindersEnabled: z.boolean().optional(),
+        })
         .refine((body) => Object.keys(body).length > 0),
     ),
     async (c) => {

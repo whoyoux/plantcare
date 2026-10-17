@@ -23,18 +23,20 @@ export default function PlantsScreen() {
   function showActions(plant: Plant) {
     const options = [
       t('plants.water'),
+      plant.remindersEnabled ? t('plants.remindersDisable') : t('plants.remindersEnable'),
       t('plants.changeInterval'),
       t('plants.rename'),
       t('plants.remove'),
       t('plants.cancel'),
     ];
     ActionSheetIOS.showActionSheetWithOptions(
-      { title: plant.name, options, destructiveButtonIndex: 3, cancelButtonIndex: 4 },
+      { title: plant.name, options, destructiveButtonIndex: 4, cancelButtonIndex: 5 },
       (index) => {
         if (index === 0) actions.water(plant);
-        if (index === 1) actions.changeInterval(plant);
-        if (index === 2) actions.rename(plant);
-        if (index === 3) actions.remove(plant);
+        if (index === 1) void actions.toggleReminders(plant);
+        if (index === 2) actions.changeInterval(plant);
+        if (index === 3) actions.rename(plant);
+        if (index === 4) actions.remove(plant);
       },
     );
   }
@@ -50,7 +52,7 @@ export default function PlantsScreen() {
       refreshing={pulling}
       onRefresh={() => void refresh()}
       ListHeaderComponent={
-        remindersAllowed === false && plants.data?.length ? (
+        remindersAllowed === false && plants.data?.some((plant) => plant.remindersEnabled) ? (
           <Pressable onPress={() => void Linking.openSettings()} className="mb-1 rounded-2xl bg-accent-soft px-4 py-3">
             <Text className="text-[14px] leading-5 text-accent">{t('plants.remindersOff')}</Text>
           </Pressable>

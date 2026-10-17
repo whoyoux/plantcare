@@ -88,6 +88,11 @@ const pl: Translations<typeof en> = {
     retry: 'Spróbuj ponownie',
   },
   plants: {
+    reminders: 'Przypomnienia o podlewaniu',
+    remindersTitle: 'Powiadomienia są wyłączone',
+    remindersEnable: 'Przypominaj o podlewaniu',
+    remindersDisable: 'Wyłącz przypomnienia',
+    openSettings: 'Otwórz Ustawienia',
     title: 'Moje rośliny',
     emptyTitle: 'Brak roślin',
     emptyDescription: 'Rozpoznaj roślinę i dodaj ją tutaj, a przypomnimy Ci o podlewaniu.',

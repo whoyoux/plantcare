@@ -1,4 +1,4 @@
-import { check, index, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, check, index, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 import { user } from './auth';
@@ -22,6 +22,8 @@ export const plant = pgTable(
     scientificName: text('scientific_name'),
     wateringIntervalDays: integer('watering_interval_days').notNull(),
     lastWateredAt: timestamp('last_watered_at', { withTimezone: true }).notNull(),
+    /** Watering notifications are opt-in per plant (a plant found on a walk isn't one you water). */
+    remindersEnabled: boolean('reminders_enabled').notNull().default(false),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
