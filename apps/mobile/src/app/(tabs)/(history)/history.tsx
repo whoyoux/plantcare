@@ -34,13 +34,43 @@ export default function HistoryScreen() {
     setPulling(false);
   }
 
+  const searchBar = (
+    <Stack.SearchBar
+      placeholder={t('history.searchPlaceholder')}
+      onChangeText={(event) => setQuery(event.nativeEvent.text)}
+    />
+  );
+
+  // Empty and error states are static screens: an empty list stretched to the screen height
+  // would still scroll by the large title and tab bar insets (and that minimizes the tab bar).
+  if (!history.isPending && items.length === 0) {
+    return (
+      <>
+        {searchBar}
+        <View className="flex-1 bg-background">
+          {history.isError ? (
+            <View className="flex-1 gap-4 px-6">
+              <EmptyState title={t('history.loadFailed')} systemImage="exclamationmark.triangle" />
+              <Button label={t('history.retry')} variant="secondary" onPress={() => void history.refetch()} />
+            </View>
+          ) : search ? (
+            <EmptyState title={t('history.noResultsTitle', { query: search })} systemImage="magnifyingglass" />
+          ) : (
+            <EmptyState
+              title={t('history.emptyTitle')}
+              description={t('history.emptyDescription')}
+              systemImage="leaf"
+            />
+          )}
+        </View>
+      </>
+    );
+  }
+
   // The list must be the screen's first view so iOS collapses the large title and search bar on scroll.
   return (
     <>
-      <Stack.SearchBar
-        placeholder={t('history.searchPlaceholder')}
-        onChangeText={(event) => setQuery(event.nativeEvent.text)}
-      />
+      {searchBar}
       <SectionList
         className="flex-1 bg-background"
         sections={sections}
@@ -53,8 +83,7 @@ export default function HistoryScreen() {
         )}
         stickySectionHeadersEnabled
         contentInsetAdjustmentBehavior="automatic"
-        // Fill the screen only for the empty state; otherwise a short list would still scroll.
-        contentContainerClassName={`pb-8 ${items.length ? '' : 'grow'}`}
+        contentContainerClassName="pb-8"
         onEndReached={() => {
           if (history.hasNextPage && !history.isFetchingNextPage) void history.fetchNextPage();
         }}
@@ -62,24 +91,7 @@ export default function HistoryScreen() {
         refreshing={pulling}
         onRefresh={() => void refresh()}
         ListFooterComponent={history.isFetchingNextPage ? <ActivityIndicator className="py-4" /> : undefined}
-        ListEmptyComponent={
-          history.isPending ? (
-            <ActivityIndicator className="py-10" />
-          ) : history.isError ? (
-            <View className="flex-1 gap-4 px-6 pt-10">
-              <EmptyState title={t('history.loadFailed')} systemImage="exclamationmark.triangle" />
-              <Button label={t('history.retry')} variant="secondary" onPress={() => void history.refetch()} />
-            </View>
-          ) : search ? (
-            <EmptyState title={t('history.noResultsTitle', { query: search })} systemImage="magnifyingglass" />
-          ) : (
-            <EmptyState
-              title={t('history.emptyTitle')}
-              description={t('history.emptyDescription')}
-              systemImage="leaf"
-            />
-          )
-        }
+        ListEmptyComponent={history.isPending ? <ActivityIndicator className="py-10" /> : undefined}
       />
     </>
   );

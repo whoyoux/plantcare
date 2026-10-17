@@ -41,6 +41,16 @@ export default function PlantsScreen() {
     );
   }
 
+  if (plants.isSuccess && plants.data.length === 0) {
+    // A static screen: an empty list stretched to the screen height would still scroll by the
+    // large title and tab bar insets (and that minimizes the tab bar).
+    return (
+      <View className="flex-1 bg-background">
+        <EmptyState title={t('plants.emptyTitle')} description={t('plants.emptyDescription')} systemImage="drop" />
+      </View>
+    );
+  }
+
   return (
     <FlatList
       className="flex-1 bg-background"
@@ -48,8 +58,7 @@ export default function PlantsScreen() {
       keyExtractor={(plant) => plant.id}
       renderItem={({ item }) => <PlantCareRow plant={item} onLongPress={() => showActions(item)} />}
       contentInsetAdjustmentBehavior="automatic"
-      // Fill the screen only for the empty state; otherwise a short list would still scroll.
-      contentContainerClassName={`gap-2.5 px-4 pb-8 pt-2 ${plants.data?.length ? '' : 'grow'}`}
+      contentContainerClassName="gap-2.5 px-4 pb-8 pt-2"
       refreshing={pulling}
       onRefresh={() => void refresh()}
       ListHeaderComponent={
@@ -59,15 +68,7 @@ export default function PlantsScreen() {
           </Pressable>
         ) : undefined
       }
-      ListEmptyComponent={
-        plants.isPending ? (
-          <ActivityIndicator className="py-10" />
-        ) : (
-          <View className="flex-1">
-            <EmptyState title={t('plants.emptyTitle')} description={t('plants.emptyDescription')} systemImage="drop" />
-          </View>
-        )
-      }
+      ListEmptyComponent={plants.isPending ? <ActivityIndicator className="py-10" /> : undefined}
     />
   );
 }
