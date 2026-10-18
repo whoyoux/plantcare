@@ -72,7 +72,7 @@ describe('POST /v1/identify', () => {
     const { id } = await response.json<{ id: string }>();
     const calls = modelCalls(model);
     expect(calls).toHaveLength(1);
-    expect(String(calls[0]![1]?.body).match(/data:image\/jpeg;base64,/g)).toHaveLength(3);
+    expect((calls[0]![1]?.body as string).match(/data:image\/jpeg;base64,/g)).toHaveLength(3);
     expect(await env.PHOTOS.head(photoKey(user.id, id))).not.toBeNull();
     // Still one attempt against the daily allowance.
     const attempts = await db.select().from(schema.identifyAttempt).where(eq(schema.identifyAttempt.userId, user.id));
