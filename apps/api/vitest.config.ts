@@ -20,7 +20,10 @@ export default defineConfig({
               compatibilityFlags: ['nodejs_compat'],
               hyperdrives: { HYPERDRIVE: TEST_DATABASE_URL },
               r2Buckets: ['PHOTOS'],
-              ratelimits: { IDENTIFY_RATE_LIMIT: { namespace_id: '1001', simple: { limit: 6, period: 60 } } },
+              ratelimits: {
+                IDENTIFY_RATE_LIMIT: { namespace_id: '1001', simple: { limit: 6, period: 60 } },
+                IDENTIFY_GLOBAL_RATE_LIMIT: { namespace_id: '1002', simple: { limit: 120, period: 60 } },
+              },
               bindings: {
                 STAGE: 'test',
                 API_URL: 'http://api.test',
@@ -29,10 +32,7 @@ export default defineConfig({
                 APPLE_TEAM_ID: 'TEAM123',
                 APPLE_KEY_ID: '',
                 APPLE_PRIVATE_KEY: '',
-                AI_GATEWAY_ID: 'plantcare-test',
-                CLOUDFLARE_ACCOUNT_ID: 'account',
                 OPENROUTER_API_KEY: 'test-openrouter-key',
-                AI_GATEWAY_TOKEN: '',
               },
             },
           }),

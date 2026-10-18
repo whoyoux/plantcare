@@ -57,16 +57,16 @@ export function urlOf(input: RequestInfo | URL) {
   return input instanceof Request ? input.url : input instanceof URL ? input.href : input;
 }
 
-/** Calls to the model through AI Gateway made by a mocked fetch. */
+/** Calls to the model (OpenRouter) made by a mocked fetch. */
 export function modelCalls(fetch: ReturnType<typeof mockModel>) {
-  return fetch.mock.calls.filter(([input]) => urlOf(input).startsWith('https://gateway.ai.cloudflare.com/'));
+  return fetch.mock.calls.filter(([input]) => urlOf(input).startsWith('https://openrouter.ai/'));
 }
 
-/** Answers model requests to AI Gateway with `result`; every other request goes out as usual. */
+/** Answers model requests to OpenRouter with `result`; every other request goes out as usual. */
 export function mockModel(result: Identification) {
   const realFetch = globalThis.fetch;
   return vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
-    if (urlOf(input).startsWith('https://gateway.ai.cloudflare.com/')) {
+    if (urlOf(input).startsWith('https://openrouter.ai/')) {
       return Promise.resolve(Response.json({ choices: [{ message: { content: JSON.stringify(result) } }] }));
     }
     return realFetch(input, init);

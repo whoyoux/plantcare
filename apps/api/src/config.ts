@@ -25,9 +25,11 @@ export function stageConfig(stage: string): StageConfig {
 
 /**
  * Vision model for /v1/identify, chosen with tools/ai-eval (accuracy, latency, cost).
- * Requests go to OpenRouter through Cloudflare AI Gateway.
+ * Requests go straight to OpenRouter.
  */
 export const IDENTIFY_MODEL = { model: 'google/gemini-3.8-flash', effort: 'low' } as const;
+
+export const OPENROUTER_URL = 'https://openrouter.ai/api/v1';
 
 /** Identifications per user in a rolling 24 hours. */
 export const DAILY_IDENTIFICATIONS = 30;

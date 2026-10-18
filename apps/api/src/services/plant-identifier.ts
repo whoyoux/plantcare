@@ -24,24 +24,14 @@ function parseIdentification(content: string) {
 }
 
 /**
- * Identifies a plant with a vision model. Requests go to OpenRouter through Cloudflare AI Gateway
- * (logs, rate limits and spend caps live there).
+ * Identifies a plant with a vision model through OpenRouter (an OpenAI-compatible API). Limits
+ * live in the API (per user and overall) and on the OpenRouter key (credit limit).
  */
-export function createPlantIdentifier(deps: {
-  baseUrl: string;
-  apiKey: string;
-  /** AI Gateway token, when the gateway requires one. */
-  gatewayToken?: string;
-  config: ModelConfig;
-}) {
+export function createPlantIdentifier(deps: { baseUrl: string; apiKey: string; config: ModelConfig }) {
   async function attempt(photo: Uint8Array, language: Language) {
     const response = await fetch(`${deps.baseUrl}/chat/completions`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${deps.apiKey}`,
-        'Content-Type': 'application/json',
-        ...(deps.gatewayToken ? { 'cf-aig-authorization': `Bearer ${deps.gatewayToken}` } : {}),
-      },
+      headers: { Authorization: `Bearer ${deps.apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: deps.config.model,
         messages: [

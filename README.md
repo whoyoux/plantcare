@@ -6,15 +6,15 @@ iOS app that identifies plants from a photo, explains how to care for them and r
 
 ## What's inside
 
-| Path                                          | What it is                                                                                                                                                                  |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/mobile`                                 | Expo SDK 58 app (Expo Router, native tabs, dev client + CNG), iOS-first                                                                                                     |
-| `apps/api`                                    | Hono API on Cloudflare Workers: Better Auth (Sign in with Apple / Google), Neon Postgres via Hyperdrive, photos in R2, plant identification through AI Gateway → OpenRouter |
-| `apps/web`                                    | Website with legal pages (React Router, pre-rendered, served as Worker static assets)                                                                                       |
-| `packages/db`                                 | Drizzle schema and migrations                                                                                                                                               |
-| `packages/shared`                             | Shared Zod schemas, the identification prompt, languages                                                                                                                    |
-| `packages/eslint-config`, `packages/tsconfig` | Shared tooling config                                                                                                                                                       |
-| `tools/ai-eval`                               | Model and prompt evaluation for plant identification ([results](tools/ai-eval/RESULTS.md))                                                                                  |
+| Path                                          | What it is                                                                                                                                                              |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/mobile`                                 | Expo SDK 58 app (Expo Router, native tabs, dev client + CNG), iOS-first                                                                                                 |
+| `apps/api`                                    | Hono API on Cloudflare Workers: Better Auth (Sign in with Apple / Google), Neon Postgres via Hyperdrive, photos in R2, plant identification through OpenRouter (Gemini) |
+| `apps/web`                                    | Website with legal pages (React Router, pre-rendered, served as Worker static assets)                                                                                   |
+| `packages/db`                                 | Drizzle schema and migrations                                                                                                                                           |
+| `packages/shared`                             | Shared Zod schemas, the identification prompt, languages                                                                                                                |
+| `packages/eslint-config`, `packages/tsconfig` | Shared tooling config                                                                                                                                                   |
+| `tools/ai-eval`                               | Model and prompt evaluation for plant identification ([results](tools/ai-eval/RESULTS.md))                                                                              |
 
 pnpm workspaces + Turborepo, Node 24. Infrastructure is code: [Alchemy](https://alchemy.run) (`alchemy.run.ts` in `apps/api` and `apps/web`).
 
@@ -36,7 +36,7 @@ pnpm --filter @plantcare/web dev      # website
 
 Rebuild the dev client only after adding a native module or changing `app.config.ts`; JS changes reload live. The app variant comes from `APP_VARIANT` (`development` | `preview` | `production`), see `apps/mobile/app.config.ts`.
 
-Secrets live in `apps/api/.env` locally (Apple key, `OPENROUTER_API_KEY`, `AI_GATEWAY_TOKEN`) and in the GitHub environments `dev` and `prod` for CI. They are never committed.
+Secrets live in `apps/api/.env` locally (Apple key, `OPENROUTER_API_KEY`) and in the GitHub environments `dev` and `prod` for CI. They are never committed.
 
 ## Checks
 
@@ -62,4 +62,4 @@ pnpm test
 
 ## Limits and cost safeguards
 
-Per user: 6 identifications a minute and 30 a rolling day. Every model call counts toward these, including photos without a plant. The AI Gateway requires a token, caps requests per minute and has a daily spend cap. The OpenRouter key has its own credit limit. A Cloudflare rate-limiting rule blocks floods on the API paths.
+Per user: 6 identifications a minute and 30 a rolling day. Every model call counts toward these, including photos without a plant. A shared cap limits model calls across all users per minute, and the OpenRouter key has a credit limit (auto top-up off). A Cloudflare rate-limiting rule blocks floods on the API paths.

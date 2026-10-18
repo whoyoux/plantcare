@@ -1,6 +1,6 @@
 name: Deploy
 
-# Deploys the API (Worker, Neon migrations, R2, AI Gateway) and the website for one stage.
+# Deploys the API (Worker, Neon migrations, R2) and the website for one stage.
 on:
   workflow_call:
     inputs:
@@ -24,7 +24,6 @@ jobs:
       APPLE_KEY_ID: ${{ secrets.APPLE_KEY_ID }}
       APPLE_PRIVATE_KEY: ${{ secrets.APPLE_PRIVATE_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      AI_GATEWAY_TOKEN: ${{ secrets.AI_GATEWAY_TOKEN }}
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6

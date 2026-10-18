@@ -22,7 +22,7 @@ function setup(...responses: Response[]) {
   for (const response of responses) fetch.mockResolvedValueOnce(response);
   vi.stubGlobal('fetch', fetch);
   const identifier = createPlantIdentifier({
-    baseUrl: 'https://gateway.example/openrouter/v1',
+    baseUrl: 'https://openrouter.example/api/v1',
     apiKey: 'key',
     config: { model: 'google/gemini-3.8-flash', effort: 'low' },
   });
@@ -40,7 +40,7 @@ describe('createPlantIdentifier', () => {
     await expect(identifier.identify(photo, 'pl')).resolves.toEqual(monstera);
 
     const [url, init] = fetch.mock.calls[0]!;
-    expect(url).toBe('https://gateway.example/openrouter/v1/chat/completions');
+    expect(url).toBe('https://openrouter.example/api/v1/chat/completions');
     const body = JSON.parse(init!.body as string) as {
       model: string;
       reasoning: unknown;
@@ -70,7 +70,7 @@ describe('createPlantIdentifier', () => {
     await expect(identifier.identify(photo, 'en')).rejects.toEqual(new AppError('IDENTIFICATION_FAILED', 502));
   });
 
-  it('fails without retrying when the gateway returns an error', async () => {
+  it('fails without retrying when OpenRouter returns an error', async () => {
     const { fetch, identifier } = setup(new Response('upstream down', { status: 503 }));
     vi.spyOn(console, 'error').mockImplementation(() => {});
     await expect(identifier.identify(photo, 'en')).rejects.toBeInstanceOf(AppError);

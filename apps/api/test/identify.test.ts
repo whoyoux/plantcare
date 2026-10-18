@@ -26,11 +26,9 @@ describe('POST /v1/identify', () => {
     expect(body.language).toBe('pl');
     expect(body.imageUrl).toMatch(`http://api.test/v1/photos/users/${user.id}/${body.id}.jpg?`);
 
-    // The model got the Polish prompt through the stage's AI Gateway.
+    // The model got the Polish prompt, straight from OpenRouter.
     const [url, init] = modelCalls(model)[0]!;
-    expect(urlOf(url)).toBe(
-      'https://gateway.ai.cloudflare.com/v1/account/plantcare-test/openrouter/v1/chat/completions',
-    );
+    expect(urlOf(url)).toBe('https://openrouter.ai/api/v1/chat/completions');
     expect(init?.body).toContain('Polish');
 
     const [row] = await db.select().from(schema.identification).where(eq(schema.identification.id, body.id));

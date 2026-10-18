@@ -2,7 +2,7 @@ import { and, count, eq, gte, lt, schema } from '@plantcare/db';
 import { LANGUAGES } from '@plantcare/shared';
 import { z } from 'zod';
 
-import { DAILY_IDENTIFICATIONS, IDENTIFY_MODEL } from '../../config';
+import { DAILY_IDENTIFICATIONS, IDENTIFY_MODEL, OPENROUTER_URL } from '../../config';
 import { factory } from '../../env';
 import { AppError } from '../../errors';
 import { requireUser } from '../../middleware/require-user';
@@ -42,6 +42,8 @@ export const identifyRoutes = factory
     // including photos without a plant: each one costs the same.
     const { success } = await c.env.IDENTIFY_RATE_LIMIT.limit({ key: user.id });
     if (!success) throw new AppError('RATE_LIMITED', 429);
+    const global = await c.env.IDENTIFY_GLOBAL_RATE_LIMIT.limit({ key: 'all' });
+    if (!global.success) throw new AppError('RATE_LIMITED', 429);
     const since = new Date(Date.now() - DAY_MS);
     const attempts = schema.identifyAttempt;
     const [today] = await c.var.db
@@ -56,9 +58,8 @@ export const identifyRoutes = factory
       .where(and(eq(attempts.userId, user.id), lt(attempts.createdAt, new Date(Date.now() - 2 * DAY_MS))));
 
     const identifier = createPlantIdentifier({
-      baseUrl: `https://gateway.ai.cloudflare.com/v1/${c.env.CLOUDFLARE_ACCOUNT_ID}/${c.env.AI_GATEWAY_ID}/openrouter/v1`,
+      baseUrl: OPENROUTER_URL,
       apiKey: c.env.OPENROUTER_API_KEY,
-      gatewayToken: c.env.AI_GATEWAY_TOKEN,
       config: IDENTIFY_MODEL,
     });
     const result = await identifier.identify(bytes, language);

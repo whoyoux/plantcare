@@ -55,7 +55,7 @@ const privacyPl: LegalDoc = {
     {
       heading: 'Rozpoznawanie przez sztuczną inteligencję',
       blocks: [
-        `Żeby rozpoznać roślinę, wysyłamy zdjęcie do modelu sztucznej inteligencji (${SITE.aiProvider}) przez Cloudflare AI Gateway. Model dostaje tylko zdjęcie i instrukcję, bez Twojego imienia ani adresu e-mail. Wynik może być błędny, więc traktuj go jako wskazówkę.`,
+        `Żeby rozpoznać roślinę, wysyłamy zdjęcie do modelu sztucznej inteligencji (${SITE.aiProvider}) przez OpenRouter. Model dostaje tylko zdjęcie i instrukcję, bez Twojego imienia ani adresu e-mail. Wynik może być błędny, więc traktuj go jako wskazówkę.`,
       ],
     },
     {
@@ -138,7 +138,7 @@ const privacyEn: LegalDoc = {
     {
       heading: 'Identification by artificial intelligence',
       blocks: [
-        `To identify a plant, we send the photo to an AI model (${SITE.aiProvider}) through Cloudflare AI Gateway. The model receives only the photo and an instruction, never your name or email. Results can be wrong, so treat them as guidance.`,
+        `To identify a plant, we send the photo to an AI model (${SITE.aiProvider}) through OpenRouter. The model receives only the photo and an instruction, never your name or email. Results can be wrong, so treat them as guidance.`,
       ],
     },
     {
