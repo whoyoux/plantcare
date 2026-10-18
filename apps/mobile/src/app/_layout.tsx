@@ -39,6 +39,7 @@ export default function RootLayout() {
             {/* The app is for signed-in users only; signing out or deleting the account lands on sign-in. */}
             <Stack.Protected guard={signedIn}>
               <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="camera" options={{ presentation: 'fullScreenModal' }} />
               <Stack.Screen
                 name="result"
                 options={{

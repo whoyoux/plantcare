@@ -2,12 +2,14 @@ import { NativeTabs } from 'expo-router/native-tabs';
 import { useTranslation } from 'react-i18next';
 import { useCSSVariable } from 'uniwind';
 
+import { useQuickActions } from '@/lib/quick-actions';
 import { useReminderSync } from '@/lib/use-reminders';
 
 export default function TabsLayout() {
   const { t } = useTranslation();
   const accent = useCSSVariable('--color-accent');
   useReminderSync();
+  useQuickActions();
 
   return (
     <NativeTabs tintColor={typeof accent === 'string' ? accent : undefined} minimizeBehavior="onScrollDown">
