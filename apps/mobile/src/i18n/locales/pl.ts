@@ -72,7 +72,8 @@ const pl: Translations<typeof en> = {
     dogs: 'Psy',
     people: 'Ludzie',
     toxicity: { safe: 'Bezpieczna', mild: 'Lekko trująca', toxic: 'Trująca', unknown: 'Brak danych' },
-    safetyAdvice: 'Jeśli zwierzę lub dziecko zjadło roślinę, skontaktuj się z weterynarzem albo lekarzem.',
+    safetyAdvice:
+      'Ocenę przygotowała sztuczna inteligencja na podstawie ogólnodostępnej wiedzy, więc może być niepełna lub błędna i nie zastępuje porady specjalisty. Jeśli zwierzę albo dziecko zjadło roślinę, od razu skontaktuj się z weterynarzem lub lekarzem.',
     disclaimer:
       'Rozpoznanie wykonała sztuczna inteligencja, która może się mylić. Traktuj wynik, wskazówki i informacje o toksyczności jako podpowiedź. Nie jedz roślin rozpoznanych w aplikacji.',
     identifying: 'Rozpoznaję roślinę…',

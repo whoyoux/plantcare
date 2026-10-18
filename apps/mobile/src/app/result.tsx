@@ -354,7 +354,10 @@ function Safety({ toxicity }: { toxicity: Toxicity }) {
           </Text>
         )}
       </View>
-      <Text className="px-1 text-[13px] leading-[18px] text-muted">{t('result.safetyAdvice')}</Text>
+      <View className="flex-row gap-2 px-1">
+        <SymbolView name="info.circle" size={15} tintColor={typeof muted === 'string' ? muted : undefined} />
+        <Text className="flex-1 text-[13px] leading-[18px] text-muted">{t('result.safetyAdvice')}</Text>
+      </View>
     </View>
   );
 }

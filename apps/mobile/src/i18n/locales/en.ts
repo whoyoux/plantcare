@@ -65,7 +65,8 @@ export default {
     dogs: 'Dogs',
     people: 'People',
     toxicity: { safe: 'Safe', mild: 'Mildly toxic', toxic: 'Toxic', unknown: 'No data' },
-    safetyAdvice: 'If a pet or child has eaten the plant, contact a vet or doctor.',
+    safetyAdvice:
+      'This assessment was made by AI from general knowledge, so it may be incomplete or wrong and is no substitute for professional advice. If a pet or child has eaten the plant, contact a vet or doctor right away.',
     disclaimer:
       'Identified by AI, which can make mistakes. Treat the result, care tips and toxicity information as guidance. Never eat a plant identified in this app.',
     identifying: 'Identifying the plant…',
