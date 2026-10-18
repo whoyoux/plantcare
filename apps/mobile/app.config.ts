@@ -122,6 +122,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-secure-store',
     // Adds the per-app language picker in iOS Settings.
     ['expo-localization', { supportedLocales: ['en', 'pl'] }],
+    // "Water today" home screen widget; shares the app group above with the app.
+    [
+      'expo-widgets',
+      {
+        groupIdentifier: `group.${bundleIdentifier}`,
+        widgets: [
+          {
+            name: 'Watering',
+            displayName: variant === 'production' ? 'Water today' : `Water today (${variant})`,
+            description: 'Plants that need water today.',
+            ios: {
+              supportedFamilies: ['systemSmall', 'systemMedium'],
+              initialLayout: './src/widgets/watering.tsx',
+            },
+          },
+        ],
+      },
+    ],
     // Watering reminders are local notifications scheduled on the device; no push, so no APNs entitlement.
     ['expo-notifications', { enableRemoteNotifications: false }],
     [

@@ -4,12 +4,14 @@ import { useCSSVariable } from 'uniwind';
 
 import { useQuickActions } from '@/lib/quick-actions';
 import { useReminderSync } from '@/lib/use-reminders';
+import { useWidgetSync } from '@/lib/use-widget';
 
 export default function TabsLayout() {
   const { t } = useTranslation();
   const accent = useCSSVariable('--color-accent');
   useReminderSync();
   useQuickActions();
+  useWidgetSync();
 
   return (
     <NativeTabs tintColor={typeof accent === 'string' ? accent : undefined} minimizeBehavior="onScrollDown">

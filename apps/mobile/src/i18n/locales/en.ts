@@ -16,6 +16,9 @@ export default {
     privacy: 'Privacy Policy',
     failed: "Couldn't sign in. Check your connection and try again.",
   },
+  widget: {
+    noPlants: 'Add plants in PlantCare to see which ones need water here.',
+  },
   identify: {
     dueTitle: 'Water today',
     allWatered: 'All your plants are watered.',

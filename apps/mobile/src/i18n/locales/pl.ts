@@ -19,6 +19,9 @@ const pl: Translations<typeof en> = {
     privacy: 'Politykę prywatności',
     failed: 'Nie udało się zalogować. Sprawdź połączenie i spróbuj ponownie.',
   },
+  widget: {
+    noPlants: 'Dodaj rośliny w PlantCare, a tu zobaczysz, które trzeba podlać.',
+  },
   identify: {
     dueTitle: 'Dziś do podlania',
     allWatered: 'Wszystkie rośliny są podlane.',
