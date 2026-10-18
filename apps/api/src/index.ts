@@ -1,5 +1,3 @@
-import { sql } from '@plantcare/db';
-
 import { factory } from './env';
 import { onError } from './errors';
 import { identificationRoutes } from './features/identifications/routes';
@@ -12,11 +10,10 @@ import { requestContext } from './middleware/context';
 // Composition only: global middleware, auth, feature routes. Logic lives in features/ and services/.
 const app = factory
   .createApp()
-  .use(requestContext)
-  .get('/health', async (c) => {
-    await c.var.db.execute(sql`select 1`);
-    return c.json({ status: 'ok', stage: c.env.STAGE });
-  })
+  // Public and cheap: no database, so flooding it can't wake or exhaust Neon.
+  .get('/health', (c) => c.json({ status: 'ok', stage: c.env.STAGE }))
+  .use('/api/*', requestContext)
+  .use('/v1/*', requestContext)
   // Better Auth: sign-in, session, sign-out, delete-user and the Apple token plugin.
   .on(['GET', 'POST'], '/api/auth/*', (c) => c.var.auth.handler(c.req.raw))
   .route('/v1/me', meRoutes)

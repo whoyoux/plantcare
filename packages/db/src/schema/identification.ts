@@ -1,4 +1,4 @@
-import { index, jsonb, pgTable, real, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { bigserial, index, jsonb, pgTable, real, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 import { user } from './auth';
 
@@ -22,6 +22,22 @@ export const identification = pgTable(
     result: jsonb('result').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
-  // Serves both the history list and the per-user daily limit count.
+  // Serves the history list.
   (table) => [index('identification_user_created_idx').on(table.userId, table.createdAt.desc())],
+);
+
+/**
+ * One call to the identification model, plant or not. The daily limit counts these, so photos
+ * without a plant (which leave no identification) still use up the allowance.
+ */
+export const identifyAttempt = pgTable(
+  'identify_attempt',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [index('identify_attempt_user_created_idx').on(table.userId, table.createdAt)],
 );

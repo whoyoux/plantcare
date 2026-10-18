@@ -32,6 +32,7 @@ export default defineConfig({
                 AI_GATEWAY_ID: 'plantcare-test',
                 CLOUDFLARE_ACCOUNT_ID: 'account',
                 OPENROUTER_API_KEY: 'test-openrouter-key',
+                AI_GATEWAY_TOKEN: '',
               },
             },
           }),

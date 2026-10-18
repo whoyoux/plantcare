@@ -56,16 +56,29 @@ export const Hyperdrive = Effect.gen(function* () {
 export const Photos = Cloudflare.R2.Bucket('Photos');
 
 /**
+ * AI Gateway token (`cf-aig-authorization`), from apps/api/.env or the GitHub environment. With it
+ * set, the gateway only serves our Worker; without it, anyone who learns the gateway URL could use
+ * up its request cap (never our money: the OpenRouter key stays in the Worker).
+ */
+const AiGatewayToken = Config.Redacted('AI_GATEWAY_TOKEN').pipe(Config.withDefault(Redacted.make('')));
+
+/** Daily spend cap per stage, in cents: a backstop far above normal use (~$0.0026 a photo). */
+const DAILY_SPEND_CENTS: Record<string, number> = { prod: 1000, dev: 200 };
+
+/**
  * AI Gateway in front of OpenRouter: request logs, a gateway-wide request cap and a daily spend cap
  * as a backstop behind the per-user limits in the API.
  */
 export const AiGateway = Effect.gen(function* () {
   const { stage } = yield* Alchemy.Stack;
+  const token = yield* AiGatewayToken;
   return yield* Cloudflare.AI.Gateway('AiGateway', {
     id: `plantcare-${stage}`,
-    // The OpenRouter key travels with each request (Authorization header) and is never stored in the
-    // gateway, so the gateway itself needs no token.
-    authentication: false,
+    authentication: Redacted.value(token) !== '',
+    spendLimits: {
+      enabled: true,
+      rules: [{ limit: DAILY_SPEND_CENTS[stage] ?? 200, limitType: 'cost', window: '1 day', technique: 'sliding' }],
+    },
     collectLogs: true,
     logManagement: 10_000,
     logManagementStrategy: 'DELETE_OLDEST',
@@ -115,6 +128,7 @@ export const Api = Effect.gen(function* () {
       AI_GATEWAY_ID: gateway.gatewayId,
       CLOUDFLARE_ACCOUNT_ID: gateway.accountId,
       OPENROUTER_API_KEY: Config.Redacted('OPENROUTER_API_KEY'),
+      AI_GATEWAY_TOKEN: AiGatewayToken,
     },
   });
 });

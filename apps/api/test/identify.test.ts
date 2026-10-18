@@ -66,24 +66,33 @@ describe('POST /v1/identify', () => {
   });
 
   it('enforces the daily allowance', async () => {
-    mockModel(monstera);
+    const model = mockModel(monstera);
     const user = await signedInUser();
-    await db.insert(schema.identification).values(
-      Array.from({ length: 30 }, () => ({
-        userId: user.id,
-        imageKey: 'users/x/y.jpg',
-        language: 'pl',
-        scientificName: 'Monstera deliciosa',
-        commonName: null,
-        confidence: 0.9,
-        model: 'test',
-        result: monstera,
-      })),
-    );
+    await db.insert(schema.identifyAttempt).values(Array.from({ length: 30 }, () => ({ userId: user.id })));
 
     const response = await user.request('/v1/identify', { method: 'POST', body: identifyForm() });
     expect(response.status).toBe(429);
     expect(await response.json()).toEqual({ code: 'DAILY_LIMIT_REACHED' });
+    expect(modelCalls(model)).toEqual([]);
+  });
+
+  it('counts photos without a plant toward the allowance', async () => {
+    mockModel({ ...monstera, isPlant: false, scientificName: null, commonName: null, care: null, alternatives: [] });
+    const user = await signedInUser();
+
+    await user.request('/v1/identify', { method: 'POST', body: identifyForm() });
+    const rows = await db.select().from(schema.identifyAttempt).where(eq(schema.identifyAttempt.userId, user.id));
+    expect(rows).toHaveLength(1);
+  });
+
+  it('rejects oversized uploads before reading them', async () => {
+    const model = mockModel(monstera);
+    const user = await signedInUser();
+    const big = new File([new Uint8Array(4 * 1024 * 1024).fill(0xff)], 'photo.jpg', { type: 'image/jpeg' });
+
+    const response = await user.request('/v1/identify', { method: 'POST', body: identifyForm(big) });
+    expect(response.status).toBe(413);
+    expect(modelCalls(model)).toEqual([]);
   });
 
   it('limits bursts per user', async () => {

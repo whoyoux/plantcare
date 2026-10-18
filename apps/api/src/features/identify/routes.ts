@@ -1,4 +1,4 @@
-import { and, count, eq, gte, schema } from '@plantcare/db';
+import { and, count, eq, gte, lt, schema } from '@plantcare/db';
 import { LANGUAGES } from '@plantcare/shared';
 import { z } from 'zod';
 
@@ -10,6 +10,7 @@ import { createPlantIdentifier } from '../../services/plant-identifier';
 
 /** The app downsizes photos to ~1024 px before upload; anything bigger is not from the app. */
 const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const form = z.object({
   photo: z.instanceof(File),
@@ -26,6 +27,10 @@ export const identifyRoutes = factory
   .post('/', async (c) => {
     const user = c.var.user;
 
+    // Refuse oversized uploads before reading them (the multipart envelope adds a little).
+    if (Number(c.req.header('content-length') ?? 0) > MAX_PHOTO_BYTES + 64 * 1024) {
+      throw new AppError('PHOTO_TOO_LARGE', 413);
+    }
     const parsed = form.safeParse(await c.req.parseBody());
     if (!parsed.success) throw new AppError('INVALID_REQUEST', 400);
     const { photo, language } = parsed.data;
@@ -33,19 +38,27 @@ export const identifyRoutes = factory
     const bytes = new Uint8Array(await photo.arrayBuffer());
     if (!isJpeg(bytes)) throw new AppError('INVALID_PHOTO', 415);
 
-    // Burst protection per user, then the daily allowance (rolling 24 h).
+    // Burst protection per user, then the daily allowance (rolling 24 h). Every model call counts,
+    // including photos without a plant: each one costs the same.
     const { success } = await c.env.IDENTIFY_RATE_LIMIT.limit({ key: user.id });
     if (!success) throw new AppError('RATE_LIMITED', 429);
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const since = new Date(Date.now() - DAY_MS);
+    const attempts = schema.identifyAttempt;
     const [today] = await c.var.db
       .select({ value: count() })
-      .from(schema.identification)
-      .where(and(eq(schema.identification.userId, user.id), gte(schema.identification.createdAt, since)));
+      .from(attempts)
+      .where(and(eq(attempts.userId, user.id), gte(attempts.createdAt, since)));
     if ((today?.value ?? 0) >= DAILY_IDENTIFICATIONS) throw new AppError('DAILY_LIMIT_REACHED', 429);
+    await c.var.db.insert(attempts).values({ userId: user.id });
+    // Only the last 24 h matter; drop this user's older attempts so the table stays small.
+    await c.var.db
+      .delete(attempts)
+      .where(and(eq(attempts.userId, user.id), lt(attempts.createdAt, new Date(Date.now() - 2 * DAY_MS))));
 
     const identifier = createPlantIdentifier({
       baseUrl: `https://gateway.ai.cloudflare.com/v1/${c.env.CLOUDFLARE_ACCOUNT_ID}/${c.env.AI_GATEWAY_ID}/openrouter/v1`,
       apiKey: c.env.OPENROUTER_API_KEY,
+      gatewayToken: c.env.AI_GATEWAY_TOKEN,
       config: IDENTIFY_MODEL,
     });
     const result = await identifier.identify(bytes, language);

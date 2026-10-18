@@ -44,6 +44,10 @@ export function createAuth(env: ApiEnv, db: Database) {
         },
       },
     },
+    // Per isolate (in memory), so a backstop only; the zone's WAF rate limit does the heavy lifting.
+    // Workers don't set NODE_ENV, so turn it on explicitly, keyed by the real client IP.
+    rateLimit: { enabled: true, window: 60, max: 100 },
+    advanced: { ipAddress: { ipAddressHeaders: ['cf-connecting-ip'] } },
     plugins: [expo(), appleTokens(apple)],
   });
 }
