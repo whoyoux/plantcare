@@ -87,7 +87,11 @@ export function visionModel(apiKey: string, options: ModelOptions): Provider {
     id: label(options),
     async identify(photo) {
       const { identification, costUsd } = await complete(apiKey, options, photo);
-      return { candidates: toCandidates(identification), costUsd };
+      return {
+        candidates: toCandidates(identification),
+        costUsd,
+        ...('toxicity' in identification ? { toxicity: identification.toxicity } : {}),
+      };
     },
   };
 }

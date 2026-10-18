@@ -1,7 +1,7 @@
 import { Identification, identificationPrompt, type Language } from '@plantcare/shared';
 import { z } from 'zod';
 
-/** The first production prompt (Oct 2026), kept to measure changes against. No analysis step. */
+/** The first production prompt (Oct 2026), kept to measure changes against. No analysis or toxicity step. */
 function promptV1(language: Language) {
   const name = language === 'pl' ? 'Polish' : 'English';
   return `You identify plants from photos for a plant care app.
@@ -15,7 +15,7 @@ Answer with JSON that matches the schema.
 If the photo shows no plant, set isPlant to false, the names and care to null and alternatives to [].`;
 }
 
-const SchemaV1 = Identification.omit({ analysis: true });
+const SchemaV1 = Identification.omit({ analysis: true, toxicity: true });
 
 export const PROMPTS = {
   v1: { prompt: promptV1, schema: z.toJSONSchema(SchemaV1, { target: 'draft-7' }), parse: SchemaV1 },

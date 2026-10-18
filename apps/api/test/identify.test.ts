@@ -41,7 +41,15 @@ describe('POST /v1/identify', () => {
   });
 
   it('stores nothing when the photo shows no plant', async () => {
-    mockModel({ ...monstera, isPlant: false, scientificName: null, commonName: null, care: null, alternatives: [] });
+    mockModel({
+      ...monstera,
+      isPlant: false,
+      scientificName: null,
+      commonName: null,
+      care: null,
+      toxicity: null,
+      alternatives: [],
+    });
     const user = await signedInUser();
 
     const response = await user.request('/v1/identify', { method: 'POST', body: identifyForm() });
@@ -75,7 +83,15 @@ describe('POST /v1/identify', () => {
   });
 
   it('counts photos without a plant toward the allowance', async () => {
-    mockModel({ ...monstera, isPlant: false, scientificName: null, commonName: null, care: null, alternatives: [] });
+    mockModel({
+      ...monstera,
+      isPlant: false,
+      scientificName: null,
+      commonName: null,
+      care: null,
+      toxicity: null,
+      alternatives: [],
+    });
     const user = await signedInUser();
 
     await user.request('/v1/identify', { method: 'POST', body: identifyForm() });

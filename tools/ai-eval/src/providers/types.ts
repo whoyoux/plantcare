@@ -5,6 +5,8 @@ export type Prediction = {
   candidates: Candidate[];
   /** What this call cost, in USD, when known. */
   costUsd: number | null;
+  /** The model's toxicity answer (vision models with the current prompt), kept for review. */
+  toxicity?: unknown;
 };
 
 export type Provider = {

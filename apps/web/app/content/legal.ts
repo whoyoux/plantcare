@@ -207,7 +207,7 @@ const termsPl: LegalDoc = {
         {
           list: [
             'Nie jedz roślin i nie używaj ich jako leków na podstawie wyniku z aplikacji.',
-            'Nie oceniaj na podstawie aplikacji, czy roślina jest bezpieczna dla dzieci lub zwierząt.',
+            'Informacje o toksyczności są orientacyjne: brak ostrzeżenia nie znaczy, że roślina jest bezpieczna. Jeśli dziecko lub zwierzę zjadło roślinę, skontaktuj się z lekarzem lub weterynarzem.',
             'W razie podejrzenia zatrucia zadzwoń pod numer alarmowy 112.',
           ],
         },
@@ -278,7 +278,7 @@ const termsEn: LegalDoc = {
         {
           list: [
             'Do not eat plants or use them as medicine based on a result from the app.',
-            'Do not rely on the app to decide whether a plant is safe for children or pets.',
+            'Toxicity information is guidance only: no warning does not mean a plant is safe. If a child or pet has eaten a plant, contact a doctor or vet.',
             'If you suspect poisoning, call your local emergency number (112 in the EU).',
           ],
         },

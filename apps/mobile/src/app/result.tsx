@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
+import type { Toxicity, ToxicityLevel } from '@plantcare/shared';
+
 import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import type { Language } from '@/i18n';
@@ -24,6 +26,20 @@ const careRows = [
   { key: 'light', icon: 'sun.max.fill' },
   { key: 'temperature', icon: 'thermometer.medium' },
 ] as const satisfies readonly { key: keyof NonNullable<Result['care']>; icon: SFSymbol }[];
+
+const safetyRows = [
+  { key: 'cats', icon: 'cat.fill' },
+  { key: 'dogs', icon: 'dog.fill' },
+  { key: 'people', icon: 'figure.and.child.holdinghands' },
+] as const satisfies readonly { key: keyof Omit<Toxicity, 'note'>; icon: SFSymbol }[];
+
+/** Text colour per level; the label says it too, so colour is never the only signal. */
+const levelColor: Record<ToxicityLevel, string> = {
+  safe: 'text-accent',
+  mild: 'text-warning',
+  toxic: 'text-danger',
+  unknown: 'text-muted',
+};
 
 const KNOWN_ERRORS = ['NOT_A_PLANT', 'DAILY_LIMIT_REACHED', 'RATE_LIMITED'] as const;
 
@@ -283,6 +299,9 @@ function Details({ result }: { result: Result }) {
         </View>
       )}
 
+      {/* Results from before the toxicity field have no safety section. */}
+      {result.toxicity && <Safety toxicity={result.toxicity} />}
+
       {result.alternatives.length > 0 && (
         <View className="gap-2">
           <Text className="font-rounded text-[20px] font-bold text-foreground">{t('result.alternatives')}</Text>
@@ -305,5 +324,36 @@ function Details({ result }: { result: Result }) {
         </View>
       )}
     </>
+  );
+}
+
+function Safety({ toxicity }: { toxicity: Toxicity }) {
+  const { t } = useTranslation();
+  const muted = useCSSVariable('--color-muted');
+
+  return (
+    <View className="gap-2">
+      <Text className="font-rounded text-[20px] font-bold text-foreground">{t('result.safety')}</Text>
+      <View className="overflow-hidden rounded-2xl bg-card">
+        {safetyRows.map(({ key, icon }, index) => (
+          <View
+            key={key}
+            className={`flex-row items-center gap-3 px-4 py-3 ${index > 0 ? 'border-t border-separator' : ''}`}
+          >
+            <SymbolView name={icon} size={20} tintColor={typeof muted === 'string' ? muted : undefined} />
+            <Text className="flex-1 text-[17px] text-foreground">{t(`result.${key}`)}</Text>
+            <Text className={`text-[15px] font-semibold ${levelColor[toxicity[key]]}`}>
+              {t(`result.toxicity.${toxicity[key]}`)}
+            </Text>
+          </View>
+        ))}
+        {toxicity.note && (
+          <Text className="border-t border-separator px-4 py-3 text-[15px] leading-5 text-foreground">
+            {toxicity.note}
+          </Text>
+        )}
+      </View>
+      <Text className="px-1 text-[13px] leading-[18px] text-muted">{t('result.safetyAdvice')}</Text>
+    </View>
   );
 }

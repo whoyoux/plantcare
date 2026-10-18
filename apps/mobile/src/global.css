@@ -23,6 +23,8 @@
       --color-accent-foreground: #ffffff;
       --color-accent-soft: #e3f0e7;
       --color-danger: #c4311f;
+      /* Toxicity "mild": 5.3:1 on the card. */
+      --color-warning: #95560a;
     }
 
     @variant dark {
@@ -37,6 +39,7 @@
       --color-accent-foreground: #0b1a10;
       --color-accent-soft: #21402c;
       --color-danger: #ff7a66;
+      --color-warning: #f0b04a;
     }
   }
 }
