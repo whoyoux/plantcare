@@ -77,8 +77,8 @@
     "doctor": "expo-doctor",
     "icons": "node scripts/generate-icons.mjs",
     "icons:artwork": "node --env-file-if-exists=.env.icons.local scripts/generate-icon-artwork.mjs",
-    "build:preview:local": "eas build --platform ios --profile preview --local --output build/plantcare-preview.ipa && APP_VARIANT=preview eas submit --platform ios --profile preview --path build/plantcare-preview.ipa",
-    "build:prod:local": "eas build --platform ios --profile production --local --output build/plantcare-production.ipa && APP_VARIANT=production eas submit --platform ios --profile production --path build/plantcare-production.ipa",
+    "build:preview:local": "EAS_LOCAL_BUILD_WORKINGDIR=$HOME/.cache/eas-local-build eas build --platform ios --profile preview --local --output build/plantcare-preview.ipa && APP_VARIANT=preview eas submit --platform ios --profile preview --path build/plantcare-preview.ipa",
+    "build:prod:local": "EAS_LOCAL_BUILD_WORKINGDIR=$HOME/.cache/eas-local-build eas build --platform ios --profile production --local --output build/plantcare-production.ipa && APP_VARIANT=production eas submit --platform ios --profile production --path build/plantcare-production.ipa",
     "update:preview": "APP_VARIANT=preview eas update --channel preview --environment preview",
     "update:prod": "APP_VARIANT=production eas update --channel production --environment production"
   },
