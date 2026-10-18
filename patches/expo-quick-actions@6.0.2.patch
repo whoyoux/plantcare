@@ -1,0 +1,63 @@
+diff --git a/ios/AppDelegate.swift b/ios/AppDelegate.swift
+index 37558e006b606eae26e2e5be6e44afee93590547..c0e6be04c81aaea8e8671386cbc7f4719ac5e533 100644
+--- a/ios/AppDelegate.swift
++++ b/ios/AppDelegate.swift
+@@ -17,6 +17,12 @@ public class ExpoQuickActionsAppDelegate: ExpoAppDelegateSubscriber {
+   }
+ 
+   public func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
++    // Under the UIScene life cycle (Expo SDK 58+) a quick action that cold-starts the app is not in
++    // the launch options: it is forwarded here from the scene's connection options, before JS
++    // listens. Keep it as the initial action so `QuickActions.initial` still reports it.
++    if !jsListening {
++      initialAction = shortcutItem
++    }
+     NotificationCenter.default.post(name: Notification.Name(onQuickAction), object: shortcutItem)
+     completionHandler(true)
+   }
+diff --git a/ios/ExpoQuickActionsModule.swift b/ios/ExpoQuickActionsModule.swift
+index 252da492ce374eef886d574a2c38af242de6d6c3..6c2372179da8f7d4026af893ffda714d47a89c52 100644
+--- a/ios/ExpoQuickActionsModule.swift
++++ b/ios/ExpoQuickActionsModule.swift
+@@ -72,6 +72,8 @@ func toActionObject(item: UIApplicationShortcutItem?) -> ActionObject? {
+ }
+ 
+ var initialAction: UIApplicationShortcutItem?
++/// Whether JS listens for quick actions; until then a forwarded action counts as the initial one.
++var jsListening = false
+ 
+ public class ExpoQuickActionsModule: Module {
+     
+@@ -80,9 +82,14 @@ public class ExpoQuickActionsModule: Module {
+         
+         Constants([
+             // https://developer.apple.com/design/human-interface-guidelines/home-screen-quick-actions
+-            "maxCount": 4,
+-            "initial": toActionObject(item: initialAction)?.toDictionary()
++            "maxCount": 4
+         ])
++
++        // Read on access rather than at module creation: under the UIScene life cycle the
++        // cold-start action is only known once the scene connects.
++        Property("initial") { () -> ActionObject? in
++            return toActionObject(item: initialAction)
++        }
+                 
+         AsyncFunction("setItems") { (items: [ActionObject]?) in
+             UIApplication.shared.shortcutItems = items?.map { item in
+@@ -103,6 +110,7 @@ public class ExpoQuickActionsModule: Module {
+         Events(onQuickAction)
+         
+         OnStartObserving {
++            jsListening = true
+             NotificationCenter.default.addObserver(
+                 self,
+                 selector: #selector(self.quickActionListener),
+@@ -112,6 +120,7 @@ public class ExpoQuickActionsModule: Module {
+         }
+         
+         OnStopObserving {
++            jsListening = false
+             NotificationCenter.default.removeObserver(
+                 self,
+                 name: Notification.Name(onQuickAction),

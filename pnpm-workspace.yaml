@@ -62,3 +62,6 @@ minimumReleaseAgeExclude:
 overrides:
   react: 'catalog:'
   react-dom: 'catalog:'
+
+patchedDependencies:
+  expo-quick-actions@6.0.2: patches/expo-quick-actions@6.0.2.patch
