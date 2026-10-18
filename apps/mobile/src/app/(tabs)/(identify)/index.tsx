@@ -1,5 +1,4 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import * as Haptics from 'expo-haptics';
 import { router, useFocusEffect } from 'expo-router';
 import { SymbolView, type SFSymbol } from 'expo-symbols';
 import { useCallback, useRef, useState } from 'react';
@@ -11,6 +10,7 @@ import { Button } from '@/components/native/button';
 import { Viewfinder } from '@/components/viewfinder';
 import { CollectionStats, PhotoTips, RecentPlants } from '@/components/home';
 import { DueToday } from '@/components/plant-care';
+import { haptics } from '@/lib/haptics';
 import { pickPhoto } from '@/lib/pick-photo';
 
 function openResult(uri: string) {
@@ -19,7 +19,6 @@ function openResult(uri: string) {
 
 export default function IdentifyScreen() {
   async function chooseFromLibrary() {
-    void Haptics.selectionAsync();
     const uri = await pickPhoto('library');
     if (uri) openResult(uri);
   }
@@ -61,7 +60,8 @@ function CameraCard({ onChooseFromLibrary }: { onChooseFromLibrary: () => void }
 
   async function takePhoto() {
     if (!camera.current || !ready) return;
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    // Often silent while the camera runs; the result sheet confirms with its own haptic.
+    haptics.tap();
     try {
       const photo = await camera.current.takePictureAsync({ quality: 0.8 });
       openResult(photo.uri);
@@ -115,7 +115,10 @@ function CameraCard({ onChooseFromLibrary }: { onChooseFromLibrary: () => void }
         <GlassButton
           icon={torch ? 'flashlight.on.fill' : 'flashlight.off.fill'}
           label={t('identify.torch')}
-          onPress={() => setTorch((on) => !on)}
+          onPress={() => {
+            haptics.toggle(!torch);
+            setTorch(!torch);
+          }}
         />
       </View>
     </View>

@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/native/empty-state';
 import { PlantCareRow, usePlantActions } from '@/components/plant-care';
 import { usePlants, type Plant } from '@/lib/plants';
 import { useRemindersAllowed } from '@/lib/use-reminders';
+import { haptics } from '@/lib/haptics';
 
 export default function PlantsScreen() {
   const { t } = useTranslation();
@@ -21,6 +22,8 @@ export default function PlantsScreen() {
   }
 
   function showActions(plant: Plant) {
+    // A long press with no system menu of its own: confirm it like a context menu would.
+    haptics.tap();
     const options = [
       t('plants.water'),
       plant.remindersEnabled ? t('plants.remindersDisable') : t('plants.remindersEnable'),

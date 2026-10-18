@@ -11,6 +11,7 @@ import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
+import { haptics } from '@/lib/haptics';
 import { identifyPhoto, type IdentifyResponse } from '@/lib/identify';
 import { useAddPlant } from '@/lib/plants';
 import { shareIdentification } from '@/lib/share';
@@ -50,6 +51,17 @@ function NewResult({ uri }: { uri: string }) {
   useEffect(() => {
     if (identification.isSuccess) void queryClient.invalidateQueries({ queryKey: historyKeys.all });
   }, [identification.isSuccess, queryClient]);
+
+  // The moment the answer lands (the shutter's own haptic is muted while the camera runs).
+  const { status, error } = identification;
+  useEffect(() => {
+    if (status === 'success') haptics.success();
+    if (status === 'error') {
+      const code = error instanceof ApiError ? error.code : undefined;
+      if (KNOWN_ERRORS.some((known) => known === code)) haptics.warning();
+      else haptics.error();
+    }
+  }, [status, error]);
 
   return (
     <Sheet photo={{ uri }}>
@@ -160,7 +172,15 @@ function AddPlantButton({ identificationId, plantId }: { identificationId: strin
       label={t('result.addPlant')}
       systemImage="drop.fill"
       disabled={add.isPending}
-      onPress={() => add.mutate(identificationId, { onError: () => Alert.alert(t('result.addFailed')) })}
+      onPress={() =>
+        add.mutate(identificationId, {
+          onSuccess: haptics.success,
+          onError: () => {
+            haptics.error();
+            Alert.alert(t('result.addFailed'));
+          },
+        })
+      }
     />
   );
 }
@@ -170,6 +190,7 @@ function DeleteButton({ id }: { id: string }) {
   const remove = useDeleteIdentification();
 
   function confirm() {
+    haptics.warning();
     Alert.alert(t('result.deleteTitle'), t('result.deleteMessage'), [
       { text: t('result.cancel'), style: 'cancel' },
       {

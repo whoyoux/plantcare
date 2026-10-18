@@ -1,4 +1,3 @@
-import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +6,7 @@ import { useCSSVariable } from 'uniwind';
 
 import { Image } from '@/components/image';
 import { daysUntilWatering, useDeletePlant, usePlants, useUpdatePlant, useWaterPlant, type Plant } from '@/lib/plants';
+import { haptics } from '@/lib/haptics';
 import { requestReminders } from '@/lib/reminders';
 
 function useAccent() {
@@ -32,12 +32,16 @@ export function usePlantActions() {
   const water = useWaterPlant();
   const update = useUpdatePlant();
   const remove = useDeletePlant();
-  const failed = () => Alert.alert(t('plants.failed'));
+  const failed = () => {
+    haptics.error();
+    Alert.alert(t('plants.failed'));
+  };
 
   return {
     /** Turning reminders on asks for notification permission the first time; off never asks. */
     async toggleReminders(plant: Plant) {
       if (plant.remindersEnabled) {
+        haptics.toggle(false);
         update.mutate({ id: plant.id, remindersEnabled: false }, { onError: failed });
         return;
       }
@@ -48,11 +52,11 @@ export function usePlantActions() {
         ]);
         return;
       }
-      void Haptics.selectionAsync();
+      haptics.toggle(true);
       update.mutate({ id: plant.id, remindersEnabled: true }, { onError: failed });
     },
     water(plant: Plant) {
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      haptics.success();
       water.mutate(plant.id, { onError: failed });
     },
     changeInterval(plant: Plant) {
@@ -94,6 +98,7 @@ export function usePlantActions() {
       );
     },
     remove(plant: Plant) {
+      haptics.warning();
       Alert.alert(t('plants.removeTitle'), t('plants.removeMessage'), [
         { text: t('plants.cancel'), style: 'cancel' },
         {

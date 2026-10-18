@@ -2,10 +2,12 @@ import { Link, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, Text, View } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Animated, { useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedReaction, useAnimatedStyle, type SharedValue } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import { Image } from '@/components/image';
 import { api, ensureOk } from '@/lib/api';
+import { haptics } from '@/lib/haptics';
 import { historyKeys, useDeleteIdentification, type HistoryItem } from '@/lib/identifications';
 import { queryClient } from '@/lib/query-client';
 import { shareIdentification } from '@/lib/share';
@@ -105,6 +107,14 @@ function DeleteAction({
   onPress: () => void;
 }) {
   const style = useAnimatedStyle(() => ({ opacity: progress.value > 0.01 ? 1 : 0 }));
+  // One tick when the swipe reveals the whole button, like Mail.
+  const tick = haptics.threshold;
+  useAnimatedReaction(
+    () => progress.value >= 1,
+    (revealed, wasRevealed) => {
+      if (revealed && wasRevealed === false) scheduleOnRN(tick);
+    },
+  );
 
   return (
     <Animated.View style={style}>

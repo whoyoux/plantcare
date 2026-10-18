@@ -1,5 +1,4 @@
 import Constants from 'expo-constants';
-import * as Haptics from 'expo-haptics';
 import * as Updates from 'expo-updates';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import { Form, FormPicker, FormRow, FormSection } from '@/components/native/form
 import { changeLanguage, languages, type Language } from '@/i18n';
 import { appVariant, isProduction } from '@/lib/app-variant';
 import { authClient } from '@/lib/auth-client';
+import { haptics } from '@/lib/haptics';
 import {
   getLanguagePreference,
   getThemePreference,
@@ -67,7 +67,7 @@ function AccountSection() {
   }
 
   function confirmDelete() {
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    haptics.warning();
     Alert.alert(t('settings.deleteTitle'), t('settings.deleteMessage'), [
       { text: t('settings.cancel'), style: 'cancel' },
       {

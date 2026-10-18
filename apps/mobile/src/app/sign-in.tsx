@@ -6,6 +6,7 @@ import { ActivityIndicator, Alert, Pressable, Text, View, useColorScheme } from 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Image } from '@/components/image';
+import { haptics } from '@/lib/haptics';
 import { PRIVACY_URL, TERMS_URL } from '@/lib/legal';
 import { availableProviders, signIn, type Provider } from '@/lib/sign-in';
 
@@ -19,9 +20,10 @@ export default function SignInScreen() {
     setPending(provider);
     try {
       // On success the session updates and the protected routes take over.
-      await signIn(provider);
+      if (await signIn(provider)) haptics.success();
     } catch (error) {
       console.warn(error);
+      haptics.error();
       Alert.alert(t('signIn.failed'));
     } finally {
       setPending(null);
