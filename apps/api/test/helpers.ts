@@ -79,9 +79,9 @@ export function jpeg() {
   return new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10])], 'photo.jpg', { type: 'image/jpeg' });
 }
 
-export function identifyForm(photo: File = jpeg(), language = 'pl') {
+export function identifyForm(photo: File | File[] = jpeg(), language = 'pl') {
   const form = new FormData();
-  form.append('photo', photo);
+  for (const file of Array.isArray(photo) ? photo : [photo]) form.append('photo', file);
   form.append('language', language);
   return form;
 }

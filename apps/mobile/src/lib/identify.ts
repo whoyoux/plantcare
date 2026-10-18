@@ -1,4 +1,5 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { router } from 'expo-router';
 import type { InferResponseType } from 'hono/client';
 import { fetch as nitroFetch } from 'react-native-nitro-fetch';
 
@@ -24,12 +25,24 @@ async function preparePhoto(uri: string) {
   return image.saveAsync({ compress: 0.8, format: SaveFormat.JPEG });
 }
 
-/** Uploads a photo to POST /v1/identify (multipart, so it goes through fetch rather than the hc helper). */
-export async function identifyPhoto(uri: string, language: Language): Promise<IdentifyResponse> {
-  const photo = await preparePhoto(uri);
+/** Opens the result sheet for new photos of one plant; `replace` swaps out the camera. */
+export function openNewResult(uris: string[], mode: 'push' | 'replace' = 'push') {
+  const href = { pathname: '/result', params: { photos: JSON.stringify(uris) } } as const;
+  if (mode === 'replace') router.replace(href);
+  else router.push(href);
+}
+
+/**
+ * Uploads photos of one plant to POST /v1/identify (multipart, so it goes through fetch rather
+ * than the hc helper). The first photo is the one kept in history.
+ */
+export async function identifyPhotos(uris: string[], language: Language): Promise<IdentifyResponse> {
+  const photos = await Promise.all(uris.map(preparePhoto));
   const form = new FormData();
-  // React Native's FormData takes a file reference instead of a Blob.
-  form.append('photo', { uri: photo.uri, type: 'image/jpeg', name: 'photo.jpg' } as unknown as Blob);
+  photos.forEach((photo, index) => {
+    // React Native's FormData takes a file reference instead of a Blob.
+    form.append('photo', { uri: photo.uri, type: 'image/jpeg', name: `photo-${index}.jpg` } as unknown as Blob);
+  });
   form.append('language', language);
 
   const cookie = await authClient.getCookie();

@@ -14,7 +14,7 @@ import { Button } from '@/components/native/button';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
 import { haptics } from '@/lib/haptics';
-import { identifyPhoto, type IdentifyResponse } from '@/lib/identify';
+import { identifyPhotos, type IdentifyResponse } from '@/lib/identify';
 import { useAddPlant } from '@/lib/plants';
 import { shareIdentification } from '@/lib/share';
 import { historyKeys, useDeleteIdentification, useSavedIdentification } from '@/lib/identifications';
@@ -48,18 +48,19 @@ const KNOWN_ERRORS = ['NOT_A_PLANT', 'DAILY_LIMIT_REACHED', 'RATE_LIMITED'] as c
  * an identification from history.
  */
 export default function ResultSheet() {
-  const { uri, id } = useLocalSearchParams<{ uri?: string; id?: string }>();
-  return id ? <SavedResult id={id} /> : <NewResult uri={uri!} />;
+  const { photos, id } = useLocalSearchParams<{ photos?: string; id?: string }>();
+  return id ? <SavedResult id={id} /> : <NewResult uris={JSON.parse(photos ?? '[]') as string[]} />;
 }
 
-function NewResult({ uri }: { uri: string }) {
+function NewResult({ uris }: { uris: string[] }) {
+  const uri = uris[0]!;
   const { i18n } = useTranslation();
   const queryClient = useQueryClient();
 
   // A query (not a mutation) so the sheet survives re-renders without uploading twice.
   const identification = useQuery({
-    queryKey: ['identify', uri],
-    queryFn: () => identifyPhoto(uri, i18n.language as Language),
+    queryKey: ['identify', ...uris],
+    queryFn: () => identifyPhotos(uris, i18n.language as Language),
     staleTime: Infinity,
     retry: false,
   });

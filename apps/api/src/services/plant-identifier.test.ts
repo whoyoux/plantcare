@@ -38,7 +38,7 @@ describe('createPlantIdentifier', () => {
   it('sends the photo with the schema and prompt in the requested language', async () => {
     const { fetch, identifier } = setup(reply(JSON.stringify(monstera)));
 
-    await expect(identifier.identify(photo, 'pl')).resolves.toEqual(monstera);
+    await expect(identifier.identify([photo], 'pl')).resolves.toEqual(monstera);
 
     const [url, init] = fetch.mock.calls[0]!;
     expect(url).toBe('https://openrouter.example/api/v1/chat/completions');
@@ -57,24 +57,24 @@ describe('createPlantIdentifier', () => {
 
   it('accepts JSON wrapped in a Markdown fence', async () => {
     const { identifier } = setup(reply('```json\n' + JSON.stringify(monstera) + '\n```'));
-    await expect(identifier.identify(photo, 'en')).resolves.toEqual(monstera);
+    await expect(identifier.identify([photo], 'en')).resolves.toEqual(monstera);
   });
 
   it('retries once when the output does not match the schema', async () => {
     const { fetch, identifier } = setup(reply('{"isPlant": "maybe"}'), reply(JSON.stringify(monstera)));
-    await expect(identifier.identify(photo, 'en')).resolves.toEqual(monstera);
+    await expect(identifier.identify([photo], 'en')).resolves.toEqual(monstera);
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
   it('gives up after two bad answers', async () => {
     const { identifier } = setup(reply('not json'), reply('still not json'));
-    await expect(identifier.identify(photo, 'en')).rejects.toEqual(new AppError('IDENTIFICATION_FAILED', 502));
+    await expect(identifier.identify([photo], 'en')).rejects.toEqual(new AppError('IDENTIFICATION_FAILED', 502));
   });
 
   it('fails without retrying when OpenRouter returns an error', async () => {
     const { fetch, identifier } = setup(new Response('upstream down', { status: 503 }));
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    await expect(identifier.identify(photo, 'en')).rejects.toBeInstanceOf(AppError);
+    await expect(identifier.identify([photo], 'en')).rejects.toBeInstanceOf(AppError);
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 });

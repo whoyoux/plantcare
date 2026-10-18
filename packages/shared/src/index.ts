@@ -67,6 +67,8 @@ export function identificationPrompt(language: Language) {
   const name = LANGUAGE_NAMES[language];
   return `You are an expert field botanist. People photograph houseplants, garden plants, herbs and wild plants with their phone, and you identify the plant in the photo for a plant care app.
 
+You may get several photos of the same plant (for example a leaf close-up, a flower and the whole plant). Use the evidence from all of them together.
+
 Work in this order and answer with JSON that matches the schema:
 1. analysis (in English, 2-4 sentences): describe only what is visible and diagnostic: leaf shape, tip and base, margin (smooth, toothed, lobed), surface (glossy, hairy, wrinkled), venation, arrangement (opposite, alternate, whorled, rosette), stem (square or round, colour, hairs), flowers or fruit, and growth habit. Then name the closest look-alikes in the same genus or family and the visible trait that separates them (for example spearmint vs peppermint vs lemon balm vs catnip, parsley vs coriander, stinging nettle vs dead-nettle). Decide from these traits, not from which plant is more common.
 2. isPlant: false if the photo shows no plant; then set the names, care and toxicity to null and alternatives to [].

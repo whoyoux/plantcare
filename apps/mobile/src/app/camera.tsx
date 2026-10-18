@@ -11,16 +11,17 @@ import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import { Viewfinder } from '@/components/viewfinder';
 import { haptics } from '@/lib/haptics';
-import { pickPhoto } from '@/lib/pick-photo';
+import { openNewResult } from '@/lib/identify';
+import { MAX_PHOTOS, pickPhotos } from '@/lib/pick-photo';
 
 /** Swap the camera for the result sheet, so closing the result lands back home. */
-function showResult(uri: string) {
-  router.replace({ pathname: '/result', params: { uri } });
+function showResult(uris: string[]) {
+  openNewResult(uris, 'replace');
 }
 
 async function chooseFromLibrary() {
-  const uri = await pickPhoto('library');
-  if (uri) showResult(uri);
+  const uris = await pickPhotos();
+  if (uris.length > 0) showResult(uris);
 }
 
 /**
@@ -47,6 +48,8 @@ function Camera() {
   const camera = useRef<CameraView>(null);
   const [ready, setReady] = useState(false);
   const [torch, setTorch] = useState(false);
+  // Shots of one plant (a leaf, a flower, the whole plant); identified together.
+  const [shots, setShots] = useState<string[]>([]);
 
   async function takePhoto() {
     if (!camera.current || !ready) return;
@@ -54,7 +57,9 @@ function Camera() {
     haptics.tap();
     try {
       const photo = await camera.current.takePictureAsync({ quality: 0.8 });
-      showResult(photo.uri);
+      const next = [...shots, photo.uri];
+      if (next.length >= MAX_PHOTOS) showResult(next);
+      else setShots(next);
     } catch (error) {
       console.warn(error);
       Alert.alert(t('identify.cameraUnavailable'));
@@ -78,7 +83,9 @@ function Camera() {
       >
         <GlassButton icon="xmark" label={t('identify.close')} onPress={() => router.back()} />
         <View pointerEvents="none" className="rounded-full bg-black/35 px-3 py-1.5">
-          <Text className="text-[13px] font-semibold text-white">{t('identify.hint')}</Text>
+          <Text className="text-[13px] font-semibold text-white">
+            {shots.length === 0 ? t('identify.hint') : t('identify.hintMore', { count: MAX_PHOTOS - shots.length })}
+          </Text>
         </View>
         <GlassButton
           icon={torch ? 'flashlight.on.fill' : 'flashlight.off.fill'}
@@ -102,11 +109,15 @@ function Camera() {
         className="absolute left-0 right-0 flex-row items-center justify-around"
         style={{ bottom: insets.bottom + 32 }}
       >
-        <GlassButton
-          icon="photo.on.rectangle"
-          label={t('identify.chooseFromLibrary')}
-          onPress={() => void chooseFromLibrary()}
-        />
+        {shots.length === 0 ? (
+          <GlassButton
+            icon="photo.on.rectangle"
+            label={t('identify.chooseFromLibrary')}
+            onPress={() => void chooseFromLibrary()}
+          />
+        ) : (
+          <Shots uris={shots} onRemoveLast={() => setShots(shots.slice(0, -1))} />
+        )}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('identify.takePhoto')}
@@ -115,10 +126,44 @@ function Camera() {
         >
           <View className="size-[62px] rounded-full bg-white" />
         </Pressable>
-        {/* Balances the library button so the shutter stays centred. */}
-        <View className="size-12" />
+        {shots.length === 0 ? (
+          // Balances the library button so the shutter stays centred.
+          <View className="size-12" />
+        ) : (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('identify.identify')}
+            onPress={() => showResult(shots)}
+            hitSlop={6}
+            className="size-14 items-center justify-center rounded-full bg-accent-fill active:opacity-80"
+          >
+            <SymbolView name="checkmark" size={24} weight="bold" tintColor="white" />
+          </Pressable>
+        )}
       </View>
     </View>
+  );
+}
+
+/** The latest shot with a count; tap to drop it and retake. */
+function Shots({ uris, onRemoveLast }: { uris: string[]; onRemoveLast: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={t('identify.removeLast', { count: uris.length })}
+      onPress={() => {
+        haptics.toggle(false);
+        onRemoveLast();
+      }}
+      hitSlop={6}
+      className="size-14 active:opacity-70"
+    >
+      <Image source={{ uri: uris.at(-1)! }} contentFit="cover" className="size-14 rounded-xl border-2 border-white" />
+      <View className="absolute -right-1.5 -top-1.5 size-6 items-center justify-center rounded-full bg-white">
+        <Text className="text-[13px] font-bold text-black">{uris.length}</Text>
+      </View>
+    </Pressable>
   );
 }
 

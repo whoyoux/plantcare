@@ -3,7 +3,7 @@ import { env, SELF } from 'cloudflare:test';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { photoKey } from '../src/services/photos';
-import { db, identifyForm, mockModel, modelCalls, monstera, signedInUser, urlOf } from './helpers';
+import { db, identifyForm, jpeg, mockModel, modelCalls, monstera, signedInUser, urlOf } from './helpers';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -57,6 +57,38 @@ describe('POST /v1/identify', () => {
     expect(response.status).toBe(422);
     expect(await response.json()).toEqual({ code: 'NOT_A_PLANT' });
     expect(await db.select().from(schema.identification).where(eq(schema.identification.userId, user.id))).toEqual([]);
+  });
+
+  it('sends up to three photos of one plant to the model in one call and keeps the first', async () => {
+    const model = mockModel(monstera);
+    const user = await signedInUser();
+
+    const response = await user.request('/v1/identify', {
+      method: 'POST',
+      body: identifyForm([jpeg(), jpeg(), jpeg()]),
+    });
+
+    expect(response.status).toBe(201);
+    const { id } = await response.json<{ id: string }>();
+    const calls = modelCalls(model);
+    expect(calls).toHaveLength(1);
+    expect(String(calls[0]![1]?.body).match(/data:image\/jpeg;base64,/g)).toHaveLength(3);
+    expect(await env.PHOTOS.head(photoKey(user.id, id))).not.toBeNull();
+    // Still one attempt against the daily allowance.
+    const attempts = await db.select().from(schema.identifyAttempt).where(eq(schema.identifyAttempt.userId, user.id));
+    expect(attempts).toHaveLength(1);
+  });
+
+  it('refuses more than three photos', async () => {
+    const model = mockModel(monstera);
+    const user = await signedInUser();
+
+    const response = await user.request('/v1/identify', {
+      method: 'POST',
+      body: identifyForm([jpeg(), jpeg(), jpeg(), jpeg()]),
+    });
+    expect(response.status).toBe(400);
+    expect(modelCalls(model)).toEqual([]);
   });
 
   it('rejects files that are not JPEGs and unknown languages', async () => {

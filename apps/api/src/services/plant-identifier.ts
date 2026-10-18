@@ -28,7 +28,7 @@ function parseIdentification(content: string) {
  * live in the API (per user and overall) and on the OpenRouter key (credit limit).
  */
 export function createPlantIdentifier(deps: { baseUrl: string; apiKey: string; config: ModelConfig }) {
-  async function attempt(photo: Uint8Array, language: Language) {
+  async function attempt(photos: Uint8Array[], language: Language) {
     const response = await fetch(`${deps.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${deps.apiKey}`, 'Content-Type': 'application/json' },
@@ -39,8 +39,17 @@ export function createPlantIdentifier(deps: { baseUrl: string; apiKey: string; c
           {
             role: 'user',
             content: [
-              { type: 'text', text: 'Identify this plant.' },
-              { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${toBase64(photo)}` } },
+              {
+                type: 'text',
+                text:
+                  photos.length > 1
+                    ? `Identify this plant. All ${photos.length} photos show the same plant.`
+                    : 'Identify this plant.',
+              },
+              ...photos.map((photo) => ({
+                type: 'image_url',
+                image_url: { url: `data:image/jpeg;base64,${toBase64(photo)}` },
+              })),
             ],
           },
         ],
@@ -67,9 +76,9 @@ export function createPlantIdentifier(deps: { baseUrl: string; apiKey: string; c
   return {
     model: deps.config.model,
     /** Retries once when the model returns output that doesn't match the schema. */
-    async identify(photo: Uint8Array, language: Language): Promise<Identification> {
+    async identify(photos: Uint8Array[], language: Language): Promise<Identification> {
       for (let i = 0; i < 2; i++) {
-        const result = await attempt(photo, language);
+        const result = await attempt(photos, language);
         if (result?.success) return result.data;
       }
       throw new AppError('IDENTIFICATION_FAILED', 502);

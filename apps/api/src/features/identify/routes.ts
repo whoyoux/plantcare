@@ -10,10 +10,15 @@ import { createPlantIdentifier } from '../../services/plant-identifier';
 
 /** The app downsizes photos to ~1024 px before upload; anything bigger is not from the app. */
 const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
+/** Up to three photos of one plant (say a leaf, a flower and the whole plant) for one answer. */
+const MAX_PHOTOS = 3;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const form = z.object({
-  photo: z.instanceof(File),
+  // One `photo` field per photo; a single one arrives as a File, several as an array.
+  photo: z
+    .union([z.instanceof(File), z.array(z.instanceof(File)).min(1).max(MAX_PHOTOS)])
+    .transform((value) => (Array.isArray(value) ? value : [value])),
   language: z.enum(LANGUAGES),
 });
 
@@ -28,15 +33,15 @@ export const identifyRoutes = factory
     const user = c.var.user;
 
     // Refuse oversized uploads before reading them (the multipart envelope adds a little).
-    if (Number(c.req.header('content-length') ?? 0) > MAX_PHOTO_BYTES + 64 * 1024) {
+    if (Number(c.req.header('content-length') ?? 0) > MAX_PHOTOS * MAX_PHOTO_BYTES + 64 * 1024) {
       throw new AppError('PHOTO_TOO_LARGE', 413);
     }
-    const parsed = form.safeParse(await c.req.parseBody());
+    const parsed = form.safeParse(await c.req.parseBody({ all: true }));
     if (!parsed.success) throw new AppError('INVALID_REQUEST', 400);
-    const { photo, language } = parsed.data;
-    if (photo.size > MAX_PHOTO_BYTES) throw new AppError('PHOTO_TOO_LARGE', 413);
-    const bytes = new Uint8Array(await photo.arrayBuffer());
-    if (!isJpeg(bytes)) throw new AppError('INVALID_PHOTO', 415);
+    const { language } = parsed.data;
+    if (parsed.data.photo.some((photo) => photo.size > MAX_PHOTO_BYTES)) throw new AppError('PHOTO_TOO_LARGE', 413);
+    const photos = await Promise.all(parsed.data.photo.map(async (photo) => new Uint8Array(await photo.arrayBuffer())));
+    if (!photos.every(isJpeg)) throw new AppError('INVALID_PHOTO', 415);
 
     // Burst protection per user, then the daily allowance (rolling 24 h). Every model call counts,
     // including photos without a plant: each one costs the same.
@@ -62,12 +67,13 @@ export const identifyRoutes = factory
       apiKey: c.env.OPENROUTER_API_KEY,
       config: IDENTIFY_MODEL,
     });
-    const result = await identifier.identify(bytes, language);
+    const result = await identifier.identify(photos, language);
     // Nothing is stored for photos without a plant.
     if (!result.isPlant || !result.scientificName) throw new AppError('NOT_A_PLANT', 422);
 
     const id = crypto.randomUUID();
-    const imageKey = await c.var.photos.save(user.id, id, bytes);
+    // The first photo is the one kept in history; the others only help the model.
+    const imageKey = await c.var.photos.save(user.id, id, photos[0]!);
     const [row] = await c.var.db
       .insert(schema.identification)
       .values({

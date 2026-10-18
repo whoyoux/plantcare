@@ -8,15 +8,16 @@ import { Button } from '@/components/native/button';
 import { Viewfinder } from '@/components/viewfinder';
 import { CollectionStats, PhotoTips, RecentPlants } from '@/components/home';
 import { DueToday } from '@/components/plant-care';
-import { pickPhoto } from '@/lib/pick-photo';
+import { openNewResult } from '@/lib/identify';
+import { pickPhotos } from '@/lib/pick-photo';
 
 function openCamera() {
   router.push('/camera');
 }
 
 async function chooseFromLibrary() {
-  const uri = await pickPhoto('library');
-  if (uri) router.push({ pathname: '/result', params: { uri } });
+  const uris = await pickPhotos();
+  if (uris.length > 0) openNewResult(uris);
 }
 
 export default function IdentifyScreen() {
