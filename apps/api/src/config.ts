@@ -4,16 +4,25 @@
  */
 export const GOOGLE_WEB_CLIENT_ID = '310586722263-as5g7dcle9hqtphaa3aphjng70m5qmd8.apps.googleusercontent.com';
 
-/** Per-stage identity: which app builds may sign in and which deep-link schemes Better Auth trusts. */
+/**
+ * Per-stage identity: which app builds may sign in, which deep-link schemes Better Auth trusts and
+ * which Google OAuth clients (web + one iOS client per bundle ID; public ids) may issue ID tokens.
+ */
 const STAGES = {
   prod: {
     bundleIds: ['dev.whxx.plantcare'],
     schemes: ['plantcare://'],
+    googleClientIds: [GOOGLE_WEB_CLIENT_ID, '310586722263-0sng933js9sp11cafohfgd9gvv2q24hf.apps.googleusercontent.com'],
   },
   // The dev backend serves both the development client and the preview (TestFlight) build.
   dev: {
     bundleIds: ['dev.whxx.plantcare.dev', 'dev.whxx.plantcare.preview'],
     schemes: ['plantcare-dev://', 'plantcare-preview://'],
+    googleClientIds: [
+      GOOGLE_WEB_CLIENT_ID,
+      '310586722263-8msb04d7gie51dgga949qjm0rddii8p7.apps.googleusercontent.com',
+      '310586722263-85du90phsvh58libdvrrorl28lfupj6v.apps.googleusercontent.com',
+    ],
   },
 } as const;
 

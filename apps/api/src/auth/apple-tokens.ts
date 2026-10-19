@@ -1,5 +1,12 @@
 import type { BetterAuthPlugin } from 'better-auth';
-import { APIError, createAuthEndpoint, sessionMiddleware } from 'better-auth/api';
+import {
+  APIError,
+  createAuthEndpoint,
+  createAuthMiddleware,
+  getSessionFromCtx,
+  sessionMiddleware,
+} from 'better-auth/api';
+import { decryptOAuthToken, setTokenUtil } from 'better-auth/oauth2';
 import { z } from 'zod';
 
 import { audienceOf, exchangeAuthorizationCode, revokeRefreshToken, type AppleKey } from './apple';
@@ -14,7 +21,8 @@ export type AppleTokensOptions = {
  * Keeps Apple's refresh token so the app can be disconnected from the user's Apple ID when the
  * account is deleted (required by App Review). Native sign-in only yields an ID token, so right
  * after signing in the app sends its one-time authorization code, which we exchange here and
- * store on the Apple account row.
+ * store on the Apple account row, encrypted like Better Auth's own tokens (`encryptOAuthTokens`).
+ * Deleting the account revokes it first.
  */
 export const appleTokens = (options: AppleTokensOptions) =>
   ({
@@ -39,10 +47,35 @@ export const appleTokens = (options: AppleTokensOptions) =>
           if (!apple) throw new APIError('NOT_FOUND', { code: 'APPLE_ACCOUNT_NOT_FOUND' });
 
           const refreshToken = await exchangeAuthorizationCode(options.key, bundleId, authorizationCode);
-          await ctx.context.internalAdapter.updateAccount(apple.id, { refreshToken });
+          await ctx.context.internalAdapter.updateAccount(apple.id, {
+            refreshToken: await setTokenUtil(refreshToken, ctx.context),
+          });
           return ctx.json({ stored: true });
         },
       ),
+    },
+    hooks: {
+      before: [
+        {
+          matcher: (context) => context.path === '/delete-user',
+          handler: createAuthMiddleware(async (ctx) => {
+            const session = await getSessionFromCtx(ctx);
+            if (!session) return;
+            const accounts = await ctx.context.internalAdapter.findAccounts(session.user.id);
+            const readable = await Promise.all(
+              accounts.map(async (account) => ({
+                ...account,
+                // Passes tokens stored before encryption was switched on through unchanged.
+                refreshToken: account.refreshToken ? await decryptOAuthToken(account.refreshToken, ctx.context) : null,
+              })),
+            );
+            // Never block a deletion on Apple being unreachable.
+            await revokeAppleAccess(options, readable).catch((error: unknown) =>
+              console.error('Apple token revocation failed', error),
+            );
+          }),
+        },
+      ],
     },
   }) satisfies BetterAuthPlugin;
 
