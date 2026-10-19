@@ -13,6 +13,7 @@ import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
+import { BADGE_SYMBOLS, badgeName } from '@/lib/badges';
 import { haptics } from '@/lib/haptics';
 import { identifyPhotos, type IdentifyResponse } from '@/lib/identify';
 import { useAddPlant } from '@/lib/plants';
@@ -86,6 +87,7 @@ function NewResult({ uris }: { uris: string[] }) {
       {identification.isError && <Failure error={identification.error} onRetry={() => void identification.refetch()} />}
       {identification.data && (
         <>
+          <Discovery herbarium={identification.data.herbarium} />
           <Details result={identification.data.result} />
           <Disclaimer />
           <Actions id={identification.data.id} photoUri={uri} result={identification.data.result} plantId={null} />
@@ -358,6 +360,35 @@ function Safety({ toxicity }: { toxicity: Toxicity }) {
         <SymbolView name="info.circle" size={15} tintColor={typeof muted === 'string' ? muted : undefined} />
         <Text className="flex-1 text-[13px] leading-[18px] text-muted">{t('result.safetyAdvice')}</Text>
       </View>
+    </View>
+  );
+}
+
+/** "New species in your herbarium · #24", plus any badge it earned. Only for a fresh identification. */
+function Discovery({ herbarium }: { herbarium: IdentifyResponse['herbarium'] }) {
+  const { t } = useTranslation();
+  const accent = useCSSVariable('--color-accent');
+  if (!herbarium.newSpecies && herbarium.newBadges.length === 0) return null;
+  const tint = typeof accent === 'string' ? accent : undefined;
+
+  return (
+    <View className="gap-2 rounded-2xl bg-accent-soft px-4 py-3">
+      {herbarium.newSpecies && (
+        <View className="flex-row items-center gap-2.5">
+          <SymbolView name="sparkles" size={18} tintColor={tint} />
+          <Text className="flex-1 text-[15px] font-semibold text-accent">
+            {t('herbarium.newSpecies', { number: herbarium.speciesCount })}
+          </Text>
+        </View>
+      )}
+      {herbarium.newBadges.map((badge) => (
+        <View key={badge.id} className="flex-row items-center gap-2.5">
+          <SymbolView name={BADGE_SYMBOLS[badge.id]} size={18} tintColor={tint} />
+          <Text className="flex-1 text-[15px] font-semibold text-accent">
+            {t('herbarium.newBadge', { name: badgeName(badge, t) })}
+          </Text>
+        </View>
+      ))}
     </View>
   );
 }

@@ -137,6 +137,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
               initialLayout: './src/widgets/watering.tsx',
             },
           },
+          {
+            name: 'Herbarium',
+            displayName: variant === 'production' ? 'Herbarium' : `Herbarium (${variant})`,
+            description: 'Your plant collection and the next badge.',
+            ios: {
+              supportedFamilies: ['systemSmall', 'systemMedium', 'accessoryCircular'],
+              initialLayout: './src/widgets/herbarium.tsx',
+            },
+          },
         ],
       },
     ],

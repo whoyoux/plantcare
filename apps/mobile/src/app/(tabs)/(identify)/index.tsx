@@ -6,7 +6,8 @@ import { useCSSVariable } from 'uniwind';
 
 import { Button } from '@/components/native/button';
 import { Viewfinder } from '@/components/viewfinder';
-import { CollectionStats, PhotoTips, RecentPlants } from '@/components/home';
+import { HerbariumCard } from '@/components/herbarium';
+import { PhotoTips, RecentPlants } from '@/components/home';
 import { DueToday } from '@/components/plant-care';
 import { openNewResult } from '@/lib/identify';
 import { pickPhotos } from '@/lib/pick-photo';
@@ -31,7 +32,7 @@ export default function IdentifyScreen() {
 
       <DueToday />
       <PhotoTips />
-      <CollectionStats />
+      <HerbariumCard />
       <RecentPlants />
     </ScrollView>
   );

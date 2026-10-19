@@ -8,7 +8,7 @@ import { useCSSVariable } from 'uniwind';
 import { Image } from '@/components/image';
 import { openSaved } from '@/components/plant-row';
 import { relativeDay } from '@/lib/dates';
-import { useCollectionStats, useHistory, type HistoryItem } from '@/lib/identifications';
+import { useHistory, type HistoryItem } from '@/lib/identifications';
 
 function useAccent() {
   const accent = useCSSVariable('--color-accent');
@@ -37,30 +37,6 @@ export function PhotoTips() {
           </View>
         ))}
       </View>
-    </View>
-  );
-}
-
-/** Plants, distinct species and this week's count. Hidden until the first identification. */
-export function CollectionStats() {
-  const { t } = useTranslation();
-  const { data } = useCollectionStats();
-  if (!data?.total) return null;
-
-  const items = [
-    { key: 'plants', value: data.total },
-    { key: 'species', value: data.species },
-    { key: 'thisWeek', value: data.thisWeek },
-  ] as const;
-
-  return (
-    <View className="flex-row gap-2.5">
-      {items.map(({ key, value }) => (
-        <View key={key} className="flex-1 gap-0.5 rounded-2xl bg-card px-3.5 py-3">
-          <Text className="text-[13px] text-muted">{t(`identify.stats.${key}`)}</Text>
-          <Text className="font-rounded text-[26px] font-extrabold text-foreground">{value}</Text>
-        </View>
-      ))}
     </View>
   );
 }

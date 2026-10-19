@@ -4,6 +4,7 @@ import { useCSSVariable } from 'uniwind';
 
 import { useQuickActions } from '@/lib/quick-actions';
 import { useReminderSync } from '@/lib/use-reminders';
+import { useHerbariumWidgetSync } from '@/lib/use-herbarium-widget';
 import { useWidgetSync } from '@/lib/use-widget';
 
 export default function TabsLayout() {
@@ -12,6 +13,7 @@ export default function TabsLayout() {
   useReminderSync();
   useQuickActions();
   useWidgetSync();
+  useHerbariumWidgetSync();
 
   return (
     <NativeTabs tintColor={typeof accent === 'string' ? accent : undefined} minimizeBehavior="onScrollDown">
