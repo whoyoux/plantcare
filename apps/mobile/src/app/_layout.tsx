@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -24,12 +24,17 @@ export default function RootLayout() {
   const { t } = useTranslation();
   const { data: session, isPending } = authClient.useSession();
   const signedIn = Boolean(session);
+  // Only the first session check hides the app (behind the splash). Better Auth reports
+  // `isPending` again on every refetch while signed out (after signing out, while signing in);
+  // hiding then made the screen flash.
+  const [loaded, setLoaded] = useState(false);
+  if (!isPending && !loaded) setLoaded(true);
 
   useEffect(() => {
-    if (!isPending) void SplashScreen.hideAsync();
-  }, [isPending]);
+    if (loaded) void SplashScreen.hideAsync();
+  }, [loaded]);
 
-  if (isPending) return null;
+  if (!loaded) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

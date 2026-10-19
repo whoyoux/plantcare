@@ -41,7 +41,8 @@ async function signInWithApple(): Promise<boolean> {
   }
   if (!credential.identityToken) throw new Error('Apple returned no identity token');
 
-  const { error } = await authClient.signIn.social({
+  const fullName = [credential.fullName?.givenName, credential.fullName?.familyName].filter(Boolean).join(' ');
+  const { data, error } = await authClient.signIn.social({
     provider: 'apple',
     idToken: {
       token: credential.identityToken,
@@ -57,6 +58,12 @@ async function signInWithApple(): Promise<boolean> {
     },
   });
   if (error) throw new Error(error.message ?? 'Sign in failed');
+
+  // Better Auth only uses the name when it creates the user. If the account already existed
+  // without one (e.g. created before the name was shared), fill it in now: Apple won't send it again.
+  if (fullName && data && 'user' in data && !data.user.name) {
+    await authClient.updateUser({ name: fullName }).catch((updateError: unknown) => console.warn(updateError));
+  }
 
   // Lets the server keep Apple's refresh token, so deleting the account can revoke it later.
   if (credential.authorizationCode) {
