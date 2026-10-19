@@ -51,6 +51,7 @@ export const monstera: Identification = {
   alternatives: [{ scientificName: 'Thaumatophyllum bipinnatifidum', commonName: null, confidence: 0.03 }],
   care: { watering: 'Co 7–10 dni', light: 'Jasne, rozproszone', temperature: '18–27 °C', wateringDays: 8 },
   toxicity: { cats: 'mild', dogs: 'mild', people: 'mild', note: 'Sok z liści podrażnia usta i żołądek.' },
+  category: 'houseplant',
 };
 
 /** The URL of a fetch call, whatever form the input took. */

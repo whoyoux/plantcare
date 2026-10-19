@@ -48,6 +48,7 @@ describe('POST /v1/identify', () => {
       commonName: null,
       care: null,
       toxicity: null,
+      category: null,
       alternatives: [],
     });
     const user = await signedInUser();
@@ -122,6 +123,7 @@ describe('POST /v1/identify', () => {
       commonName: null,
       care: null,
       toxicity: null,
+      category: null,
       alternatives: [],
     });
     const user = await signedInUser();

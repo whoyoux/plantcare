@@ -1,5 +1,6 @@
 import { factory } from './env';
 import { onError } from './errors';
+import { herbariumRoutes } from './features/herbarium/routes';
 import { identificationRoutes } from './features/identifications/routes';
 import { identifyRoutes } from './features/identify/routes';
 import { meRoutes } from './features/me/routes';
@@ -20,7 +21,8 @@ const app = factory
   .route('/v1/identify', identifyRoutes)
   .route('/v1/identifications', identificationRoutes)
   .route('/v1/photos', photoRoutes)
-  .route('/v1/plants', plantRoutes);
+  .route('/v1/plants', plantRoutes)
+  .route('/v1/herbarium', herbariumRoutes);
 
 app.onError(onError);
 app.notFound((c) => c.json({ code: 'NOT_FOUND' }, 404));

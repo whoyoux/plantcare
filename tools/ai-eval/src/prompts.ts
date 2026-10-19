@@ -15,7 +15,7 @@ Answer with JSON that matches the schema.
 If the photo shows no plant, set isPlant to false, the names and care to null and alternatives to [].`;
 }
 
-const SchemaV1 = Identification.omit({ analysis: true, toxicity: true });
+const SchemaV1 = Identification.omit({ analysis: true, toxicity: true, category: true });
 
 export const PROMPTS = {
   v1: { prompt: promptV1, schema: z.toJSONSchema(SchemaV1, { target: 'draft-7' }), parse: SchemaV1 },

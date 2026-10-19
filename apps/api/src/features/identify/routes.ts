@@ -6,7 +6,9 @@ import { DAILY_IDENTIFICATIONS, IDENTIFY_MODEL, OPENROUTER_URL } from '../../con
 import { factory } from '../../env';
 import { AppError } from '../../errors';
 import { requireUser } from '../../middleware/require-user';
+import { buildHerbarium, newBadges } from '../../services/herbarium';
 import { createPlantIdentifier } from '../../services/plant-identifier';
+import { loadHerbariumData } from '../herbarium/routes';
 
 /** The app downsizes photos to ~1024 px before upload; anything bigger is not from the app. */
 const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
@@ -71,6 +73,10 @@ export const identifyRoutes = factory
     // Nothing is stored for photos without a plant.
     if (!result.isPlant || !result.scientificName) throw new AppError('NOT_A_PLANT', 422);
 
+    // The collection before this find, to tell the app about a new species or badge.
+    const { entries, plantDates } = await loadHerbariumData(c.var.db, user.id);
+    const before = buildHerbarium(entries, plantDates);
+
     const id = crypto.randomUUID();
     // The first photo is the one kept in history; the others only help the model.
     const imageKey = await c.var.photos.save(user.id, id, photos[0]!);
@@ -91,6 +97,26 @@ export const identifyRoutes = factory
       })
       .returning({ id: schema.identification.id, createdAt: schema.identification.createdAt });
 
+    const toxicity = result.toxicity;
+    const after = buildHerbarium(
+      [
+        ...entries,
+        {
+          id,
+          createdAt: row!.createdAt,
+          scientificName: result.scientificName,
+          commonName: result.commonName,
+          family: result.family,
+          confidence: result.confidence,
+          imageKey,
+          category: result.category,
+          toxic: toxicity ? [toxicity.cats, toxicity.dogs, toxicity.people].includes('toxic') : false,
+        },
+      ],
+      plantDates,
+    );
+    const key = result.scientificName.trim().toLowerCase();
+
     return c.json(
       {
         id: row!.id,
@@ -98,6 +124,13 @@ export const identifyRoutes = factory
         language,
         result,
         imageUrl: await c.var.photoUrls.sign(imageKey),
+        herbarium: {
+          /** First time this species was found. */
+          newSpecies: !before.species.some((item) => item.key === key),
+          /** Its number in the collection (species found so far). */
+          speciesCount: after.species.length,
+          newBadges: newBadges(before, after),
+        },
       },
       201,
     );

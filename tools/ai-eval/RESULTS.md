@@ -35,3 +35,7 @@ Prompt v2 doesn't change accuracy measurably, but it lowers confidence where spe
 The prompt now also asks for `toxicity` (safe / mild / toxic / unknown per cats, dogs and people, plus a one-sentence note), with levels defined by the worst likely effect and examples drawn from the ASPCA lists. Gemini 3.8 Flash (low), 100 photos: species accuracy 92% (unchanged within noise), about $0.0004 more per photo ($3.65 per 1000) and about 0.5 s slower.
 
 Checked by hand against the ASPCA lists for all 45 species: no plant the ASPCA lists as toxic came back "safe" for cats or dogs except one of three catnip and parsley photos. Without the level definitions the same species often switched between "mild" and "toxic" across photos (Epipremnum, Philodendron, Spathiphyllum) and lemon balm and catnip came back "safe"; with them 41 of 45 species get the same answer on every photo.
+
+## 2026-10-19: plant category for the herbarium
+
+The prompt now also asks for `category` (houseplant / herb / tree / wildflower / other), which drives the herbarium's themed badges. Gemini 3.8 Flash (low), 100 photos: species accuracy 91% (unchanged within noise), $3.52 per 1000 photos. 42 of 45 species got the same category on every photo; the three that varied are borderline (Philodendron houseplant/other, catnip and coriander herb/wildflower). All houseplants, trees and kitchen herbs were labelled as expected.

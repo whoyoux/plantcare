@@ -91,6 +91,7 @@ export function visionModel(apiKey: string, options: ModelOptions): Provider {
         candidates: toCandidates(identification),
         costUsd,
         ...('toxicity' in identification ? { toxicity: identification.toxicity } : {}),
+        ...('category' in identification ? { category: identification.category } : {}),
       };
     },
   };

@@ -7,6 +7,8 @@ export type Prediction = {
   costUsd: number | null;
   /** The model's toxicity answer (vision models with the current prompt), kept for review. */
   toxicity?: unknown;
+  /** The model's plant category (current prompt), kept for review. */
+  category?: unknown;
 };
 
 export type Provider = {

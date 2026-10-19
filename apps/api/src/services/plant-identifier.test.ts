@@ -14,6 +14,7 @@ const monstera: Identification = {
   alternatives: [],
   care: { watering: 'Co 7–10 dni', light: 'Jasne, rozproszone', temperature: '18–27 °C', wateringDays: 8 },
   toxicity: { cats: 'mild', dogs: 'mild', people: 'mild', note: 'Sok z liści podrażnia usta i żołądek.' },
+  category: 'houseplant',
 };
 
 const reply = (content: string) => Response.json({ choices: [{ message: { content } }] });

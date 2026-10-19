@@ -27,6 +27,9 @@ export const Toxicity = z.object({
   note: z.string().nullable(),
 });
 
+/** How people usually meet the plant; drives the herbarium's themed badges. */
+export const PlantCategory = z.enum(['houseplant', 'herb', 'tree', 'wildflower', 'other']);
+
 /**
  * What the model returns for one photo, and what the API stores and sends to the app.
  * Every field is required (nullable where it may be unknown) so it works as a strict JSON schema.
@@ -46,12 +49,15 @@ export const Identification = z.object({
   care: CareGuide.nullable(),
   /** Null for photos without a plant. Results from before Oct 2026 lack it. */
   toxicity: Toxicity.nullable(),
+  /** Null for photos without a plant. Results from before 19 Oct 2026 lack it. */
+  category: PlantCategory.nullable(),
 });
 
 export type SpeciesCandidate = z.infer<typeof SpeciesCandidate>;
 export type CareGuide = z.infer<typeof CareGuide>;
 export type ToxicityLevel = z.infer<typeof ToxicityLevel>;
 export type Toxicity = z.infer<typeof Toxicity>;
+export type PlantCategory = z.infer<typeof PlantCategory>;
 export type Identification = z.infer<typeof Identification>;
 
 /** JSON schema for structured model output. */
@@ -71,7 +77,7 @@ You may get several photos of the same plant (for example a leaf close-up, a flo
 
 Work in this order and answer with JSON that matches the schema:
 1. analysis (in English, 2-4 sentences): describe only what is visible and diagnostic: leaf shape, tip and base, margin (smooth, toothed, lobed), surface (glossy, hairy, wrinkled), venation, arrangement (opposite, alternate, whorled, rosette), stem (square or round, colour, hairs), flowers or fruit, and growth habit. Then name the closest look-alikes in the same genus or family and the visible trait that separates them (for example spearmint vs peppermint vs lemon balm vs catnip, parsley vs coriander, stinging nettle vs dead-nettle). Decide from these traits, not from which plant is more common.
-2. isPlant: false if the photo shows no plant; then set the names, care and toxicity to null and alternatives to [].
+2. isPlant: false if the photo shows no plant; then set the names, care, toxicity and category to null and alternatives to [].
 3. scientificName: the accepted name without author: genus and species, with × for hybrids (e.g. Mentha × piperita). If only the genus is certain, give the genus alone.
 4. commonName: the common name in ${name}, or null if there is none.
 5. family: the botanical family.
@@ -83,5 +89,37 @@ Work in this order and answer with JSON that matches the schema:
    - "mild": irritation of the mouth, drooling, vomiting or diarrhoea that usually passes without treatment. This covers most plants the ASPCA lists as toxic only for such signs, e.g. calcium-oxalate aroids (Monstera, Epipremnum, Philodendron, Spathiphyllum), Ficus, Dracaena, garden mints, lemon balm, catnip.
    - "toxic": can harm the kidneys, liver, heart or breathing, cause severe swelling, or kill, and needs a vet or doctor, e.g. lilies for cats, Dieffenbachia, ivy, sago palm, oleander, hydrangea.
    - "unknown": you are not sure, or only the genus is known. Never answer "safe" when unsure.
-   Give the same levels for the same species every time. toxicity.note: one short sentence in ${name} saying which parts are harmful and what they cause, or null when all three are "safe".`;
+   Give the same levels for the same species every time. toxicity.note: one short sentence in ${name} saying which parts are harmful and what they cause, or null when all three are "safe".
+10. category: how people usually meet this species: "houseplant" (mostly grown indoors in pots), "herb" (a culinary or medicinal herb, wherever it grows), "tree", "wildflower" (a wild, non-woody plant of meadows, roadsides or woods) or "other" (garden ornamentals, shrubs, crops, grasses and the rest).`;
 }
+
+/**
+ * Herbarium badges, in display order. Levelled badges have several thresholds (Collector I-IV);
+ * the API works out progress and dates, the app names and draws them.
+ */
+export const BADGES = [
+  { id: 'firstLeaf', kind: 'species', levels: [1] },
+  { id: 'collector', kind: 'species', levels: [10, 25, 50, 100] },
+  { id: 'botanist', kind: 'families', levels: [5, 10] },
+  { id: 'herbalist', kind: 'herb', levels: [5] },
+  { id: 'forester', kind: 'tree', levels: [5] },
+  { id: 'homebody', kind: 'houseplant', levels: [10] },
+  { id: 'meadow', kind: 'wildflower', levels: [5] },
+  { id: 'careful', kind: 'toxic', levels: [1] },
+  { id: 'lookalikes', kind: 'lookalikes', levels: [1] },
+  { id: 'caretaker', kind: 'plants', levels: [5] },
+] as const satisfies readonly { id: string; kind: string; levels: readonly number[] }[];
+
+export type BadgeId = (typeof BADGES)[number]['id'];
+
+/**
+ * Easily confused pairs (see tools/ai-eval look-alikes): finding both halves of one earns
+ * "Look-alikes". Matched on the start of the scientific name, so a genus covers its species.
+ */
+export const LOOKALIKE_PAIRS = [
+  ['Mentha', 'Melissa officinalis'],
+  ['Mentha spicata', 'Mentha × piperita'],
+  ['Petroselinum crispum', 'Coriandrum sativum'],
+  ['Urtica dioica', 'Lamium album'],
+  ['Mentha', 'Nepeta cataria'],
+] as const;
