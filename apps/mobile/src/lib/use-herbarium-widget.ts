@@ -67,13 +67,14 @@ export function useHerbariumWidgetSync() {
         title: t('herbarium.title'),
         speciesCount: data.speciesCount,
         familiesText: t('herbarium.families', { count: data.familyCount }),
+        // No nulls in widget props (see HerbariumWidgetProps).
         next: data.next
           ? { name: badgeName(data.next, t, true), current: data.next.current, target: data.next.target }
-          : null,
+          : { name: '', current: 0, target: 0 },
         doneText: data.speciesCount === 0 ? t('herbarium.cardEmpty') : t('herbarium.allBadges'),
         recent: recent.map((species, index) => ({
           name: species.commonName ?? species.scientificName,
-          image: images[index] ?? null,
+          image: images[index] ?? '',
         })),
         // `at` makes the link open the herbarium even if the History tab was left on History.
         url: Linking.createURL('/history', { queryParams: { view: 'herbarium', at: String(Date.now()) } }),

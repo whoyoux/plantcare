@@ -13,17 +13,21 @@ import {
 } from '@expo/ui/swift-ui/modifiers';
 import { createWidget, type WidgetEnvironment } from 'expo-widgets';
 
+/**
+ * Props are stored in UserDefaults (shared with the widget), which accepts only property-list
+ * values: never put null in them (it crashes the app on launch). Empty strings and zeros instead.
+ */
 export type HerbariumWidgetProps = {
   title: string;
   speciesCount: number;
   /** "9 families", already translated. */
   familiesText: string;
-  /** The badge being worked towards, or null once every badge is earned. */
-  next: { name: string; current: number; target: number } | null;
+  /** The badge being worked towards; `name` is empty once every badge is earned. */
+  next: { name: string; current: number; target: number };
   /** Shown instead of `next` when every badge is earned, or before the app has run. */
   doneText: string;
-  /** Latest finds; `image` is a file in the shared widgets directory, or null. */
-  recent: { name: string; image: string | null }[];
+  /** Latest finds; `image` is a file in the shared widgets directory, or empty. */
+  recent: { name: string; image: string }[];
   url: string;
 };
 
@@ -36,7 +40,8 @@ const HerbariumWidget = (props: HerbariumWidgetProps, environment: WidgetEnviron
   const dark = environment.colorScheme === 'dark';
   const accent = dark ? '#74d19a' : '#2a7148';
   const background = dark ? '#1a221d' : '#f2f5f1';
-  const progress = props.next ? Math.min(1, props.next.current / props.next.target) : 1;
+  const hasNext = props.next.name !== '' && props.next.target > 0;
+  const progress = hasNext ? Math.min(1, props.next.current / props.next.target) : 1;
   const link = widgetURL(props.url);
 
   if (environment.widgetFamily === 'accessoryCircular') {
@@ -51,7 +56,7 @@ const HerbariumWidget = (props: HerbariumWidgetProps, environment: WidgetEnviron
     );
   }
 
-  const nextBadge = props.next ? (
+  const nextBadge = hasNext ? (
     <VStack alignment="leading" spacing={3}>
       <HStack spacing={4}>
         <Text modifiers={[font({ textStyle: 'caption', weight: 'semibold' }), lineLimit(1)]}>{props.next.name}</Text>
@@ -99,7 +104,7 @@ const HerbariumWidget = (props: HerbariumWidgetProps, environment: WidgetEnviron
             {props.recent
               .slice(0, 3)
               .map((plant) =>
-                plant.image ? (
+                plant.image !== '' ? (
                   <Image
                     key={plant.name}
                     uiImage={plant.image}
@@ -130,7 +135,7 @@ export default createWidget<HerbariumWidgetProps>('Herbarium', HerbariumWidget, 
   title: 'Herbarium',
   speciesCount: 0,
   familiesText: '',
-  next: null,
+  next: { name: '', current: 0, target: 0 },
   doneText: 'Identify a plant to start your collection.',
   recent: [],
   url: 'plantcare://history',
