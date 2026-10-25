@@ -107,14 +107,14 @@ function ResultPhone({ lang }: { lang: Lang }) {
               {t.match}
             </span>
           </div>
-          <div className="flex flex-col gap-1 rounded-2xl bg-[#c8372b] px-3.5 py-3 text-white">
+          <div className="flex flex-col gap-1 rounded-[18px] bg-[#c8372b] px-3.5 py-3 text-white">
             <p className="flex items-center gap-2 text-sm font-bold">
               <TriangleAlert className="size-4 shrink-0" aria-hidden />
               {t.toxicFor}
             </p>
             <p className="text-[13px] leading-snug text-white/90">{t.toxicNote}</p>
           </div>
-          <div className="flex flex-col divide-y divide-border rounded-2xl bg-muted">
+          <div className="flex flex-col divide-y divide-border rounded-[18px] bg-muted">
             {t.rows.map((row) => (
               <div key={row.label} className="flex flex-col px-3.5 py-2">
                 <span className="text-xs text-muted-foreground">{row.label}</span>
@@ -152,7 +152,7 @@ function Features({ lang }: { lang: Lang }) {
           <h3 className="text-xl font-bold">{t.toxic.title}</h3>
           <p className="leading-relaxed text-muted-foreground">{t.toxic.body}</p>
         </div>
-        <div className="flex items-center gap-2 rounded-2xl bg-destructive px-4 py-3 text-sm font-bold text-white">
+        <div className="flex items-center gap-2 rounded-[18px] bg-destructive px-4 py-3 text-sm font-bold text-white">
           <TriangleAlert className="size-4 shrink-0" aria-hidden />
           {t.toxic.banner}
         </div>
@@ -171,7 +171,7 @@ function Features({ lang }: { lang: Lang }) {
           <h3 className="text-xl font-bold">{t.water.title}</h3>
           <p className="leading-relaxed text-muted-foreground">{t.water.body}</p>
         </div>
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-muted py-2.5 pl-4 pr-2.5">
+        <div className="flex items-center justify-between gap-3 rounded-[18px] bg-muted py-2.5 pl-4 pr-2.5">
           <span className="text-sm font-semibold">{t.water.sample}</span>
           <span
             aria-hidden
@@ -211,7 +211,7 @@ function PhotoTile({
     <article className={`flex flex-col overflow-hidden rounded-[28px] bg-card ${className ?? ''}`}>
       <div className="relative h-64 sm:h-72">
         <img src={src} alt="" width={900} height={600} loading="lazy" className="size-full object-cover" />
-        <span className="absolute bottom-3 left-3 rounded-2xl bg-black/60 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur">
+        <span className="absolute bottom-3 left-3 rounded-[18px] bg-black/60 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur">
           {label}
         </span>
       </div>
