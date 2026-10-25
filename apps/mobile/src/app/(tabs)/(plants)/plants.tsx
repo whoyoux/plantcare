@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { ActionSheetIOS, ActivityIndicator, FlatList, Linking, Pressable, Text, View } from 'react-native';
 
 import { EmptyState } from '@/components/native/empty-state';
-import { PlantCareRow, usePlantActions } from '@/components/plant-care';
-import { usePlants, type Plant } from '@/lib/plants';
+import { PlantCareRow, PlantPhotoCard, usePlantActions } from '@/components/plant-care';
+import { daysUntilWatering, usePlants, type Plant } from '@/lib/plants';
 import { useRemindersAllowed } from '@/lib/use-reminders';
 import { haptics } from '@/lib/haptics';
 
@@ -59,7 +59,14 @@ export default function PlantsScreen() {
       className="flex-1 bg-background"
       data={plants.data ?? []}
       keyExtractor={(plant) => plant.id}
-      renderItem={({ item }) => <PlantCareRow plant={item} onLongPress={() => showActions(item)} />}
+      renderItem={({ item }) =>
+        // Plants that need water now get the big photo card; the rest stay compact rows.
+        daysUntilWatering(item) <= 0 ? (
+          <PlantPhotoCard plant={item} onLongPress={() => showActions(item)} />
+        ) : (
+          <PlantCareRow plant={item} onLongPress={() => showActions(item)} />
+        )
+      }
       contentInsetAdjustmentBehavior="automatic"
       contentContainerClassName="gap-2.5 px-4 pb-8 pt-2"
       refreshing={pulling}

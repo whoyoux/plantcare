@@ -5,6 +5,7 @@ import { Alert, Linking, Pressable, Text, View } from 'react-native';
 import { useCSSVariable } from 'uniwind';
 
 import { Image } from '@/components/image';
+import { GlassCircle } from '@/components/photo-ui';
 import { daysUntilWatering, useDeletePlant, usePlants, useUpdatePlant, useWaterPlant, type Plant } from '@/lib/plants';
 import { haptics } from '@/lib/haptics';
 import { requestReminders } from '@/lib/reminders';
@@ -129,13 +130,13 @@ export function PlantCareRow({ plant, onLongPress }: { plant: Plant; onLongPress
       accessibilityRole="button"
       onPress={() => openPlant(plant)}
       onLongPress={onLongPress}
-      className="flex-row items-center gap-3 rounded-2xl bg-card p-2.5 active:opacity-80"
+      className="flex-row items-center gap-3 rounded-[20px] bg-card p-2.5 active:opacity-80"
     >
       <Image
         source={{ uri: plant.imageUrl, cacheKey: `plant-${plant.id}` }}
         contentFit="cover"
         transition={150}
-        className="size-14 rounded-xl bg-accent-soft"
+        className="size-14 rounded-[14px] bg-elevated"
       />
       <View className="flex-1 gap-0.5">
         <Text numberOfLines={1} className="text-[17px] font-semibold text-foreground">
@@ -172,6 +173,58 @@ export function PlantCareRow({ plant, onLongPress }: { plant: Plant; onLongPress
   );
 }
 
+/**
+ * A plant that needs water now, photo first: the name and due label on the photo, a solid
+ * "Water" button and the reminder bell. Long press opens the same actions as the row.
+ */
+export function PlantPhotoCard({ plant, onLongPress }: { plant: Plant; onLongPress?: () => void }) {
+  const { t } = useTranslation();
+  const due = useDueLabel()(plant);
+  const actions = usePlantActions();
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={() => openPlant(plant)}
+      onLongPress={onLongPress}
+      className="h-[210px] overflow-hidden rounded-[24px] bg-elevated active:opacity-90"
+    >
+      <Image
+        source={{ uri: plant.imageUrl, cacheKey: `plant-${plant.id}` }}
+        contentFit="cover"
+        transition={150}
+        style={{ width: '100%', height: 210 }}
+      />
+      <View className="absolute right-3 top-3">
+        <GlassCircle
+          icon={plant.remindersEnabled ? 'bell.fill' : 'bell.slash'}
+          label={t('plants.reminders')}
+          onPress={() => void actions.toggleReminders(plant)}
+        />
+      </View>
+      <View className="absolute bottom-3 left-3 right-3 flex-row items-center gap-3 rounded-[18px] bg-black/60 py-2.5 pl-4 pr-2.5">
+        <View className="flex-1">
+          <Text numberOfLines={1} className="text-[17px] font-bold text-white">
+            {plant.name}
+          </Text>
+          <Text numberOfLines={1} className={`text-[13px] ${due.late ? 'text-[#FFB4A6]' : 'text-white/80'}`}>
+            {due.text} · {t('plants.every', { count: plant.wateringIntervalDays })}
+          </Text>
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${t('plants.water')}: ${plant.name}`}
+          onPress={() => actions.water(plant)}
+          className="h-11 flex-row items-center gap-1.5 rounded-full bg-white px-4 active:opacity-80"
+        >
+          <SymbolView name="drop.fill" size={15} tintColor="#0d110e" />
+          <Text className="text-[15px] font-bold text-[#0d110e]">{t('plants.water')}</Text>
+        </Pressable>
+      </View>
+    </Pressable>
+  );
+}
+
 /** Home screen: plants due today or overdue. Hidden until the user has plants. */
 export function DueToday() {
   const { t } = useTranslation();
@@ -183,7 +236,7 @@ export function DueToday() {
     <View className="gap-2.5">
       <Text className="px-1 font-rounded text-[20px] font-bold text-foreground">{t('identify.dueTitle')}</Text>
       {due.length > 0 ? (
-        due.map((plant) => <PlantCareRow key={plant.id} plant={plant} />)
+        due.map((plant) => <PlantPhotoCard key={plant.id} plant={plant} />)
       ) : (
         <View className="rounded-2xl bg-card px-4 py-4">
           <Text className="text-[15px] text-muted">{t('identify.allWatered')}</Text>
