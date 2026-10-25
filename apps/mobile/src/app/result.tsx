@@ -4,13 +4,13 @@ import type { SFSymbol } from 'expo-symbols';
 import { SymbolView } from 'expo-symbols';
 import { useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
-import { useCSSVariable } from 'uniwind';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Toxicity, ToxicityLevel } from '@plantcare/shared';
 
 import { Image } from '@/components/image';
-import { Button } from '@/components/native/button';
+import { GlassCircle, PhotoLabel, PillButton, useColor } from '@/components/photo-ui';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
 import { BADGE_SYMBOLS, badgeName } from '@/lib/badges';
@@ -19,8 +19,12 @@ import { identifyPhotos, type IdentifyResponse } from '@/lib/identify';
 import { useAddPlant } from '@/lib/plants';
 import { shareIdentification } from '@/lib/share';
 import { historyKeys, useDeleteIdentification, useSavedIdentification } from '@/lib/identifications';
+import { SUBJECTS, toxicHeadline, toxicWarning } from '@/lib/toxicity';
 
 type Result = IdentifyResponse['result'];
+
+/** Height of the photo at the top; the details card overlaps its bottom edge. */
+const HERO_HEIGHT = 470;
 
 const careRows = [
   { key: 'watering', icon: 'drop.fill' },
@@ -28,16 +32,16 @@ const careRows = [
   { key: 'temperature', icon: 'thermometer.medium' },
 ] as const satisfies readonly { key: keyof NonNullable<Result['care']>; icon: SFSymbol }[];
 
-const safetyRows = [
-  { key: 'cats', icon: 'cat.fill' },
-  { key: 'dogs', icon: 'dog.fill' },
-  { key: 'people', icon: 'figure.and.child.holdinghands' },
-] as const satisfies readonly { key: keyof Omit<Toxicity, 'note'>; icon: SFSymbol }[];
+const subjectIcons: Record<(typeof SUBJECTS)[number], SFSymbol> = {
+  cats: 'cat.fill',
+  dogs: 'dog.fill',
+  people: 'figure.and.child.holdinghands',
+};
 
 /** Text colour per level; the label says it too, so colour is never the only signal. */
 const levelColor: Record<ToxicityLevel, string> = {
   safe: 'text-accent',
-  mild: 'text-warning',
+  mild: 'text-danger',
   toxic: 'text-danger',
   unknown: 'text-muted',
 };
@@ -45,20 +49,20 @@ const levelColor: Record<ToxicityLevel, string> = {
 const KNOWN_ERRORS = ['NOT_A_PLANT', 'DAILY_LIMIT_REACHED', 'RATE_LIMITED'] as const;
 
 /**
- * The result sheet. Opened with `uri` for a new photo (uploads and identifies it), or with `id` for
- * an identification from history.
+ * The result screen: the photo edge to edge, the details on a card over its lower edge. Opened
+ * with `photos` for new photos (uploads and identifies them), or with `id` for one from history.
  */
-export default function ResultSheet() {
+export default function ResultScreen() {
   const { photos, id } = useLocalSearchParams<{ photos?: string; id?: string }>();
   return id ? <SavedResult id={id} /> : <NewResult uris={JSON.parse(photos ?? '[]') as string[]} />;
 }
 
 function NewResult({ uris }: { uris: string[] }) {
   const uri = uris[0]!;
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
 
-  // A query (not a mutation) so the sheet survives re-renders without uploading twice.
+  // A query (not a mutation) so the screen survives re-renders without uploading twice.
   const identification = useQuery({
     queryKey: ['identify', ...uris],
     queryFn: () => identifyPhotos(uris, i18n.language as Language),
@@ -81,87 +85,93 @@ function NewResult({ uris }: { uris: string[] }) {
     }
   }, [status, error]);
 
+  const data = identification.data;
   return (
-    <Sheet photo={{ uri }}>
+    <Layout
+      photo={{ uri }}
+      toxicity={data?.result.toxicity}
+      share={data ? () => void shareIdentification({ id: data.id, photoUri: uri, result: data.result }, t) : undefined}
+    >
       {identification.isPending && <Identifying />}
       {identification.isError && <Failure error={identification.error} onRetry={() => void identification.refetch()} />}
-      {identification.data && (
+      {data && (
         <>
-          <Discovery herbarium={identification.data.herbarium} />
-          <Details result={identification.data.result} />
-          <Disclaimer />
-          <Actions id={identification.data.id} photoUri={uri} result={identification.data.result} plantId={null} />
+          <Discovery herbarium={data.herbarium} />
+          <Details result={data.result} />
+          <Actions id={data.id} plantId={null} />
         </>
       )}
-    </Sheet>
+    </Layout>
   );
 }
 
 function SavedResult({ id }: { id: string }) {
+  const { t } = useTranslation();
   const saved = useSavedIdentification(id);
+  const data = saved.data;
 
   return (
-    <Sheet photo={saved.data && { uri: saved.data.imageUrl, cacheKey: id }}>
+    <Layout
+      photo={data && { uri: data.imageUrl, cacheKey: id }}
+      toxicity={data?.result.toxicity}
+      share={data ? () => void shareIdentification({ id, photoUri: data.imageUrl, result: data.result }, t) : undefined}
+    >
       {saved.isPending && <ActivityIndicator className="py-6" />}
       {saved.isError && <Failure error={saved.error} onRetry={() => void saved.refetch()} />}
-      {saved.data && (
+      {data && (
         <>
-          <Details result={saved.data.result} />
-          <Disclaimer />
-          <Actions id={id} photoUri={saved.data.imageUrl} result={saved.data.result} plantId={saved.data.plantId} />
+          <Details result={data.result} />
+          <Actions id={id} plantId={data.plantId} />
         </>
       )}
-    </Sheet>
+    </Layout>
   );
 }
 
-function Sheet({ photo, children }: { photo?: { uri: string; cacheKey?: string }; children: ReactNode }) {
-  return (
-    <ScrollView contentContainerClassName="gap-6 px-5 pb-10 pt-4" contentInsetAdjustmentBehavior="automatic">
-      {photo ? (
-        <Image source={photo} contentFit="cover" className="aspect-[4/3] w-full rounded-3xl" />
-      ) : (
-        <View className="aspect-[4/3] w-full rounded-3xl bg-card" />
-      )}
-      {children}
-    </ScrollView>
-  );
-}
-
-/** Every result is AI output; say so where people read it (see also the Terms of Use). */
-function Disclaimer() {
+function Layout({
+  photo,
+  toxicity,
+  share,
+  children,
+}: {
+  photo?: { uri: string; cacheKey?: string };
+  toxicity?: Toxicity | null;
+  share?: () => void;
+  children: ReactNode;
+}) {
   const { t } = useTranslation();
-  const muted = useCSSVariable('--color-muted');
+  const insets = useSafeAreaInsets();
+  const warning = toxicWarning(toxicity);
 
   return (
-    <View className="flex-row gap-3 rounded-2xl bg-card px-4 py-3">
-      <SymbolView name="sparkles" size={18} tintColor={typeof muted === 'string' ? muted : undefined} />
-      <Text className="flex-1 text-[13px] leading-[18px] text-muted">{t('result.disclaimer')}</Text>
+    <View className="flex-1 bg-card">
+      <ScrollView contentInsetAdjustmentBehavior="never" className="flex-1">
+        <View style={{ height: HERO_HEIGHT }} className="bg-elevated">
+          {photo && <Image source={photo} contentFit="cover" style={{ width: '100%', height: HERO_HEIGHT }} />}
+          {warning && (
+            <View className="absolute bottom-12 left-4">
+              <PhotoLabel tone="danger">{t(`result.toxicity.${warning.level}`)}</PhotoLabel>
+            </View>
+          )}
+        </View>
+        <View className="-mt-8 min-h-[400px] gap-6 rounded-t-[30px] bg-card px-5 pb-12 pt-6">{children}</View>
+      </ScrollView>
+      <View
+        pointerEvents="box-none"
+        className="absolute left-4 right-4 flex-row justify-between"
+        style={{ top: insets.top + 8 }}
+      >
+        <GlassCircle icon="xmark" label={t('result.close')} onPress={() => router.back()} />
+        {share && <GlassCircle icon="square.and.arrow.up" label={t('result.share')} onPress={share} />}
+      </View>
     </View>
   );
 }
 
-function Actions({
-  id,
-  photoUri,
-  result,
-  plantId,
-}: {
-  id: string;
-  photoUri: string;
-  result: Result;
-  plantId: string | null;
-}) {
-  const { t } = useTranslation();
+function Actions({ id, plantId }: { id: string; plantId: string | null }) {
   return (
     <View className="gap-2.5">
       <AddPlantButton identificationId={id} plantId={plantId} />
-      <Button
-        label={t('result.share')}
-        systemImage="square.and.arrow.up"
-        variant="secondary"
-        onPress={() => void shareIdentification({ id, photoUri, result }, t)}
-      />
       <DeleteButton id={id} />
     </View>
   );
@@ -175,9 +185,9 @@ function AddPlantButton({ identificationId, plantId }: { identificationId: strin
 
   if (added) {
     return (
-      <Button
+      <PillButton
         label={t('result.inPlants')}
-        systemImage="checkmark.circle.fill"
+        icon="checkmark.circle.fill"
         variant="secondary"
         onPress={() => {
           router.back();
@@ -187,9 +197,9 @@ function AddPlantButton({ identificationId, plantId }: { identificationId: strin
     );
   }
   return (
-    <Button
+    <PillButton
       label={t('result.addPlant')}
-      systemImage="drop.fill"
+      icon="drop.fill"
       disabled={add.isPending}
       onPress={() =>
         add.mutate(identificationId, {
@@ -225,11 +235,10 @@ function DeleteButton({ id }: { id: string }) {
   }
 
   return (
-    <Button
+    <PillButton
       label={t('result.delete')}
-      systemImage="trash"
-      variant="secondary"
-      tone="danger"
+      icon="trash"
+      variant="danger"
       disabled={remove.isPending}
       onPress={confirm}
     />
@@ -255,70 +264,73 @@ function Failure({ error, onRetry }: { error: Error; onRetry: () => void }) {
       <Text className="text-center text-[17px] leading-6 text-foreground">
         {known ? t(`result.errors.${known}`) : t('result.errors.generic')}
       </Text>
-      {known !== 'DAILY_LIMIT_REACHED' && <Button label={t('result.retry')} onPress={onRetry} variant="secondary" />}
+      {known !== 'DAILY_LIMIT_REACHED' && (
+        <PillButton label={t('result.retry')} onPress={onRetry} variant="secondary" />
+      )}
     </View>
   );
 }
 
 function Details({ result }: { result: Result }) {
   const { t } = useTranslation();
-  const accent = useCSSVariable('--color-accent');
-  const tint = typeof accent === 'string' ? accent : undefined;
+  const accent = useColor('--color-accent');
 
   return (
     <>
-      <View className="gap-1">
-        <Text className="font-rounded text-[30px] font-extrabold leading-9 text-foreground">
-          {result.commonName ?? result.scientificName}
-        </Text>
-        <Text className="font-latin text-[19px] italic text-muted">
-          {result.scientificName}
-          {result.family && <Text className="font-latin text-[15px] not-italic text-muted"> · {result.family}</Text>}
-        </Text>
-        <View className="mt-2 self-start rounded-full bg-accent-soft px-3 py-1">
-          <Text className="text-[13px] font-semibold text-accent">
-            {t('result.match', { value: Math.round(result.confidence * 100) })}
+      <View className="flex-row items-start gap-3">
+        <View className="flex-1 gap-1">
+          <Text className="text-[30px] font-bold leading-9 tracking-tight text-foreground">
+            {result.commonName ?? result.scientificName}
+          </Text>
+          <Text className="font-latin text-[17px] italic text-muted">
+            {result.scientificName}
+            {result.family && <Text className="text-[15px] not-italic text-muted"> · {result.family}</Text>}
+          </Text>
+        </View>
+        <View
+          accessibilityLabel={t('result.match', { value: Math.round(result.confidence * 100) })}
+          className="mt-1.5 rounded-full bg-accent-soft px-3 py-1.5"
+        >
+          <Text className="text-[13px] font-bold text-accent">
+            {t('result.confidence', { value: Math.round(result.confidence * 100) })}
           </Text>
         </View>
       </View>
 
+      {/* Toxicity first: anyone who reads one thing on this screen should read this. */}
+      {result.toxicity && <Safety toxicity={result.toxicity} />}
+
       {result.care && (
-        <View className="gap-2">
-          <Text className="font-rounded text-[20px] font-bold text-foreground">{t('result.care')}</Text>
-          <View className="overflow-hidden rounded-2xl bg-card">
-            {careRows.map(({ key, icon }, index) => (
-              <View
-                key={key}
-                className={`flex-row items-center gap-3 px-4 py-3 ${index > 0 ? 'border-t border-separator' : ''}`}
-              >
-                <SymbolView name={icon} size={22} tintColor={tint} />
-                <View className="flex-1">
-                  <Text className="text-[13px] text-muted">{t(`result.${key}`)}</Text>
-                  <Text className="text-[17px] text-foreground">{result.care?.[key]}</Text>
-                </View>
+        <View className="overflow-hidden rounded-2xl bg-elevated">
+          {careRows.map(({ key, icon }, index) => (
+            <View
+              key={key}
+              className={`flex-row items-center gap-3 px-4 py-3 ${index > 0 ? 'border-t border-separator' : ''}`}
+            >
+              <SymbolView name={icon} size={20} tintColor={accent} />
+              <View className="flex-1">
+                <Text className="text-[13px] text-muted">{t(`result.${key}`)}</Text>
+                <Text className="text-[16px] text-foreground">{result.care?.[key]}</Text>
               </View>
-            ))}
-          </View>
+            </View>
+          ))}
         </View>
       )}
 
-      {/* Results from before the toxicity field have no safety section. */}
-      {result.toxicity && <Safety toxicity={result.toxicity} />}
-
       {result.alternatives.length > 0 && (
         <View className="gap-2">
-          <Text className="font-rounded text-[20px] font-bold text-foreground">{t('result.alternatives')}</Text>
-          <View className="overflow-hidden rounded-2xl bg-card">
+          <Text className="text-[17px] font-bold text-foreground">{t('result.alternatives')}</Text>
+          <View className="overflow-hidden rounded-2xl bg-elevated">
             {result.alternatives.map((alternative, index) => (
               <View
                 key={alternative.scientificName}
                 className={`flex-row items-center justify-between gap-3 px-4 py-3 ${index > 0 ? 'border-t border-separator' : ''}`}
               >
                 <View className="flex-1">
-                  <Text className="text-[17px] text-foreground">
+                  <Text className="text-[16px] text-foreground">
                     {alternative.commonName ?? alternative.scientificName}
                   </Text>
-                  <Text className="font-latin text-[15px] italic text-muted">{alternative.scientificName}</Text>
+                  <Text className="font-latin text-[14px] italic text-muted">{alternative.scientificName}</Text>
                 </View>
                 <Text className="text-[15px] text-muted">{Math.round(alternative.confidence * 100)}%</Text>
               </View>
@@ -326,38 +338,57 @@ function Details({ result }: { result: Result }) {
           </View>
         </View>
       )}
+
+      <Text className="text-[13px] leading-[18px] text-muted">{t('result.disclaimer')}</Text>
     </>
   );
 }
 
+/**
+ * Toxic plants get a solid red banner saying who they harm, before anything else; the per-subject
+ * levels and the model's note follow. Safe plants get one quiet line.
+ */
 function Safety({ toxicity }: { toxicity: Toxicity }) {
   const { t } = useTranslation();
-  const muted = useCSSVariable('--color-muted');
+  const muted = useColor('--color-muted');
+  const accent = useColor('--color-accent');
+  const warning = toxicWarning(toxicity);
+  const allSafe = SUBJECTS.every((subject) => toxicity[subject] === 'safe');
+
+  if (allSafe) {
+    return (
+      <View className="flex-row items-center gap-2.5 rounded-2xl bg-accent-soft px-4 py-3">
+        <SymbolView name="checkmark.shield.fill" size={20} tintColor={accent} />
+        <Text className="flex-1 text-[15px] font-semibold text-accent">{t('result.safeForAll')}</Text>
+      </View>
+    );
+  }
 
   return (
     <View className="gap-2">
-      <Text className="font-rounded text-[20px] font-bold text-foreground">{t('result.safety')}</Text>
-      <View className="overflow-hidden rounded-2xl bg-card">
-        {safetyRows.map(({ key, icon }, index) => (
-          <View
-            key={key}
-            className={`flex-row items-center gap-3 px-4 py-3 ${index > 0 ? 'border-t border-separator' : ''}`}
-          >
-            <SymbolView name={icon} size={20} tintColor={typeof muted === 'string' ? muted : undefined} />
-            <Text className="flex-1 text-[17px] text-foreground">{t(`result.${key}`)}</Text>
-            <Text className={`text-[15px] font-semibold ${levelColor[toxicity[key]]}`}>
-              {t(`result.toxicity.${toxicity[key]}`)}
+      {warning && (
+        <View accessibilityRole="alert" className="gap-1.5 rounded-2xl bg-danger-fill px-4 py-3.5">
+          <View className="flex-row items-center gap-2.5">
+            <SymbolView name="exclamationmark.triangle.fill" size={22} tintColor="white" />
+            <Text className="flex-1 text-[17px] font-bold text-white">{toxicHeadline(warning, t)}</Text>
+          </View>
+          {toxicity.note && <Text className="text-[15px] leading-5 text-white">{toxicity.note}</Text>}
+        </View>
+      )}
+      <View className="flex-row gap-2">
+        {SUBJECTS.map((subject) => (
+          <View key={subject} className="flex-1 items-center gap-1 rounded-2xl bg-elevated px-2 py-3">
+            <SymbolView name={subjectIcons[subject]} size={20} tintColor={muted} />
+            <Text className="text-[13px] text-muted">{t(`result.${subject}`)}</Text>
+            <Text className={`text-center text-[14px] font-bold ${levelColor[toxicity[subject]]}`}>
+              {t(`result.toxicity.${toxicity[subject]}`)}
             </Text>
           </View>
         ))}
-        {toxicity.note && (
-          <Text className="border-t border-separator px-4 py-3 text-[15px] leading-5 text-foreground">
-            {toxicity.note}
-          </Text>
-        )}
       </View>
+      {!warning && toxicity.note && <Text className="text-[14px] leading-5 text-foreground">{toxicity.note}</Text>}
       <View className="flex-row gap-2 px-1">
-        <SymbolView name="info.circle" size={15} tintColor={typeof muted === 'string' ? muted : undefined} />
+        <SymbolView name="info.circle" size={15} tintColor={muted} />
         <Text className="flex-1 text-[13px] leading-[18px] text-muted">{t('result.safetyAdvice')}</Text>
       </View>
     </View>
@@ -367,15 +398,21 @@ function Safety({ toxicity }: { toxicity: Toxicity }) {
 /** "New species in your herbarium · #24", plus any badge it earned. Only for a fresh identification. */
 function Discovery({ herbarium }: { herbarium: IdentifyResponse['herbarium'] }) {
   const { t } = useTranslation();
-  const accent = useCSSVariable('--color-accent');
+  const accent = useColor('--color-accent');
   if (!herbarium.newSpecies && herbarium.newBadges.length === 0) return null;
-  const tint = typeof accent === 'string' ? accent : undefined;
 
   return (
-    <View className="gap-2 rounded-2xl bg-accent-soft px-4 py-3">
+    <Pressable
+      accessibilityRole="button"
+      onPress={() => {
+        router.back();
+        router.navigate({ pathname: '/history', params: { view: 'herbarium', at: String(Date.now()) } });
+      }}
+      className="gap-2 rounded-2xl bg-accent-soft px-4 py-3 active:opacity-80"
+    >
       {herbarium.newSpecies && (
         <View className="flex-row items-center gap-2.5">
-          <SymbolView name="sparkles" size={18} tintColor={tint} />
+          <SymbolView name="leaf.fill" size={18} tintColor={accent} />
           <Text className="flex-1 text-[15px] font-semibold text-accent">
             {t('herbarium.newSpecies', { number: herbarium.speciesCount })}
           </Text>
@@ -383,12 +420,12 @@ function Discovery({ herbarium }: { herbarium: IdentifyResponse['herbarium'] }) 
       )}
       {herbarium.newBadges.map((badge) => (
         <View key={badge.id} className="flex-row items-center gap-2.5">
-          <SymbolView name={BADGE_SYMBOLS[badge.id]} size={18} tintColor={tint} />
+          <SymbolView name={BADGE_SYMBOLS[badge.id]} size={18} tintColor={accent} />
           <Text className="flex-1 text-[15px] font-semibold text-accent">
             {t('herbarium.newBadge', { name: badgeName(badge, t) })}
           </Text>
         </View>
       ))}
-    </View>
+    </Pressable>
   );
 }

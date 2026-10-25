@@ -110,7 +110,9 @@ export const identifyRoutes = factory
           confidence: result.confidence,
           imageKey,
           category: result.category,
-          toxic: toxicity ? [toxicity.cats, toxicity.dogs, toxicity.people].includes('toxic') : false,
+          toxic: toxicity
+            ? [toxicity.cats, toxicity.dogs, toxicity.people].some((level) => level === 'mild' || level === 'toxic')
+            : false,
         },
       ],
       plantDates,

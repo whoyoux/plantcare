@@ -126,7 +126,14 @@ const pl: Translations<typeof en> = {
     cats: 'Koty',
     dogs: 'Psy',
     people: 'Ludzie',
-    toxicity: { safe: 'Bezpieczna', mild: 'Lekko trująca', toxic: 'Trująca', unknown: 'Brak danych' },
+    toxicity: { safe: 'Bezpieczna', mild: 'Trująca', toxic: 'Silnie trująca', unknown: 'Brak danych' },
+    toxicFor: { mild: 'Trująca dla {{who}}', toxic: 'Silnie trująca dla {{who}}' },
+    toxicWho: { cats: 'kotów', dogs: 'psów', people: 'ludzi' },
+    and: 'i',
+    safeForAll: 'Bezpieczna dla kotów, psów i ludzi',
+    toxicBadge: 'Trująca',
+    close: 'Zamknij',
+    confidence: '{{value}}%',
     safetyAdvice:
       'Ocenę przygotowała sztuczna inteligencja na podstawie ogólnodostępnej wiedzy, więc może być niepełna lub błędna i nie zastępuje porady specjalisty. Jeśli zwierzę albo dziecko zjadło roślinę, od razu skontaktuj się z weterynarzem lub lekarzem.',
     disclaimer:

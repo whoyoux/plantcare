@@ -6,7 +6,6 @@ import { Stack } from 'expo-router';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -21,7 +20,6 @@ void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const { t } = useTranslation();
   const { data: session, isPending } = authClient.useSession();
   const signedIn = Boolean(session);
   // Only the first session check hides the app (behind the splash). Better Auth reports
@@ -45,19 +43,8 @@ export default function RootLayout() {
             <Stack.Protected guard={signedIn}>
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="camera" options={{ presentation: 'fullScreenModal' }} />
-              <Stack.Screen
-                name="result"
-                options={{
-                  presentation: 'formSheet',
-                  sheetAllowedDetents: [0.6, 1],
-                  sheetGrabberVisible: true,
-                  sheetCornerRadius: 28,
-                  headerShown: true,
-                  headerTransparent: true,
-                  title: t('result.title'),
-                  contentStyle: { backgroundColor: 'transparent' },
-                }}
-              />
+              {/* Full height so the photo can run edge to edge; swipe down still dismisses it. */}
+              <Stack.Screen name="result" options={{ presentation: 'modal' }} />
             </Stack.Protected>
             {/* After signing in, land on the camera (`/`), not the first tab folder alphabetically. */}
             <Stack.Protected guard={!signedIn} redirectTo="/">

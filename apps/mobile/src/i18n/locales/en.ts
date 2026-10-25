@@ -113,7 +113,14 @@ export default {
     cats: 'Cats',
     dogs: 'Dogs',
     people: 'People',
-    toxicity: { safe: 'Safe', mild: 'Mildly toxic', toxic: 'Toxic', unknown: 'No data' },
+    toxicity: { safe: 'Safe', mild: 'Toxic', toxic: 'Highly toxic', unknown: 'No data' },
+    toxicFor: { mild: 'Toxic to {{who}}', toxic: 'Highly toxic to {{who}}' },
+    toxicWho: { cats: 'cats', dogs: 'dogs', people: 'people' },
+    and: 'and',
+    safeForAll: 'Safe for cats, dogs and people',
+    toxicBadge: 'Toxic',
+    close: 'Close',
+    confidence: '{{value}}%',
     safetyAdvice:
       'This assessment was made by AI from general knowledge, so it may be incomplete or wrong and is no substitute for professional advice. If a pet or child has eaten the plant, contact a vet or doctor right away.',
     disclaimer:

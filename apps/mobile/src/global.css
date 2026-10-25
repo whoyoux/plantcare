@@ -2,43 +2,53 @@
 @import 'uniwind';
 
 /*
- * "Fern" palette: a deep leaf green accent on lightly green-tinted neutrals.
+ * Photo-first palette: plant photos carry the colour, so the chrome is quiet neutrals (near-black
+ * in dark mode, soft grey-green in light) with one green accent and a strong red for toxicity.
  * `bg-background`, `text-foreground`, `bg-accent`, … come from `--color-*`.
  *
- * Contrast (WCAG): text pairs are all ≥ 5:1 in both themes. Surfaces follow iOS's grouped
- * backgrounds: dark mode is near-black with cards at ~1.24:1 and separators at ~1.55:1, which is
- * at least as distinct as the system's own (#000 / #1C1C1E / #38383A). Re-check these numbers
- * when changing a color.
+ * Contrast (WCAG): text pairs are ≥ 4.5:1 in both themes (muted on card ≥ 5.9:1, accent on card
+ * ≥ 6:1). `inverse` is the solid primary button (white on dark, ink on light). `danger-fill` carries
+ * white text at ≥ 5.2:1 for the toxicity warning. Re-check these numbers when changing a color.
  */
 @layer theme {
   :root {
     @variant light {
-      --color-background: #f2f5f1;
+      --color-background: #f3f5f2;
       --color-card: #ffffff;
-      --color-foreground: #14201a;
-      --color-muted: #5a675f;
-      --color-separator: #cfd9d2;
-      --color-accent: #2a7148;
-      --color-accent-fill: #2a7148;
+      /* Tiles inside a card. */
+      --color-elevated: #f0f4f1;
+      --color-foreground: #121613;
+      --color-muted: #5c665f;
+      --color-separator: #d5dad6;
+      --color-accent: #22683f;
+      --color-accent-fill: #22683f;
       --color-accent-foreground: #ffffff;
       --color-accent-soft: #e3f0e7;
-      --color-danger: #c4311f;
-      /* Toxicity "mild": 5.3:1 on the card. */
+      --color-inverse: #121613;
+      --color-on-inverse: #ffffff;
+      --color-danger: #a8371e;
+      --color-danger-fill: #b3261e;
+      --color-danger-soft: #fcede8;
       --color-warning: #95560a;
     }
 
     @variant dark {
-      --color-background: #050806;
-      --color-card: #1a221d;
-      --color-foreground: #eef3ef;
-      --color-muted: #9aa7a0;
-      --color-separator: #36423b;
-      --color-accent: #74d19a;
-      /* Filled controls: white label at 5.1:1, 3.4:1 against the dark sheet. */
+      --color-background: #0d110e;
+      --color-card: #161b17;
+      --color-elevated: #1f2621;
+      --color-foreground: #f1f4f1;
+      --color-muted: #a9b4ac;
+      --color-separator: #2c342e;
+      --color-accent: #bfe6c9;
+      /* Native glass buttons tint with this; a white label stays at 5.1:1. */
       --color-accent-fill: #287d4d;
       --color-accent-foreground: #0b1a10;
       --color-accent-soft: #21402c;
-      --color-danger: #ff7a66;
+      --color-inverse: #f1f4f1;
+      --color-on-inverse: #0d110e;
+      --color-danger: #ff8a75;
+      --color-danger-fill: #c8372b;
+      --color-danger-soft: #2a1f1b;
       --color-warning: #f0b04a;
     }
   }

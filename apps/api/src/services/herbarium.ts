@@ -10,7 +10,7 @@ export type HerbariumEntry = {
   confidence: number;
   imageKey: string;
   category: PlantCategory | null;
-  /** The model rated it "toxic" for cats, dogs or people. */
+  /** The model rated it harmful ("mild" or "toxic") for cats, dogs or people. */
   toxic: boolean;
 };
 

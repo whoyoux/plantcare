@@ -34,7 +34,11 @@ describe('herbarium', () => {
     expect(first.herbarium).toEqual({
       newSpecies: true,
       speciesCount: 1,
-      newBadges: [{ id: 'firstLeaf', level: 1, maxLevel: 1 }],
+      // The test Monstera is mildly toxic, which also earns Careful.
+      newBadges: [
+        { id: 'firstLeaf', level: 1, maxLevel: 1 },
+        { id: 'careful', level: 1, maxLevel: 1 },
+      ],
     });
 
     mockModel({ ...monstera, scientificName: 'monstera deliciosa' });

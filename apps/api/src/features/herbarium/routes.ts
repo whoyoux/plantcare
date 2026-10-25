@@ -23,7 +23,8 @@ export async function loadHerbariumData(db: Database, userId: string) {
         imageKey: table.imageKey,
         family: sql<string | null>`${table.result}->>'family'`,
         category: sql<string | null>`${table.result}->>'category'`,
-        toxic: sql<boolean>`coalesce('toxic' in (${table.result}->'toxicity'->>'cats', ${table.result}->'toxicity'->>'dogs', ${table.result}->'toxicity'->>'people'), false)`,
+        // Any harm counts ("mild" or "toxic" for cats, dogs or people), as in the app.
+        toxic: sql<boolean>`coalesce(${table.result}->'toxicity'->>'cats' in ('mild', 'toxic') or ${table.result}->'toxicity'->>'dogs' in ('mild', 'toxic') or ${table.result}->'toxicity'->>'people' in ('mild', 'toxic'), false)`,
       })
       .from(table)
       .where(eq(table.userId, userId)),
