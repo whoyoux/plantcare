@@ -14,7 +14,7 @@ export function SiteFooter() {
   ];
 
   return (
-    <footer className="mx-auto w-full max-w-5xl px-5 pb-10 pt-16">
+    <footer className="mx-auto w-full max-w-6xl px-5 pb-10 pt-16">
       <Separator />
       <div className="flex flex-col gap-4 pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <nav className="flex flex-wrap gap-x-6 gap-y-2">

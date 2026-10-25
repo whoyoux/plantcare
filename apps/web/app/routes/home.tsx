@@ -64,53 +64,68 @@ export default function Home() {
   );
 }
 
-/** The app's result screen in a phone: the photo edge to edge, the details on a card over it. */
+/**
+ * The app's result screen in a phone: the photo edge to edge, the details on a card over it. The
+ * phone is a fixed near-black in both themes (like the hardware), and the screen clips everything
+ * to its own corners.
+ */
 function ResultPhone({ lang }: { lang: Lang }) {
   const t = ui[lang].phone;
 
   return (
-    <div className="mx-auto w-full max-w-[330px] overflow-hidden rounded-[52px] border-[10px] border-foreground bg-card shadow-2xl shadow-black/20">
-      <div className="relative h-[330px]">
-        <img
-          src="/photos/monstera.webp"
-          alt=""
-          width={900}
-          height={1078}
-          className="size-full object-cover object-top"
-        />
-        <span
-          aria-hidden
-          className="absolute left-4 top-4 flex size-9 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur"
-        >
-          <X className="size-4" />
-        </span>
-        <span className="absolute bottom-10 left-4 rounded-full bg-destructive px-3 py-1 text-xs font-bold text-white">
-          {t.toxic}
-        </span>
-      </div>
-      <div className="relative -mt-6 flex flex-col gap-3.5 rounded-t-[26px] bg-card px-5 pb-6 pt-5">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex flex-col">
-            <p className="text-2xl font-bold leading-tight tracking-tight">{t.name}</p>
-            <p className="font-latin text-[15px] italic text-muted-foreground">
-              Monstera deliciosa <span className="not-italic">· Araceae</span>
-            </p>
-          </div>
-          <span className="mt-1 rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-accent-foreground">
-            {t.match}
+    <div className="mx-auto w-full max-w-[320px] rounded-[54px] bg-[#0b0e0c] p-[9px] shadow-2xl shadow-black/25 ring-1 ring-black/5 dark:shadow-black/60 dark:ring-white/10">
+      <div className="relative aspect-[9/19.5] overflow-hidden rounded-[45px] bg-card">
+        <div className="relative h-[43%]">
+          <img
+            src="/photos/monstera.webp"
+            alt=""
+            width={900}
+            height={1078}
+            fetchPriority="high"
+            className="size-full object-cover object-[50%_20%]"
+          />
+          <span aria-hidden className="absolute left-1/2 top-2.5 h-6 w-[88px] -translate-x-1/2 rounded-full bg-black" />
+          <span
+            aria-hidden
+            className="absolute left-4 top-12 flex size-9 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur"
+          >
+            <X className="size-4" />
+          </span>
+          <span className="absolute bottom-9 left-4 rounded-full bg-[#c8372b] px-3 py-1 text-xs font-bold text-white">
+            {t.toxic}
           </span>
         </div>
-        <div className="flex items-center gap-2 rounded-2xl bg-destructive px-3.5 py-3 text-sm font-bold text-white">
-          <TriangleAlert className="size-4 shrink-0" aria-hidden />
-          {t.toxicFor}
-        </div>
-        <div className="flex flex-col divide-y divide-border rounded-2xl bg-muted">
-          {t.rows.map((row) => (
-            <div key={row.label} className="flex flex-col px-3.5 py-2.5">
-              <span className="text-xs text-muted-foreground">{row.label}</span>
-              <span className="text-sm">{row.value}</span>
+        <div className="absolute inset-x-0 bottom-0 top-[calc(43%-1.5rem)] flex flex-col gap-3 rounded-t-[26px] bg-card px-4 pt-5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex min-w-0 flex-col">
+              <p className="truncate text-[22px] font-bold leading-tight tracking-tight">{t.name}</p>
+              <p className="font-latin text-[15px] italic text-muted-foreground">
+                Monstera deliciosa <span className="font-sans text-[13px] not-italic">· Araceae</span>
+              </p>
             </div>
-          ))}
+            <span className="mt-1 shrink-0 rounded-full bg-accent px-2.5 py-1 text-xs font-bold text-accent-foreground">
+              {t.match}
+            </span>
+          </div>
+          <div className="flex flex-col gap-1 rounded-2xl bg-[#c8372b] px-3.5 py-3 text-white">
+            <p className="flex items-center gap-2 text-sm font-bold">
+              <TriangleAlert className="size-4 shrink-0" aria-hidden />
+              {t.toxicFor}
+            </p>
+            <p className="text-[13px] leading-snug text-white/90">{t.toxicNote}</p>
+          </div>
+          <div className="flex flex-col divide-y divide-border rounded-2xl bg-muted">
+            {t.rows.map((row) => (
+              <div key={row.label} className="flex flex-col px-3.5 py-2">
+                <span className="text-xs text-muted-foreground">{row.label}</span>
+                <span className="text-sm">{row.value}</span>
+              </div>
+            ))}
+          </div>
+          <span className="mt-auto mb-6 flex h-11 items-center justify-center gap-1.5 rounded-full bg-primary text-sm font-bold text-primary-foreground">
+            <Droplet className="size-3.5" aria-hidden />
+            {t.add}
+          </span>
         </div>
       </div>
     </div>

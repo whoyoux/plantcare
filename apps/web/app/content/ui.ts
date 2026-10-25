@@ -24,6 +24,8 @@ export const ui = {
         { label: 'Podlewanie', value: 'Co 7–10 dni' },
         { label: 'Światło', value: 'Jasne, rozproszone' },
       ],
+      toxicNote: 'Sok z liści podrażnia usta i żołądek.',
+      add: 'Dodaj do moich roślin',
       close: 'Zamknij',
     },
     features: {
@@ -92,6 +94,8 @@ export const ui = {
         { label: 'Watering', value: 'Every 7–10 days' },
         { label: 'Light', value: 'Bright, indirect' },
       ],
+      toxicNote: 'The sap irritates the mouth and stomach.',
+      add: 'Add to my plants',
       close: 'Close',
     },
     features: {

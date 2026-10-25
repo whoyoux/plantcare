@@ -1,12 +1,17 @@
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from 'react-router';
 
 import type { Route } from './+types/root';
+import newsreaderItalic from '@fontsource-variable/newsreader/files/newsreader-latin-wght-italic.woff2?url';
+
 import './app.css';
 import { SiteFooter } from '~/components/site-footer';
 import { SiteHeader } from '~/components/site-header';
 import { langFromPath } from '~/i18n';
 
 export const links: Route.LinksFunction = () => [
+  // Latin names use Newsreader where New York isn't installed (everything but Apple devices);
+  // preloading the Latin subset stops the names from swapping font after the page appears.
+  { rel: 'preload', href: newsreaderItalic, as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
   { rel: 'icon', type: 'image/png', href: '/favicon.png' },
   { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
 ];
