@@ -147,11 +147,14 @@ describe('POST /v1/identify', () => {
     mockModel(monstera);
     const user = await signedInUser();
 
+    // The limiter counts in fixed 60 s windows, so the requests can straddle a boundary: across
+    // 13 requests at most 12 (two windows of 6) get through, and never fewer than 6 in a row.
     const statuses: number[] = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 13; i++) {
       statuses.push((await user.request('/v1/identify', { method: 'POST', body: identifyForm() })).status);
     }
-    expect(statuses.slice(0, 6)).toEqual([201, 201, 201, 201, 201, 201]);
-    expect(statuses[6]).toBe(429);
+    const firstLimited = statuses.indexOf(429);
+    expect(firstLimited).toBeGreaterThanOrEqual(6);
+    expect(statuses.slice(0, firstLimited).every((status) => status === 201)).toBe(true);
   });
 });
