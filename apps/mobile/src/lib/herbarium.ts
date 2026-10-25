@@ -22,9 +22,14 @@ export type HerbariumSort = 'newest' | 'name' | 'family';
 
 const displayName = (species: Species) => species.commonName ?? species.scientificName;
 
-/** Rows of three tiles, with a heading row before each family when sorted by family. */
+/**
+ * Rows of two photo tiles. Newest first opens with the latest find as one wide tile; by family,
+ * a heading row comes before each family.
+ */
 export type GridRow =
-  { type: 'heading'; key: string; title: string } | { type: 'tiles'; key: string; items: Species[] };
+  | { type: 'heading'; key: string; title: string }
+  | { type: 'featured'; key: string; item: Species }
+  | { type: 'tiles'; key: string; items: Species[] };
 
 export function herbariumRows(
   species: Species[],
@@ -34,13 +39,16 @@ export function herbariumRows(
 ): GridRow[] {
   const collator = new Intl.Collator(language);
   const tiles = (items: Species[], prefix: string): GridRow[] =>
-    Array.from({ length: Math.ceil(items.length / 3) }, (_, row) => ({
+    Array.from({ length: Math.ceil(items.length / 2) }, (_, row) => ({
       type: 'tiles' as const,
       key: `${prefix}-${row}`,
-      items: items.slice(row * 3, row * 3 + 3),
+      items: items.slice(row * 2, row * 2 + 2),
     }));
 
-  if (sort === 'newest') return tiles(species, 'all');
+  if (sort === 'newest') {
+    const [latest, ...rest] = species;
+    return latest ? [{ type: 'featured', key: 'featured', item: latest }, ...tiles(rest, 'all')] : [];
+  }
   const byName = [...species].sort((a, b) => collator.compare(displayName(a), displayName(b)));
   if (sort === 'name') return tiles(byName, 'all');
 

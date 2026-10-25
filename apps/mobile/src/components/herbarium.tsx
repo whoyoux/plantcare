@@ -8,6 +8,7 @@ import { useCSSVariable } from 'uniwind';
 import { Image } from '@/components/image';
 import { Button } from '@/components/native/button';
 import { EmptyState } from '@/components/native/empty-state';
+import { PhotoLabel } from '@/components/photo-ui';
 import { BADGE_SYMBOLS, badgeName } from '@/lib/badges';
 import {
   herbariumRows,
@@ -64,8 +65,8 @@ const SORT_LABELS = {
 } as const;
 
 /**
- * The herbarium: one tile per species found, in rows of three, with the collection's numbers and
- * badges on top. `header` is the History/Herbarium switcher, shown above everything.
+ * The herbarium: one photo tile per species found (the latest one wide when newest first), with
+ * the next badge's progress on top. `header` is the Herbarium/History switcher, above everything.
  */
 export function HerbariumView({ header, search }: { header: ReactNode; search: string }) {
   const { t, i18n } = useTranslation();
@@ -130,12 +131,22 @@ export function HerbariumView({ header, search }: { header: ReactNode; search: s
       keyExtractor={(row) => row.key}
       renderItem={({ item: row }) =>
         row.type === 'heading' ? (
-          <Text className="px-5 pb-2 pt-4 font-rounded text-[15px] font-bold text-muted">{row.title}</Text>
+          <Text className="px-5 pb-2 pt-4 text-[15px] font-bold text-muted">{row.title}</Text>
+        ) : row.type === 'featured' ? (
+          <View className="px-4 pb-2.5">
+            <SpeciesTile species={row.item} height={240} />
+          </View>
         ) : (
-          <View className="flex-row gap-2.5 px-4 pb-3">
-            {[0, 1, 2].map((slot) => {
+          <View className="flex-row gap-2.5 px-4 pb-2.5">
+            {[0, 1].map((slot) => {
               const item = row.items[slot];
-              return item ? <SpeciesTile key={item.key} species={item} /> : <View key={slot} className="flex-1" />;
+              return item ? (
+                <View key={item.key} className="flex-1">
+                  <SpeciesTile species={item} height={170} />
+                </View>
+              ) : (
+                <View key={slot} className="flex-1" />
+              );
             })}
           </View>
         )
@@ -144,32 +155,23 @@ export function HerbariumView({ header, search }: { header: ReactNode; search: s
         <View className="gap-3 pb-3 pt-2">
           {header}
           {data && (
-            <View className="mx-4 gap-3 rounded-2xl bg-card p-4">
-              <View className="flex-row items-baseline justify-between">
-                <Text className="font-rounded text-[17px] font-bold text-foreground">
+            <View className="mx-4 gap-3">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-[15px] text-muted">
                   {t('herbarium.species', { count: data.speciesCount })} ·{' '}
                   {t('herbarium.families', { count: data.familyCount })}
                 </Text>
-                <Pressable accessibilityRole="button" onPress={chooseSort} hitSlop={8}>
-                  <Text className="text-[15px] font-semibold text-accent">{t(SORT_LABELS[sort])}</Text>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('herbarium.sort')}
+                  onPress={chooseSort}
+                  hitSlop={8}
+                  className="rounded-full bg-elevated px-3.5 py-2 active:opacity-70"
+                >
+                  <Text className="text-[14px] font-semibold text-foreground">{t(SORT_LABELS[sort])}</Text>
                 </Pressable>
               </View>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t('herbarium.badges')}
-                onPress={openBadges}
-                className="flex-row items-center gap-2 active:opacity-70"
-              >
-                <View className="flex-1 flex-row gap-1.5">
-                  {[...data.badges]
-                    .sort((a, b) => Number(b.level > 0) - Number(a.level > 0))
-                    .slice(0, 6)
-                    .map((badge) => (
-                      <Medal key={badge.id} badge={badge} size={34} />
-                    ))}
-                </View>
-                <Text className="text-[15px] font-semibold text-accent">{t('herbarium.badges')} ›</Text>
-              </Pressable>
+              <NextBadge data={data} />
             </View>
           )}
         </View>
@@ -183,43 +185,69 @@ export function HerbariumView({ header, search }: { header: ReactNode; search: s
   );
 }
 
-function SpeciesTile({ species }: { species: Species }) {
+/** A species as a photo with its name on it, the toxic warning and how often it was found. */
+function SpeciesTile({ species, height }: { species: Species; height: number }) {
   const { t } = useTranslation();
-  const danger = useColor('--color-danger');
   const name = species.commonName ?? species.scientificName;
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={name}
+      accessibilityLabel={species.toxic ? `${name}, ${t('result.toxicBadge')}` : name}
       onPress={() => openSpecies(species.key)}
-      className="flex-1 gap-1.5 active:opacity-70"
+      className="overflow-hidden rounded-[22px] bg-elevated active:opacity-80"
+      style={{ height }}
     >
-      <View>
-        <Image
-          source={{ uri: species.imageUrl, cacheKey: species.bestId }}
-          contentFit="cover"
-          transition={150}
-          className="aspect-square w-full rounded-2xl bg-card"
-        />
-        {species.count > 1 && (
-          <View className="absolute right-1.5 top-1.5 rounded-full bg-black/55 px-1.5 py-0.5">
-            <Text className="text-[12px] font-bold text-white">×{species.count}</Text>
-          </View>
-        )}
-        {species.toxic && (
-          <View
-            accessibilityLabel={t('herbarium.toxic')}
-            className="absolute left-1.5 top-1.5 size-6 items-center justify-center rounded-full bg-card"
-          >
-            <SymbolView name="exclamationmark.triangle.fill" size={13} tintColor={danger} />
-          </View>
-        )}
+      <Image
+        source={{ uri: species.imageUrl, cacheKey: species.bestId }}
+        contentFit="cover"
+        transition={150}
+        style={{ width: '100%', height }}
+      />
+      {species.toxic && (
+        <View className="absolute left-2 top-2">
+          <PhotoLabel tone="danger">{t('result.toxicBadge')}</PhotoLabel>
+        </View>
+      )}
+      <View className="absolute bottom-2 left-2 right-2 rounded-[14px] bg-black/60 px-3 py-2">
+        <Text numberOfLines={1} className="text-[14px] font-semibold text-white">
+          {name}
+        </Text>
+        <Text numberOfLines={1} className="text-[12px] text-white/80">
+          {species.genusOnly ? t('herbarium.genus') : species.scientificName}
+          {species.count > 1 ? ` · ×${species.count}` : ''}
+        </Text>
       </View>
-      <Text numberOfLines={2} className="text-[13px] font-semibold leading-4 text-foreground">
-        {name}
-      </Text>
-      {species.genusOnly && <Text className="-mt-1 text-[12px] text-muted">{t('herbarium.genus')}</Text>}
+    </Pressable>
+  );
+}
+
+/** The badge closest to its next level, with a link to every badge. */
+function NextBadge({ data }: { data: NonNullable<ReturnType<typeof useHerbarium>['data']> }) {
+  const { t } = useTranslation();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={openBadges}
+      className="flex-row items-center gap-3 rounded-[20px] bg-card px-3.5 py-3 active:opacity-80"
+    >
+      {data.next ? (
+        <>
+          <Medal badge={{ id: data.next.id, level: 1 }} size={40} />
+          <View className="flex-1 gap-1.5">
+            <View className="flex-row justify-between">
+              <Text className="text-[15px] font-semibold text-foreground">{badgeName(data.next, t, true)}</Text>
+              <Text className="text-[13px] text-muted">
+                {t('herbarium.progress', { current: data.next.current, target: data.next.target })}
+              </Text>
+            </View>
+            <ProgressBar value={data.next.current / data.next.target} />
+          </View>
+        </>
+      ) : (
+        <Text className="flex-1 text-[15px] font-semibold text-accent">{t('herbarium.allBadges')}</Text>
+      )}
+      <Text className="text-[14px] font-semibold text-accent">{t('herbarium.badges')}</Text>
     </Pressable>
   );
 }
