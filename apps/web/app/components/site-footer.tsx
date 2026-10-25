@@ -24,9 +24,12 @@ export function SiteFooter() {
             </Link>
           ))}
         </nav>
-        <p>
-          © {new Date().getFullYear()} PlantCare. {t.footer.rights}
-        </p>
+        <div className="flex flex-col gap-1 sm:items-end">
+          <p>
+            © {new Date().getFullYear()} PlantCare. {t.footer.rights}
+          </p>
+          <p className="text-xs">{t.footer.photos}</p>
+        </div>
       </div>
     </footer>
   );

@@ -9,7 +9,7 @@ export function LegalPage({ doc, showUpdated = true }: { doc: LegalDoc; showUpda
 
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pt-8">
-      <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">{doc.title}</h1>
+      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">{doc.title}</h1>
       {showUpdated && (
         <p className="mt-3 text-sm text-muted-foreground">
           {ui[lang].legal.updated} {formatDate(SITE.legalUpdated, lang)}
@@ -26,7 +26,7 @@ export function LegalPage({ doc, showUpdated = true }: { doc: LegalDoc; showUpda
                   {block}
                 </p>
               ) : (
-                <ul key={index} className="flex list-disc flex-col gap-2 pl-5 leading-relaxed marker:text-primary">
+                <ul key={index} className="flex list-disc flex-col gap-2 pl-5 leading-relaxed marker:text-leaf">
                   {block.list.map((item) => (
                     <li key={item}>{item}</li>
                   ))}

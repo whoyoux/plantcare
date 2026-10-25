@@ -15,40 +15,54 @@ export const ui = {
       soon: 'Wkrótce w App Store',
       how: 'Jak to działa',
     },
-    specimen: {
+    phone: {
       name: 'Monstera dziurawa',
-      match: 'Dopasowanie 94%',
-      care: 'Pielęgnacja',
+      match: '94%',
+      toxic: 'Trująca',
+      toxicFor: 'Trująca dla kotów i psów',
       rows: [
-        { label: 'Podlewanie', value: 'Co 7–10 dni, gdy wierzch ziemi przeschnie' },
+        { label: 'Podlewanie', value: 'Co 7–10 dni' },
         { label: 'Światło', value: 'Jasne, rozproszone' },
-        { label: 'Temperatura', value: '18–27 °C' },
       ],
+      close: 'Zamknij',
     },
-    steps: {
-      title: 'Jak to działa',
-      video: 'Film: jak działa PlantCare',
-      items: [
-        {
-          title: 'Zrób zdjęcie',
-          body: 'Nakieruj aparat na liść, kwiat albo całą roślinę. Możesz też wybrać zdjęcie z biblioteki.',
-        },
-        {
-          title: 'Poznaj gatunek',
-          body: 'Dostajesz nazwę polską i łacińską, rodzinę oraz to, jak pewne jest rozpoznanie.',
-        },
-        {
-          title: 'Dbaj o roślinę',
-          body: 'Podlewanie, światło i temperatura dla tego gatunku, zapisane w Twojej historii.',
-        },
-      ],
+    features: {
+      title: 'Wszystko o Twoich roślinach',
+      identify: {
+        title: 'Rozpoznaj w kilka sekund',
+        body: 'Zdjęcie liścia, kwiatu albo całej rośliny. Do trzech zdjęć naraz, gdy gatunki są do siebie podobne.',
+        label: 'Mięta zielona · Mentha spicata',
+      },
+      toxic: {
+        title: 'Od razu widać, co jest trujące',
+        body: 'Jeśli roślina szkodzi kotom, psom albo ludziom, mówimy to na samej górze, na czerwono.',
+        banner: 'Silnie trująca dla kotów',
+      },
+      herbarium: {
+        title: 'Twój zielnik',
+        body: 'Każdy rozpoznany gatunek trafia do kolekcji. Zbieraj odznaki: Kolekcjoner, Botanik, Zielarz.',
+        label: 'No. 23 · Kolekcjoner II',
+      },
+      water: {
+        title: 'Przypomnienia o podlewaniu',
+        body: 'Dodaj roślinę, a telefon przypomni, kiedy ją podlać. Dla każdej rośliny osobno, tylko jeśli chcesz.',
+        sample: 'Figowiec · podlej dziś',
+      },
+      widgets: {
+        title: 'Widżety',
+        body: '„Do podlania” i zielnik na ekranie głównym i ekranie blokady.',
+      },
     },
+    video: { title: 'Zobacz w akcji', label: 'Film: jak działa PlantCare' },
     privacy: {
       title: 'Twoje zdjęcia są tylko Twoje',
       body: 'Nie pokazujemy reklam i nie śledzimy Cię. Konto razem ze zdjęciami i historią usuniesz w aplikacji jednym przyciskiem.',
       link: 'Polityka prywatności',
     },
-    footer: { rights: 'Wszystkie prawa zastrzeżone.' },
+    footer: {
+      rights: 'Wszystkie prawa zastrzeżone.',
+      photos: 'Zdjęcia roślin: Wikimedia Commons (domena publiczna).',
+    },
     legal: { updated: 'Ostatnia aktualizacja:', back: 'Strona główna' },
     notFound: {
       title: 'Nie ma takiej strony',
@@ -69,40 +83,54 @@ export const ui = {
       soon: 'Coming soon to the App Store',
       how: 'How it works',
     },
-    specimen: {
+    phone: {
       name: 'Swiss cheese plant',
-      match: '94% match',
-      care: 'Care',
+      match: '94%',
+      toxic: 'Toxic',
+      toxicFor: 'Toxic to cats and dogs',
       rows: [
-        { label: 'Watering', value: 'Every 7–10 days, when the topsoil is dry' },
+        { label: 'Watering', value: 'Every 7–10 days' },
         { label: 'Light', value: 'Bright, indirect' },
-        { label: 'Temperature', value: '18–27 °C' },
       ],
+      close: 'Close',
     },
-    steps: {
-      title: 'How it works',
-      video: 'Video: how PlantCare works',
-      items: [
-        {
-          title: 'Take a photo',
-          body: 'Point the camera at a leaf, a flower or the whole plant, or pick a photo from your library.',
-        },
-        {
-          title: 'Get the species',
-          body: 'See the common and Latin name, the plant family and how confident the match is.',
-        },
-        {
-          title: 'Care for it',
-          body: 'Watering, light and temperature for that species, saved in your history.',
-        },
-      ],
+    features: {
+      title: 'Everything about your plants',
+      identify: {
+        title: 'Identify in seconds',
+        body: 'A photo of a leaf, a flower or the whole plant. Up to three photos at once when species look alike.',
+        label: 'Spearmint · Mentha spicata',
+      },
+      toxic: {
+        title: 'See at once what’s toxic',
+        body: 'If a plant can harm cats, dogs or people, we say so right at the top, in red.',
+        banner: 'Highly toxic to cats',
+      },
+      herbarium: {
+        title: 'Your herbarium',
+        body: 'Every species you identify joins your collection. Earn badges: Collector, Botanist, Herbalist.',
+        label: 'No. 23 · Collector II',
+      },
+      water: {
+        title: 'Watering reminders',
+        body: 'Add a plant and your phone reminds you when to water it. Per plant, only if you want.',
+        sample: 'Fiddle-leaf fig · water today',
+      },
+      widgets: {
+        title: 'Widgets',
+        body: '“Water today” and your herbarium on the Home Screen and Lock Screen.',
+      },
     },
+    video: { title: 'See it in action', label: 'Video: how PlantCare works' },
     privacy: {
       title: 'Your photos stay yours',
       body: 'No ads and no tracking. Delete your account, photos and history from the app with one button.',
       link: 'Privacy Policy',
     },
-    footer: { rights: 'All rights reserved.' },
+    footer: {
+      rights: 'All rights reserved.',
+      photos: 'Plant photos: Wikimedia Commons (public domain).',
+    },
     legal: { updated: 'Last updated:', back: 'Home' },
     notFound: { title: 'Page not found', body: 'Check the address or go back to the home page.', home: 'Home' },
   },

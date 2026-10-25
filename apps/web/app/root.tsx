@@ -19,8 +19,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#f3f6f2" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#0c110e" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0d110e" media="(prefers-color-scheme: dark)" />
         <Meta />
         <Links />
       </head>
@@ -43,7 +43,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const status = isRouteErrorResponse(error) ? error.status : 500;
   return (
     <main className="mx-auto max-w-2xl px-5 pt-16">
-      <h1 className="text-4xl font-extrabold">{status === 404 ? '404' : 'Error'}</h1>
+      <h1 className="text-4xl font-bold tracking-tight">{status === 404 ? '404' : 'Error'}</h1>
     </main>
   );
 }

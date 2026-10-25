@@ -1,59 +1,61 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
-@import '@fontsource-variable/nunito/wght.css';
 @import '@fontsource-variable/newsreader/wght-italic.css';
 
 /* Follow the system theme, like the app (no manual toggle). */
 @custom-variant dark (@media (prefers-color-scheme: dark));
 
 /*
- * Same "Fern" palette and type as the mobile app (apps/mobile/src/global.css), mapped onto
- * shadcn/ui's variables so every component picks it up.
+ * Same photo-first palette as the app (apps/mobile/src/global.css): quiet neutrals so plant photos
+ * carry the colour, one green accent, red for toxicity. Mapped onto shadcn/ui's variables; the
+ * primary button is the app's "inverse" pill (ink on light, white on dark).
  */
 :root {
-  --background: #f2f5f1;
-  --foreground: #14201a;
+  --background: #f3f5f2;
+  --foreground: #121613;
   --card: #ffffff;
-  --card-foreground: #14201a;
+  --card-foreground: #121613;
   --popover: #ffffff;
-  --popover-foreground: #14201a;
-  --primary: #2a7148;
+  --popover-foreground: #121613;
+  --primary: #121613;
   --primary-foreground: #ffffff;
   --secondary: #e3f0e7;
-  --secondary-foreground: #14201a;
-  --muted: #e8eee9;
-  --muted-foreground: #5a675f;
+  --secondary-foreground: #121613;
+  --muted: #f0f4f1;
+  --muted-foreground: #5c665f;
   --accent: #e3f0e7;
-  --accent-foreground: #14201a;
-  --destructive: #c4311f;
-  --border: #cfd9d2;
-  --input: #cfd9d2;
-  --ring: #2a7148;
-  --radius: 1rem;
+  --accent-foreground: #22683f;
+  --leaf: #22683f;
+  --destructive: #b3261e;
+  --border: #d5dad6;
+  --input: #d5dad6;
+  --ring: #22683f;
+  --radius: 1.25rem;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #050806;
-    --foreground: #eef3ef;
-    --card: #1a221d;
-    --card-foreground: #eef3ef;
-    --popover: #1a221d;
-    --popover-foreground: #eef3ef;
-    --primary: #74d19a;
-    --primary-foreground: #0b1a10;
+    --background: #0d110e;
+    --foreground: #f1f4f1;
+    --card: #161b17;
+    --card-foreground: #f1f4f1;
+    --popover: #161b17;
+    --popover-foreground: #f1f4f1;
+    --primary: #f1f4f1;
+    --primary-foreground: #0d110e;
     --secondary: #21402c;
-    --secondary-foreground: #eef3ef;
-    --muted: #1a221d;
-    --muted-foreground: #9aa7a0;
+    --secondary-foreground: #f1f4f1;
+    --muted: #1f2621;
+    --muted-foreground: #a9b4ac;
     --accent: #21402c;
-    --accent-foreground: #eef3ef;
-    --destructive: #ff7a66;
-    --border: #36423b;
-    --input: #36423b;
-    --ring: #74d19a;
+    --accent-foreground: #bfe6c9;
+    --leaf: #bfe6c9;
+    --destructive: #c8372b;
+    --border: #2c342e;
+    --input: #2c342e;
+    --ring: #bfe6c9;
     color-scheme: dark;
   }
 }
@@ -61,9 +63,10 @@
 @theme inline {
   /* SF Pro on Apple devices; SF Pro Rounded / New York with Nunito / Newsreader elsewhere. */
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-rounded: ui-rounded, 'SF Pro Rounded', 'Nunito Variable', system-ui, sans-serif;
+  --font-rounded: ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
   --font-latin: ui-serif, 'New York', 'Newsreader Variable', Georgia, serif;
-  --font-heading: var(--font-rounded);
+  --font-heading: var(--font-sans);
+  --color-leaf: var(--leaf);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);

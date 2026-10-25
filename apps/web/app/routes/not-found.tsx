@@ -11,7 +11,7 @@ export function meta() {
 export default function NotFound() {
   return (
     <main className="mx-auto flex max-w-xl flex-col items-start gap-4 px-5 pt-16">
-      <h1 className="text-4xl font-extrabold">{ui.pl.notFound.title}</h1>
+      <h1 className="text-4xl font-bold tracking-tight">{ui.pl.notFound.title}</h1>
       <p className="text-muted-foreground">
         {ui.pl.notFound.body} / {ui.en.notFound.body}
       </p>

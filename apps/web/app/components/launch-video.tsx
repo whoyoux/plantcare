@@ -31,7 +31,7 @@ export function LaunchVideo({ lang, label }: { lang: Lang; label: string }) {
       playsInline
       controls
       preload="metadata"
-      className={`w-full rounded-3xl bg-secondary shadow-xl shadow-primary/10 ${
+      className={`w-full rounded-[28px] bg-card shadow-xl shadow-black/10 ${
         vertical ? 'mx-auto aspect-[9/16] max-w-sm' : 'aspect-video'
       }`}
     />

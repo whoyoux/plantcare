@@ -12,7 +12,7 @@ export function SiteHeader() {
     <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-5 py-5">
       <Link to={localePath(lang, '/')} className="flex items-center gap-2.5">
         <img src="/logo.webp" alt="" width={32} height={32} className="size-8" />
-        <span className="font-rounded text-xl font-extrabold tracking-tight">PlantCare</span>
+        <span className="text-xl font-bold tracking-tight">PlantCare</span>
       </Link>
       <Button asChild variant="ghost" size="sm">
         <Link to={switchLangPath(pathname)} hrefLang={lang === 'pl' ? 'en' : 'pl'}>
