@@ -1,12 +1,14 @@
 import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import Animated, { type SharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HerbariumCard } from '@/components/herbarium';
 import { PhotoTips } from '@/components/home';
 import { Image } from '@/components/image';
+import { ParallaxHero, useParallaxScroll } from '@/components/parallax';
 import { GlassCircle, PillButton, useColor } from '@/components/photo-ui';
 import { DueToday } from '@/components/plant-care';
 import { openSaved } from '@/components/plant-row';
@@ -29,16 +31,22 @@ async function chooseFromLibrary() {
 export default function HomeScreen() {
   const history = useHistory();
   const latest = history.data?.pages[0]?.items[0];
+  const { ref: scrollRef, offset: scrollOffset } = useParallaxScroll();
+  const background = useColor('--color-background');
 
   return (
-    <ScrollView className="flex-1 bg-background" contentInsetAdjustmentBehavior="never">
-      {latest ? <LatestFind item={latest} /> : <Welcome loading={history.isPending} />}
-      <View className="gap-7 px-4 pb-32 pt-6">
+    <Animated.ScrollView
+      ref={scrollRef}
+      contentInsetAdjustmentBehavior="never"
+      style={{ flex: 1, backgroundColor: background }}
+    >
+      {latest ? <LatestFind item={latest} offset={scrollOffset} /> : <Welcome loading={history.isPending} />}
+      <View className="gap-7 bg-background px-4 pb-32 pt-6">
         <DueToday />
         <HerbariumCard />
         {!latest && !history.isPending && <PhotoTips />}
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 }
 
@@ -55,27 +63,34 @@ function SettingsButton() {
 /** The most recent identification, edge to edge; tapping it opens the result. */
 function LatestFind({
   item,
+  offset,
 }: {
   item: NonNullable<ReturnType<typeof useHistory>['data']>['pages'][number]['items'][number];
+  offset: SharedValue<number>;
 }) {
   const { t } = useTranslation();
   const herbarium = useHerbarium();
   const number = herbarium.data?.speciesCount;
 
   return (
-    <View style={{ height: HERO_HEIGHT }} className="bg-elevated">
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={item.commonName ?? item.scientificName}
-        onPress={() => openSaved(item.id)}
-        className="flex-1 active:opacity-90"
-      >
+    <ParallaxHero
+      offset={offset}
+      height={HERO_HEIGHT}
+      photo={
         <Image
           source={{ uri: item.imageUrl, cacheKey: item.id }}
           contentFit="cover"
           transition={200}
-          style={{ width: '100%', height: HERO_HEIGHT }}
+          style={{ width: '100%', height: '100%' }}
         />
+      }
+    >
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={item.commonName ?? item.scientificName}
+        onPress={() => openSaved(item.id)}
+        className="absolute inset-0 active:opacity-90"
+      >
         <View className="absolute bottom-4 left-4 right-4 gap-1 rounded-[22px] bg-black/60 px-4 py-3.5">
           <Text className="text-[12px] font-semibold uppercase tracking-wider text-[#BFE6C9]">
             {number ? t('home.latestNumbered', { number }) : t('home.latest')}
@@ -89,7 +104,7 @@ function LatestFind({
         </View>
       </Pressable>
       <SettingsButton />
-    </View>
+    </ParallaxHero>
   );
 }
 

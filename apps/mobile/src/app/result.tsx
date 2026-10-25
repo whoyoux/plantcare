@@ -4,12 +4,14 @@ import type { SFSymbol } from 'expo-symbols';
 import { SymbolView } from 'expo-symbols';
 import { useEffect, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { Toxicity, ToxicityLevel } from '@plantcare/shared';
 
 import { Image } from '@/components/image';
+import { ParallaxHero, useParallaxScroll } from '@/components/parallax';
 import { GlassCircle, PhotoLabel, PillButton, useColor } from '@/components/photo-ui';
 import type { Language } from '@/i18n';
 import { ApiError } from '@/lib/api';
@@ -142,20 +144,24 @@ function Layout({
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const warning = toxicWarning(toxicity);
+  const { ref: scrollRef, offset: scrollOffset } = useParallaxScroll();
 
   return (
     <View className="flex-1 bg-card">
-      <ScrollView contentInsetAdjustmentBehavior="never" className="flex-1">
-        <View style={{ height: HERO_HEIGHT }} className="bg-elevated">
-          {photo && <Image source={photo} contentFit="cover" style={{ width: '100%', height: HERO_HEIGHT }} />}
+      <Animated.ScrollView ref={scrollRef} contentInsetAdjustmentBehavior="never" style={{ flex: 1 }}>
+        <ParallaxHero
+          offset={scrollOffset}
+          height={HERO_HEIGHT}
+          photo={photo && <Image source={photo} contentFit="cover" style={{ width: '100%', height: '100%' }} />}
+        >
           {warning && (
             <View className="absolute bottom-12 left-4">
               <PhotoLabel tone="danger">{t(`result.toxicity.${warning.level}`)}</PhotoLabel>
             </View>
           )}
-        </View>
+        </ParallaxHero>
         <View className="-mt-8 min-h-[400px] gap-6 rounded-t-[30px] bg-card px-5 pb-12 pt-6">{children}</View>
-      </ScrollView>
+      </Animated.ScrollView>
       <View
         pointerEvents="box-none"
         className="absolute left-4 right-4 flex-row justify-between"

@@ -2,9 +2,11 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Image } from '@/components/image';
+import { ParallaxHero, useParallaxScroll } from '@/components/parallax';
 import { EmptyState } from '@/components/native/empty-state';
 import { GlassCircle, PhotoLabel, PillButton } from '@/components/photo-ui';
 import { openSaved } from '@/components/plant-row';
@@ -20,6 +22,7 @@ export default function SpeciesScreen() {
   const herbarium = useHerbarium();
   const species = herbarium.data?.species.find((item) => item.key === key);
   const [selected, setSelected] = useState(0);
+  const { ref: scrollRef, offset: scrollOffset } = useParallaxScroll();
 
   if (herbarium.isPending) return <ActivityIndicator className="flex-1 bg-background" />;
   // Deleted from History in the meantime.
@@ -33,16 +36,23 @@ export default function SpeciesScreen() {
   return (
     <View className="flex-1 bg-card">
       <Stack.Screen options={{ headerShown: false }} />
-      <ScrollView contentInsetAdjustmentBehavior="never" className="flex-1">
-        <View style={{ height: HERO_HEIGHT }} className="bg-elevated">
-          <Image
-            source={
-              photo ? { uri: photo.imageUrl, cacheKey: photo.id } : { uri: species.imageUrl, cacheKey: species.bestId }
-            }
-            contentFit="cover"
-            transition={150}
-            style={{ width: '100%', height: HERO_HEIGHT }}
-          />
+      <Animated.ScrollView ref={scrollRef} contentInsetAdjustmentBehavior="never" style={{ flex: 1 }}>
+        <ParallaxHero
+          offset={scrollOffset}
+          height={HERO_HEIGHT}
+          photo={
+            <Image
+              source={
+                photo
+                  ? { uri: photo.imageUrl, cacheKey: photo.id }
+                  : { uri: species.imageUrl, cacheKey: species.bestId }
+              }
+              contentFit="cover"
+              transition={150}
+              style={{ width: '100%', height: '100%' }}
+            />
+          }
+        >
           <View className="absolute bottom-12 left-4 flex-row gap-2">
             {species.toxic && <PhotoLabel tone="danger">{t('result.toxicBadge')}</PhotoLabel>}
             {species.photos.length > 1 && (
@@ -51,7 +61,7 @@ export default function SpeciesScreen() {
               </PhotoLabel>
             )}
           </View>
-        </View>
+        </ParallaxHero>
 
         <View className="-mt-8 min-h-[420px] gap-6 rounded-t-[30px] bg-card px-5 pb-12 pt-6">
           <View className="gap-1">
@@ -112,7 +122,7 @@ export default function SpeciesScreen() {
             onPress={() => openSaved(photo?.id ?? species.latestId)}
           />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
       <View pointerEvents="box-none" className="absolute left-4" style={{ top: insets.top + 8 }}>
         <GlassCircle icon="chevron.left" label={t('herbarium.back')} onPress={() => router.back()} />
       </View>
