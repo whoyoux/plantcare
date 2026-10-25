@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { router } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
 import { SymbolView, type SFSymbol } from 'expo-symbols';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,10 +13,11 @@ import { Viewfinder } from '@/components/viewfinder';
 import { haptics } from '@/lib/haptics';
 import { openNewResult } from '@/lib/identify';
 import { MAX_PHOTOS, pickPhotos } from '@/lib/pick-photo';
+import { useHiddenTabBar } from '@/lib/tab-bar';
 
-/** Swap the camera for the result sheet, so closing the result lands back home. */
+/** The result opens over the camera; closing it comes back here for the next plant. */
 function showResult(uris: string[]) {
-  openNewResult(uris, 'replace');
+  openNewResult(uris, 'push');
 }
 
 async function chooseFromLibrary() {
@@ -24,11 +25,16 @@ async function chooseFromLibrary() {
   if (uris.length > 0) showResult(uris);
 }
 
+function close() {
+  router.navigate('/');
+}
+
 /**
- * The full-screen camera. It only runs while this screen is open: from the home card, or the
- * "Identify a plant" quick action on the app icon.
+ * The camera tab (the round button next to the tab bar, also the "Identify a plant" quick action).
+ * Full screen without the tab bar; the camera runs only while this tab is on screen.
  */
 export default function CameraScreen() {
+  useHiddenTabBar();
   const [permission, requestPermission] = useCameraPermissions();
 
   // Opening the camera is the ask, so ask straight away the first time.
@@ -46,6 +52,8 @@ function Camera() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const camera = useRef<CameraView>(null);
+  // Off while another tab or the result is on top: no privacy indicator, no battery drain.
+  const focused = useIsFocused();
   const [ready, setReady] = useState(false);
   const [torch, setTorch] = useState(false);
   // Shots of one plant (a leaf, a flower, the whole plant); identified together.
@@ -58,12 +66,18 @@ function Camera() {
     try {
       const photo = await camera.current.takePictureAsync({ quality: 0.8 });
       const next = [...shots, photo.uri];
-      if (next.length >= MAX_PHOTOS) showResult(next);
+      if (next.length >= MAX_PHOTOS) identify(next);
       else setShots(next);
     } catch (error) {
       console.warn(error);
       Alert.alert(t('identify.cameraUnavailable'));
     }
+  }
+
+  function identify(uris: string[]) {
+    setShots([]);
+    setTorch(false);
+    showResult(uris);
   }
 
   return (
@@ -72,7 +86,8 @@ function Camera() {
         ref={camera}
         style={{ flex: 1 }}
         facing="back"
-        enableTorch={torch}
+        active={focused}
+        enableTorch={torch && focused}
         animateShutter
         onCameraReady={() => setReady(true)}
       />
@@ -81,7 +96,7 @@ function Camera() {
         className="absolute left-0 right-0 flex-row items-center justify-between px-5"
         style={{ top: insets.top + 8 }}
       >
-        <GlassButton icon="xmark" label={t('identify.close')} onPress={() => router.back()} />
+        <GlassButton icon="xmark" label={t('identify.close')} onPress={close} />
         <View pointerEvents="none" className="rounded-full bg-black/35 px-3 py-1.5">
           <Text className="text-[13px] font-semibold text-white">
             {shots.length === 0 ? t('identify.hint') : t('identify.hintMore', { count: MAX_PHOTOS - shots.length })}
@@ -133,7 +148,7 @@ function Camera() {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('identify.identify')}
-            onPress={() => showResult(shots)}
+            onPress={() => identify(shots)}
             hitSlop={6}
             className="size-14 items-center justify-center rounded-full bg-accent-fill active:opacity-80"
           >
@@ -192,7 +207,7 @@ function PermissionNeeded({ canAsk, onAllow }: { canAsk: boolean; onAllow: () =>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('identify.close')}
-          onPress={() => router.back()}
+          onPress={close}
           hitSlop={8}
           className="size-10 items-center justify-center rounded-full bg-card active:opacity-70"
         >

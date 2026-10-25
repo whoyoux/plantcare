@@ -42,9 +42,10 @@ export default function RootLayout() {
             {/* The app is for signed-in users only; signing out or deleting the account lands on sign-in. */}
             <Stack.Protected guard={signedIn}>
               <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="camera" options={{ presentation: 'fullScreenModal' }} />
               {/* Full height so the photo can run edge to edge; swipe down still dismisses it. */}
               <Stack.Screen name="result" options={{ presentation: 'modal' }} />
+              {/* Opened from the gear on Home; the SwiftUI form draws its own title bar. */}
+              <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
             </Stack.Protected>
             {/* After signing in, land on the camera (`/`), not the first tab folder alphabetically. */}
             <Stack.Protected guard={!signedIn} redirectTo="/">

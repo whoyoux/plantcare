@@ -14,12 +14,12 @@ import { groupByDay } from '@/lib/sections';
 
 type HistoryView = 'history' | 'herbarium';
 
-/** History and the Herbarium share the tab: a switcher on top, one search bar for both. */
+/** The Herbarium tab: the collection by default, History behind the switcher; one search bar for both. */
 export default function HistoryScreen() {
   const { t } = useTranslation();
   // `at` changes with every link from the home card, so it reopens the herbarium each time.
   const params = useLocalSearchParams<{ view?: string; at?: string }>();
-  const linked: HistoryView = params.view === 'herbarium' ? 'herbarium' : 'history';
+  const linked: HistoryView = params.view === 'history' ? 'history' : 'herbarium';
   // The user's pick holds until the next link arrives (a new `at`).
   const [choice, setChoice] = useState<{ at?: string; view: HistoryView }>({ at: params.at, view: linked });
   const view = choice.at === params.at ? choice.view : linked;
@@ -31,8 +31,8 @@ export default function HistoryScreen() {
     <View className="px-4">
       <Segmented
         options={[
-          { value: 'history', label: t('herbarium.viewHistory') },
           { value: 'herbarium', label: t('herbarium.viewHerbarium') },
+          { value: 'history', label: t('herbarium.viewHistory') },
         ]}
         selection={view}
         onChange={setView}

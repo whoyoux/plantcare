@@ -3,10 +3,10 @@ import type en from './en';
 
 const pl: Translations<typeof en> = {
   tabs: {
+    home: 'Start',
     plants: 'Rośliny',
+    herbarium: 'Zielnik',
     identify: 'Rozpoznaj',
-    history: 'Historia',
-    settings: 'Ustawienia',
   },
   signIn: {
     pitch: 'Zrób zdjęcie rośliny, a powiemy Ci, co to za gatunek i jak o nią dbać.',
@@ -86,6 +86,10 @@ const pl: Translations<typeof en> = {
     lookalikes: { name: 'Sobowtóry', hint: 'Znajdź dwa mylone gatunki, np. miętę i melisę' },
     caretaker: { name: 'Opiekun', hint: 'Dodaj {{target}} roślin do „Moich roślin”' },
   },
+  home: {
+    latest: 'Ostatnio rozpoznana',
+    latestNumbered: 'Ostatnio rozpoznana · No. {{number}}',
+  },
   identify: {
     dueTitle: 'Dziś do podlania',
     allWatered: 'Wszystkie rośliny są podlane.',
@@ -112,9 +116,6 @@ const pl: Translations<typeof en> = {
     allowCamera: 'Zezwól na aparat',
     openSettings: 'Otwórz Ustawienia',
     cameraUnavailable: 'Aparat jest niedostępny. Sprawdź dostęp do aparatu w Ustawieniach.',
-    recent: 'Ostatnio rozpoznane',
-    recentEmpty: 'Tutaj pojawią się rozpoznane rośliny.',
-    seeAll: 'Wszystkie',
     tipsTitle: 'Co sfotografować?',
     tips: { leaf: 'Jeden liść z bliska', flower: 'Kwiat', light: 'Dobre światło' },
   },
@@ -168,7 +169,6 @@ const pl: Translations<typeof en> = {
     share: 'Udostępnij',
     delete: 'Usuń',
     deleteFailed: 'Nie udało się usunąć. Spróbuj ponownie.',
-    title: 'Historia',
     searchPlaceholder: 'Szukaj roślin',
     emptyTitle: 'Brak roślin',
     emptyDescription: 'Tutaj pojawią się rozpoznane rośliny.',

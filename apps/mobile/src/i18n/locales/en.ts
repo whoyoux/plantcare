@@ -1,9 +1,9 @@
 export default {
   tabs: {
+    home: 'Home',
     plants: 'Plants',
+    herbarium: 'Herbarium',
     identify: 'Identify',
-    history: 'History',
-    settings: 'Settings',
   },
   signIn: {
     pitch: "Take a photo of a plant and we'll tell you what it is and how to care for it.",
@@ -75,6 +75,10 @@ export default {
     lookalikes: { name: 'Look-alikes', hint: 'Find two easily confused species, like mint and lemon balm' },
     caretaker: { name: 'Caretaker', hint: 'Add {{target}} plants to My plants' },
   },
+  home: {
+    latest: 'Latest find',
+    latestNumbered: 'Latest find · No. {{number}}',
+  },
   identify: {
     dueTitle: 'Water today',
     allWatered: 'All your plants are watered.',
@@ -97,9 +101,6 @@ export default {
     allowCamera: 'Allow camera',
     openSettings: 'Open Settings',
     cameraUnavailable: 'The camera is unavailable. Check camera access in Settings.',
-    recent: 'Recently identified',
-    recentEmpty: 'Plants you identify will appear here.',
-    seeAll: 'See all',
     tipsTitle: 'What to photograph',
     tips: { leaf: 'One leaf, up close', flower: 'A flower', light: 'Good light' },
   },
@@ -153,7 +154,6 @@ export default {
     share: 'Share',
     delete: 'Delete',
     deleteFailed: 'Couldn’t delete it. Try again.',
-    title: 'History',
     searchPlaceholder: 'Search plants',
     emptyTitle: 'No plants yet',
     emptyDescription: 'Plants you identify will appear here.',

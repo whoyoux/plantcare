@@ -5,8 +5,8 @@ import { largeTitleScreenOptions } from '@/lib/navigation';
 export default function IdentifyLayout() {
   return (
     <Stack screenOptions={largeTitleScreenOptions}>
-      {/* Home screen carries the app name; the tab itself stays "Identify". */}
-      <Stack.Screen name="index" options={{ title: 'PlantCare' }} />
+      {/* Home draws its own top: the latest photo runs under the status bar. */}
+      <Stack.Screen name="index" options={{ title: 'PlantCare', headerShown: false }} />
     </Stack>
   );
 }

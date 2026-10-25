@@ -18,7 +18,7 @@ export function useQuickActions() {
         id: 'identify',
         title: t('identify.quickAction'),
         icon: 'symbol:camera.macro',
-        params: { href: '/camera' },
+        params: { href: '/scan' },
       },
     ]);
   }, [t, i18n.language]);

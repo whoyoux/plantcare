@@ -252,74 +252,47 @@ function NextBadge({ data }: { data: NonNullable<ReturnType<typeof useHerbarium>
   );
 }
 
-/** Home screen summary: counts, the next badge with its progress, latest finds. */
+/** Home: the collection in one card (counts, latest finds, the next badge); opens the herbarium. */
 export function HerbariumCard() {
   const { t } = useTranslation();
   const { data } = useHerbarium();
-  if (!data) return null;
-
-  const latestBadge = data.badges
-    .filter((badge) => badge.earnedAt)
-    .sort((a, b) => (b.earnedAt ?? '').localeCompare(a.earnedAt ?? ''))[0];
+  if (!data || data.speciesCount === 0) return null;
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={() => router.navigate({ pathname: '/history', params: { view: 'herbarium', at: String(Date.now()) } })}
-      className="gap-3 rounded-2xl bg-card p-4 active:opacity-80"
-    >
-      <View className="flex-row items-baseline justify-between">
-        <Text className="font-rounded text-[20px] font-bold text-foreground">{t('herbarium.cardTitle')}</Text>
-        <Text className="text-[17px] font-semibold text-accent">›</Text>
+    <View className="gap-3">
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => router.navigate({ pathname: '/history', params: { view: 'herbarium', at: String(Date.now()) } })}
+        className="flex-row items-baseline justify-between active:opacity-70"
+      >
+        <Text className="text-[22px] font-bold tracking-tight text-foreground">{t('herbarium.title')}</Text>
+        <Text className="text-[15px] text-muted">
+          {t('herbarium.species', { count: data.speciesCount })} ·{' '}
+          {t('herbarium.families', { count: data.familyCount })}
+        </Text>
+      </Pressable>
+      <View className="flex-row gap-2">
+        {data.species.slice(0, 4).map((item) => (
+          <Pressable
+            key={item.key}
+            accessibilityRole="button"
+            accessibilityLabel={item.commonName ?? item.scientificName}
+            onPress={() => openSpecies(item.key)}
+            className="flex-1 active:opacity-80"
+          >
+            <Image
+              source={{ uri: item.imageUrl, cacheKey: item.bestId }}
+              contentFit="cover"
+              transition={150}
+              className="aspect-square w-full rounded-[18px] bg-elevated"
+            />
+          </Pressable>
+        ))}
+        {Array.from({ length: Math.max(0, 4 - data.species.length) }, (_, index) => (
+          <View key={index} className="flex-1" />
+        ))}
       </View>
-
-      {data.speciesCount === 0 ? (
-        <Text className="text-[15px] text-muted">{t('herbarium.cardEmpty')}</Text>
-      ) : (
-        <>
-          <Text className="text-[15px] text-muted">
-            {t('herbarium.species', { count: data.speciesCount })} ·{' '}
-            {t('herbarium.families', { count: data.familyCount })}
-          </Text>
-
-          {data.next ? (
-            <View className="flex-row items-center gap-3">
-              <Medal badge={{ id: data.next.id, level: 0 }} size={36} />
-              <View className="flex-1 gap-1.5">
-                <View className="flex-row justify-between">
-                  <Text className="text-[15px] font-semibold text-foreground">{badgeName(data.next, t, true)}</Text>
-                  <Text className="text-[13px] text-muted">
-                    {t('herbarium.progress', { current: data.next.current, target: data.next.target })}
-                  </Text>
-                </View>
-                <ProgressBar value={data.next.current / data.next.target} />
-              </View>
-            </View>
-          ) : (
-            <Text className="text-[15px] font-semibold text-accent">{t('herbarium.allBadges')}</Text>
-          )}
-
-          <View className="flex-row items-center gap-2">
-            {data.species.slice(0, 3).map((item) => (
-              <Image
-                key={item.key}
-                source={{ uri: item.imageUrl, cacheKey: item.bestId }}
-                contentFit="cover"
-                className="size-11 rounded-xl bg-accent-soft"
-              />
-            ))}
-            <View className="flex-1" />
-            {latestBadge && (
-              <View className="flex-row items-center gap-1.5">
-                <Medal badge={latestBadge} size={28} />
-                <Text numberOfLines={1} className="max-w-[140px] text-[13px] font-semibold text-foreground">
-                  {badgeName(latestBadge, t)}
-                </Text>
-              </View>
-            )}
-          </View>
-        </>
-      )}
-    </Pressable>
+      <NextBadge data={data} />
+    </View>
   );
 }

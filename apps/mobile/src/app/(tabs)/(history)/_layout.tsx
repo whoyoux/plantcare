@@ -8,7 +8,7 @@ export default function HistoryLayout() {
 
   return (
     <Stack screenOptions={largeTitleScreenOptions}>
-      <Stack.Screen name="history" options={{ title: t('history.title') }} />
+      <Stack.Screen name="history" options={{ title: t('herbarium.title') }} />
       <Stack.Screen name="species" options={{ title: '', headerLargeTitleEnabled: false }} />
       <Stack.Screen name="badges" options={{ title: t('herbarium.badges') }} />
     </Stack>
